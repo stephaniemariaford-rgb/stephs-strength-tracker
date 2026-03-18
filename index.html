@@ -2279,18 +2279,59 @@ function renderPRs(entries,freq){
 function renderRecentSessions(entries){
   const recent=[...entries].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,30);
   const div=document.getElementById('p-history');
-  if(!recent.length){div.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ink4);font-size:.82rem;">No sessions logged yet.</div>';return;}
+  if(!recent.length){
+    div.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ink4);font-size:.82rem;">No sessions logged yet.</div>';
+    return;
+  }
   const byDate={};
   recent.forEach(e=>{if(!byDate[e.date])byDate[e.date]=[];byDate[e.date].push(e);});
   div.innerHTML=Object.entries(byDate).map(([date,exs])=>`
     <div style="padding:.75rem 0;border-bottom:1px solid var(--border2);">
-      <div style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--ink4);margin-bottom:.375rem;">${date}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:.375rem;">
-        ${exs.map(e=>`<span style="font-size:.75rem;background:var(--cream2);border:1px solid var(--border2);border-radius:4px;padding:3px 8px;color:var(--ink2);">
-          ${e.ex}${e.weight>0?' · <strong>'+e.weight+' lb</strong>':''} · ${e.sets}×${e.reps}
-        </span>`).join('')}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
+        <div style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--ink4);">${date}</div>
+        <button onclick="deleteSessionDay('${date}')"
+          style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);
+          background:none;border:1px solid var(--border);border-radius:4px;
+          padding:3px 8px;cursor:pointer;transition:all .12s;"
+          onmouseover="this.style.color='#c0392b';this.style.borderColor='#c0392b'"
+          onmouseout="this.style.color='var(--ink4)';this.style.borderColor='var(--border)'">
+          Delete day
+        </button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.375rem;">
+        ${exs.map(e=>`
+          <div style="display:flex;align-items:center;gap:.5rem;">
+            <span style="flex:1;font-size:.78rem;background:var(--cream2);border:1px solid var(--border2);
+              border-radius:4px;padding:5px 10px;color:var(--ink2);">
+              ${e.ex}${e.weight>0?' · <strong>'+e.weight+' lb</strong>':''} · ${e.sets}×${e.reps}${e.set_num?' (set '+e.set_num+')':''}
+            </span>
+            <button onclick="deleteEntry(${e.id})"
+              style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);
+              background:transparent;color:var(--ink4);cursor:pointer;font-size:.75rem;
+              display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;"
+              onmouseover="this.style.borderColor='#c0392b';this.style.color='#c0392b';this.style.background='#fce8e6'"
+              onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink4)';this.style.background='transparent'"
+              title="Delete this set">✕</button>
+          </div>`).join('')}
       </div>
     </div>`).join('');
+}
+
+async function deleteEntry(id){
+  if(!confirm('Delete this set?')) return;
+  const entries=await getEntries();
+  await saveEntries(entries.filter(e=>e.id!==id));
+  // invalidate cache so progress view refreshes
+  cache.entries=null;
+  await renderProgressView();
+}
+
+async function deleteSessionDay(date){
+  if(!confirm(`Delete all entries for ${date}? This cannot be undone.`)) return;
+  const entries=await getEntries();
+  await saveEntries(entries.filter(e=>e.date!==date));
+  cache.entries=null;
+  await renderProgressView();
 }
 
 function renderPullupLadder(){

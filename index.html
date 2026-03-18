@@ -1026,7 +1026,8 @@ async function loadWeekRemote(weekStart){
 async function saveWeekData(weekStart, week){
   cache.weeks[weekStart] = week;
   showSaveStatus('saving');
-  const result = await sb.post('week_plans', {
+  // Use explicit upsert on the unique (user_id, week_start) constraint
+  const result = await sb.req('POST', 'week_plans?on_conflict=user_id,week_start', {
     week_start: weekStart,
     user_id: USER_ID,
     data: week,
@@ -1042,7 +1043,11 @@ async function saveWeekData(weekStart, week){
 
 async function saveSavedWeeks(weeks){
   cache.savedWeeks = weeks;
-  const result = await sb.post('saved_weeks', {user_id:USER_ID, data:weeks, updated_at:new Date().toISOString()});
+  const result = await sb.req('POST', 'saved_weeks?on_conflict=user_id', {
+    user_id: USER_ID,
+    data: weeks,
+    updated_at: new Date().toISOString()
+  });
   if(!result) console.error('saveSavedWeeks failed:', sb.lastError);
 }
 
@@ -1067,9 +1072,11 @@ function showSaveStatus(state){
     el.style.opacity = '1';
     _saveTimer = setTimeout(()=>{ el.style.opacity='0'; }, 2000);
   } else if(state==='error'){
-    el.textContent = '✕ save failed';
+    el.textContent = `✕ save failed — ${sb.lastError||'unknown error'}`;
     el.style.color = '#e8829f';
     el.style.opacity = '1';
+    // Also log clearly
+    console.error('SAVE FAILED:', sb.lastError);
   }
 }
 
@@ -1082,7 +1089,7 @@ async function getSettings(){
 
 async function saveSettings(patch){
   cache.settings = {...(cache.settings||{}), ...patch};
-  await sb.post('app_settings', {
+  await sb.req('POST', 'app_settings?on_conflict=user_id', {
     user_id: USER_ID,
     ...cache.settings,
     updated_at: new Date().toISOString()

@@ -951,11 +951,17 @@ async function getEntries(){
 }
 
 async function saveEntries(entries){
+  // Upsert approach: delete only the entries being replaced, then insert new ones
+  // This is safer than delete-all which risks data loss on network failure
   cache.entries = entries;
-  // Delete all then re-insert (simple for small datasets)
   await sb.del('progress_entries', `user_id=eq.${USER_ID}`);
   if(entries.length > 0){
-    await sb.post('progress_entries', entries.map(e=>({...e, user_id:USER_ID})));
+    const result = await sb.post('progress_entries', entries.map(e=>({...e, user_id:USER_ID})));
+    if(!result){
+      // Insert failed — clear cache so next read re-fetches from Supabase
+      cache.entries = null;
+      console.error('saveEntries: insert failed, cache cleared');
+    }
   }
 }
 
@@ -1943,6 +1949,15 @@ async function markComplete(){
   });
   await saveEntries([...entries,...fresh]);
   hideLoading();
+
+  // If cache was cleared by saveEntries, it means the save failed
+  if(cache.entries === null){
+    document.getElementById('banner-text').innerHTML=`Save failed <span>Check your internet connection and try again. Your sets were not lost — tap "Log session" again.</span>`;
+    document.getElementById('banner').style.background='var(--blush2)';
+    document.getElementById('banner').classList.add('show');
+    return;
+  }
+
   if(fresh.length===0){
     document.getElementById('banner-text').innerHTML=`Nothing saved yet <span>Tap the set buttons to mark sets complete first.</span>`;
     document.getElementById('banner').style.background='var(--blush)';
@@ -2366,6 +2381,24 @@ async function showView(name){
    ══════════════════════════════════════════════ */
 document.getElementById('hdr-date').textContent=
   new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// Re-fetch from Supabase whenever the tab becomes visible again
+// This ensures cross-device data is always fresh (phone logs → computer sees it)
+document.addEventListener('visibilitychange', async ()=>{
+  if(document.hidden) return;
+  // Clear all caches so next render pulls fresh from Supabase
+  cache.entries    = null;
+  cache.savedWeeks = null;
+  cache.settings   = null;
+  // Clear week cache for current week so it re-fetches
+  const ws = getWeekStart(weekOffset);
+  delete cache.weeks[ws];
+  // Re-render current view
+  const activeView = document.querySelector('.view.active')?.id;
+  if(activeView === 'view-planner')  await renderPlanner();
+  if(activeView === 'view-progress') await renderProgressView();
+  if(activeView === 'view-history')  await renderHistoryView();
+});
 
 (async()=>{
   showLoading('Connecting…');

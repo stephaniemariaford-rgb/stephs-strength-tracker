@@ -1404,7 +1404,7 @@ async function renderDayTabs(){
   });
 }
 
-async async function updateWeekLabel(){
+async function updateWeekLabel(){
   const ws=getWeekStart(weekOffset);
   const week=await loadWeek(ws);
   const dates=week.days.map((d,i)=>d.scheduledDate||addDays(ws,DEF_OFFSETS[i])).sort();

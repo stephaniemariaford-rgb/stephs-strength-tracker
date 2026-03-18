@@ -923,7 +923,7 @@ const cache = {
 /* ══════════════════════════════════════════════
    LOADING OVERLAY
    ══════════════════════════════════════════════ */
-async function showLoading(msg='Loading…'){
+function showLoading(msg='Loading…'){
   let el=document.getElementById('sb-loading');
   if(!el){
     el=document.createElement('div');
@@ -938,7 +938,7 @@ async function showLoading(msg='Loading…'){
   document.getElementById('sb-loading-msg').textContent=msg;
   el.style.display='flex';
 }
-async function hideLoading(){ const el=document.getElementById('sb-loading'); if(el) el.style.display='none'; }
+function hideLoading(){ const el=document.getElementById('sb-loading'); if(el) el.style.display='none'; }
 
 /* ══════════════════════════════════════════════
    STORAGE API — all async, cached locally
@@ -1264,7 +1264,7 @@ function getWeekStart(off=0){
   const mon=new Date(d.getFullYear(),d.getMonth(),diff+off*7);
   return mon.toISOString().split('T')[0];
 }
-async function addDays(ds,n){
+function addDays(ds,n){
   const d=new Date(ds+'T12:00:00'); d.setDate(d.getDate()+n);
   return d.toISOString().split('T')[0];
 }
@@ -1272,7 +1272,7 @@ async function addDays(ds,n){
 /* ══════════════════════════════════════════════
    WEEK HELPERS — aliases to Supabase layer above
    ══════════════════════════════════════════════ */
-async function freshWeek(ws){
+function freshWeek(ws){
   return { weekStart:ws, days:DAY_NAMES.map((n,i)=>({
     name:n, exercises:[], logged:false,
     scheduledDate:addDays(ws,DEF_OFFSETS[i])
@@ -1286,7 +1286,7 @@ const loadWeek = loadWeekRemote;
    Only the current stage exercise is included,
    plus lat pulldown and supportwork that always apply.
    ══════════════════════════════════════════════ */
-async function buildPullupDayTemplate(){
+function buildPullupDayTemplate(){
   const stage = getPullupStage();
   // Each stage: which exercise to do, sets/reps, and notes
   const stageExercise = [
@@ -1312,7 +1312,7 @@ async function buildPullupDayTemplate(){
 /* ══════════════════════════════════════════════
    PULL-UP TRACKER RENDER
    ══════════════════════════════════════════════ */
-async function renderPullupTracker(){
+function renderPullupTracker(){
   const stage=getPullupStage();
   const el=document.getElementById('pullup-tracker');
   const hasPullup=hasAnyPullupEx();
@@ -1355,7 +1355,7 @@ async function hasAnyPullupEx(){
   const week=await loadWeek(ws);
   return week.days[curDay].exercises.some(e=>LIBRARY[e.libIdx]?.pullupStage!==undefined);
 }
-async function setPullupStageUI(i){
+function setPullupStageUI(i){
   setPullupStage(i);
   renderPullupTracker();
   updateHeaderStats();
@@ -1367,7 +1367,7 @@ async function setPullupStageUI(i){
 async function renderPlanner(){
   const ws=getWeekStart(weekOffset);
   await loadWeek(ws); // ensure cached
-  updateWeekLabel();
+  await updateWeekLabel();
   await renderDayTabs();
   await renderDayEditor();
   await updateHeaderStats();
@@ -1404,9 +1404,9 @@ async function renderDayTabs(){
   });
 }
 
-async function updateWeekLabel(){
+async async function updateWeekLabel(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeekSync(ws);
+  const week=await loadWeek(ws);
   const dates=week.days.map((d,i)=>d.scheduledDate||addDays(ws,DEF_OFFSETS[i])).sort();
   const f=new Date(dates[0]+'T12:00:00'), l=new Date(dates[dates.length-1]+'T12:00:00');
   document.getElementById('week-label').textContent=
@@ -1587,7 +1587,7 @@ async function showTemplateModal(highlightKey){
   document.body.appendChild(overlay);
 }
 
-async function cardHTML(title, subtitle, highlighted, onclickExpr){
+function cardHTML(title, subtitle, highlighted, onclickExpr){
   const bc=highlighted?'var(--blush)':'var(--border)';
   const bg=highlighted?'var(--blush-lt)':'white';
   const badge=highlighted?` <span style='font-family:Roboto Mono,monospace;font-size:.58rem;color:var(--blush2);background:var(--blush-lt);padding:2px 6px;border-radius:3px;border:1px solid rgba(212,133,106,.3);'>suggested</span>`:'';
@@ -1720,7 +1720,7 @@ async function startWorkout(){
   renderLogList();
 }
 
-async function showPlanPanel(){
+function showPlanPanel(){
   logMode=false;
   document.getElementById('log-panel').style.display='none';
   document.getElementById('plan-panel').style.display='block';
@@ -1779,7 +1779,7 @@ async function renderLogList(){
   updateLogProgress();
 }
 
-async function renderSetRows(ei,libEx,exPlan){
+function renderSetRows(ei,libEx,exPlan){
   const sl=sessionLog[ei]; if(!sl) return;
   const isBW=libEx.equipment==='pullup'||libEx.equipment==='bw';
   const container=document.getElementById(`set-rows-${ei}`); if(!container) return;
@@ -1834,18 +1834,18 @@ async function toggleSetDone(ei,si){
   renderSetRows(ei,LIBRARY[ex.libIdx],ex);
   updateLogProgress();
 }
-async function updateSetWeight(ei,si,val){
+function updateSetWeight(ei,si,val){
   if(!sessionLog[ei]) return;
   sessionLog[ei].sets[si].weight=val;
   sessionLog[ei].sets[si]._touched=true;
   updateLogProgress();
 }
-async function updateSetReps(ei,si,val){
+function updateSetReps(ei,si,val){
   if(!sessionLog[ei]) return;
   sessionLog[ei].sets[si].reps=parseInt(val)||1;
   updateLogProgress();
 }
-async function updateSetNote(ei,si,val){ if(sessionLog[ei]) sessionLog[ei].sets[si].notes=val; }
+function updateSetNote(ei,si,val){ if(sessionLog[ei]) sessionLog[ei].sets[si].notes=val; }
 
 async function addSet(ei){
   const sl=sessionLog[ei]; if(!sl) return;
@@ -1867,7 +1867,7 @@ async function removeSet(ei,si){
   renderSetRows(ei,LIBRARY[ex.libIdx],ex);
   updateLogProgress();
 }
-async function togglePeloton(ei,iconEl){
+function togglePeloton(ei,iconEl){
   if(!sessionLog[ei]) sessionLog[ei]={pelotonDone:false,notes:''};
   sessionLog[ei].pelotonDone=!sessionLog[ei].pelotonDone;
   const done=sessionLog[ei].pelotonDone;
@@ -2052,7 +2052,7 @@ async function setMetric(metric,btn){
 }
 
 // Epley estimated 1RM formula
-async function e1rm(weight,reps){ return reps===1?weight:Math.round(weight*(1+reps/30)); }
+function e1rm(weight,reps){ return reps===1?weight:Math.round(weight*(1+reps/30)); }
 
 async function renderProgressView(){
   const entries=(await getEntries()).filter(e=>e.equipment!=='peloton'&&(e.weight||0)>0);

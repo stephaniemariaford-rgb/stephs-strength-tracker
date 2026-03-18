@@ -1103,7 +1103,7 @@ function getPullupStage(){ return cache.settings?.pull_up_stage || 0; }
 function setPullupStage(n){
   if(!cache.settings) cache.settings={};
   cache.settings.pull_up_stage = n;
-  saveSettings({pull_up_stage: n}); // fire and forget
+  saveSettings({pull_up_stage: n}); // fire and forget — called from sync contexts
 }
 
 // Week cache sync shim (used after async load)
@@ -1582,20 +1582,20 @@ async function updPlanField(ri,field,val){
   const week=await loadWeek(ws);
   const nums=['sets','reps','targetWeight'];
   week.days[curDay].exercises[ri][field]=nums.includes(field)?(parseFloat(val)||''):val;
-  saveWeekData(ws,week);
+  await saveWeekData(ws,week);
 }
 async function saveDayName(val){
   const ws=getWeekStart(weekOffset);
   const week=await loadWeek(ws);
   week.days[curDay].name=val;
-  saveWeekData(ws,week);
+  await saveWeekData(ws,week);
   renderDayTabs();
 }
 async function removeEx(ri){
   const ws=getWeekStart(weekOffset);
   const week=await loadWeek(ws);
   week.days[curDay].exercises.splice(ri,1);
-  saveWeekData(ws,week);
+  await saveWeekData(ws,week);
   renderPlanExList();
   renderDayTabs();
   renderLibrary();
@@ -1680,7 +1680,7 @@ async function applyPullupTemplate(){
   week.days[curDay].exercises=buildPullupDayTemplate();
   week.days[curDay].name='Optional · Pull-up Day';
   document.getElementById('day-name-inp').value='Optional · Pull-up Day';
-  saveWeekData(ws,week);
+  await saveWeekData(ws,week);
   renderPlanExList();
   renderDayTabs();
 }
@@ -1692,7 +1692,7 @@ async function applyTemplate(key, el){
   week.days[curDay].exercises=TEMPLATES[key].map(e=>({...e}));
   week.days[curDay].name=key;
   document.getElementById('day-name-inp').value=key;
-  saveWeekData(ws,week);
+  await saveWeekData(ws,week);
   renderPlanExList();
   renderDayTabs();
 }
@@ -1753,7 +1753,7 @@ async function addFromLib(libIdx){
     libIdx, sets:3, reps:libEx.knee?12:10,
     targetWeight: isBW?'BW':'', notes:'', suggested:false
   });
-  saveWeekData(ws,week);
+  await saveWeekData(ws,week);
   renderPlanExList();
   renderDayTabs();
   const item=document.getElementById(`li-${libIdx}`);

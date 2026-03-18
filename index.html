@@ -999,11 +999,6 @@ async function getSavedWeeks(){
   return cache.savedWeeks;
 }
 
-async function saveSavedWeeks(weeks){
-  cache.savedWeeks = weeks;
-  await sb.post('saved_weeks', {user_id:USER_ID, data:weeks, updated_at:new Date().toISOString()});
-}
-
 async function loadWeekRemote(weekStart){
   if(cache.weeks[weekStart]) return cache.weeks[weekStart];
   const rows = await sb.get('week_plans', `week_start=eq.${weekStart}&user_id=eq.${USER_ID}`);
@@ -1011,12 +1006,13 @@ async function loadWeekRemote(weekStart){
     cache.weeks[weekStart] = rows[0].data;
     return cache.weeks[weekStart];
   }
-  // Fresh week
+  // Fresh week — use smart scheduling
+  const dates = await smartScheduleDates(weekStart);
   const fresh = {
     weekStart,
     days: DAY_NAMES.map((n,i)=>({
       name:n, exercises:[], logged:false,
-      scheduledDate: addDays(weekStart, DEF_OFFSETS[i])
+      scheduledDate: dates[i] || addDays(weekStart, DEF_OFFSETS[i])
     }))
   };
   cache.weeks[weekStart] = fresh;
@@ -1026,14 +1022,15 @@ async function loadWeekRemote(weekStart){
 async function saveWeekData(weekStart, week){
   cache.weeks[weekStart] = week;
   showSaveStatus('saving');
-  // Use explicit upsert on the unique (user_id, week_start) constraint
-  const result = await sb.req('POST', 'week_plans?on_conflict=user_id,week_start', {
+  // Delete existing row for this week then insert fresh — most reliable approach
+  await sb.del('week_plans', `user_id=eq.${USER_ID}&week_start=eq.${weekStart}`);
+  const result = await sb.post('week_plans', {
     week_start: weekStart,
     user_id: USER_ID,
     data: week,
     updated_at: new Date().toISOString()
   });
-  if(!result) {
+  if(!result){
     showSaveStatus('error');
     console.error('saveWeekData failed:', sb.lastError);
   } else {
@@ -1043,12 +1040,23 @@ async function saveWeekData(weekStart, week){
 
 async function saveSavedWeeks(weeks){
   cache.savedWeeks = weeks;
-  const result = await sb.req('POST', 'saved_weeks?on_conflict=user_id', {
+  await sb.del('saved_weeks', `user_id=eq.${USER_ID}`);
+  const result = await sb.post('saved_weeks', {
     user_id: USER_ID,
     data: weeks,
     updated_at: new Date().toISOString()
   });
   if(!result) console.error('saveSavedWeeks failed:', sb.lastError);
+}
+
+async function saveSettings(patch){
+  cache.settings = {...(cache.settings||{}), ...patch};
+  await sb.del('app_settings', `user_id=eq.${USER_ID}`);
+  await sb.post('app_settings', {
+    user_id: USER_ID,
+    ...cache.settings,
+    updated_at: new Date().toISOString()
+  });
 }
 
 // Small unobtrusive save indicator in the header
@@ -1085,15 +1093,6 @@ async function getSettings(){
   const rows = await sb.get('app_settings', `user_id=eq.${USER_ID}`);
   cache.settings = rows?.[0] || {pull_up_stage:0, start_date:null};
   return cache.settings;
-}
-
-async function saveSettings(patch){
-  cache.settings = {...(cache.settings||{}), ...patch};
-  await sb.req('POST', 'app_settings?on_conflict=user_id', {
-    user_id: USER_ID,
-    ...cache.settings,
-    updated_at: new Date().toISOString()
-  });
 }
 
 // Pull-up stage — reads/writes via settings table
@@ -1349,9 +1348,38 @@ function addDays(ds,n){
   return d.toISOString().split('T')[0];
 }
 
-/* ══════════════════════════════════════════════
-   WEEK HELPERS — aliases to Supabase layer above
-   ══════════════════════════════════════════════ */
+async function smartScheduleDates(ws){
+  // Find the last logged workout date across all weeks
+  const entries = await getEntries();
+  const loggedDates = [...new Set(entries.map(e=>e.date))].sort();
+  const lastLogged = loggedDates[loggedDates.length-1];
+
+  // Start scheduling from day after last logged + 1 rest day,
+  // or from Monday of this week if no history
+  let cursor;
+  if(lastLogged){
+    const d = new Date(lastLogged+'T12:00:00');
+    d.setDate(d.getDate()+2); // 1 rest day minimum
+    cursor = d.toISOString().split('T')[0];
+    // Don't schedule in the past
+    if(cursor < today()) cursor = today();
+  } else {
+    cursor = ws; // Monday of the week
+  }
+
+  // Assign dates to each day with 1 rest day between, skipping Sundays
+  const dates = [];
+  for(let i=0; i<4; i++){
+    // Skip Sunday (day 0)
+    const d = new Date(cursor+'T12:00:00');
+    while(d.getDay()===0) d.setDate(d.getDate()+1);
+    dates.push(d.toISOString().split('T')[0]);
+    // Next workout: 2 days later (1 rest day between)
+    d.setDate(d.getDate()+2);
+    cursor = d.toISOString().split('T')[0];
+  }
+  return dates;
+}
 function freshWeek(ws){
   return { weekStart:ws, days:DAY_NAMES.map((n,i)=>({
     name:n, exercises:[], logged:false,
@@ -1467,21 +1495,54 @@ async function renderDayTabs(){
   const ws=getWeekStart(weekOffset);
   const week=await loadWeek(ws);
   const c=document.getElementById('day-tabs'); c.innerHTML='';
+  const typeLabels=['Full Body A','Full Body B','Full Body C','Optional'];
+
   week.days.forEach((day,i)=>{
     const hasEx=day.exercises.length>0;
-    const isToday=(day.scheduledDate||addDays(ws,DEF_OFFSETS[i]))===today();
+    const sched=day.scheduledDate||addDays(ws,DEF_OFFSETS[i]);
+    const isToday=sched===today();
+    const isPast=sched<today();
     const div=document.createElement('div');
     div.className=`day-tab${i===curDay?' active':''}${hasEx?' has-ex':''}${day.logged?' logged':''}`;
-    div.onclick=()=>switchDay(i);
-    const typeLabels=['Full Body A','Full Body B','Full Body C','Optional'];
+    div.onclick=(e)=>{ if(e.target.tagName!=='INPUT') switchDay(i); };
+
+    // Format date for display
+    const schedDate=new Date(sched+'T12:00:00');
+    const dateLabel=schedDate.toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'});
+
     div.innerHTML=`
       <div class="dt-type">${typeLabels[i]||''}</div>
       <div class="dt-name">${day.name&&day.name!==DAY_NAMES[i]?day.name:(i<3?'Day '+(i+1):'Optional')}</div>
-      <div class="dt-count">${hasEx?day.exercises.length+' exercise'+(day.exercises.length!==1?'s':''):'empty'}</div>
-      ${day.logged?'<div class="dt-badge">✓ done</div>':''}
-      ${isToday&&!day.logged?'<div class="dt-badge" style="color:var(--blush);">today</div>':''}`;
+      <div class="dt-date" style="font-family:'Roboto Mono',monospace;font-size:.6rem;
+        color:${i===curDay?'rgba(255,255,255,.6)':'var(--ink4)'};margin-top:2px;">
+        ${isToday?'<span style="color:var(--blush);font-weight:600;">Today</span>':dateLabel}
+      </div>
+      <div class="dt-count" style="margin-top:2px;">
+        ${day.logged
+          ? `<span style="color:${i===curDay?'rgba(200,168,75,.9)':'var(--sage)'};font-family:'Roboto Mono',monospace;font-size:.6rem;font-weight:600;">✓ completed</span>`
+          : hasEx?`<span style="font-size:.6rem;font-family:'Roboto Mono',monospace;color:${i===curDay?'rgba(255,255,255,.5)':'var(--ink4)'};">${day.exercises.length} exercise${day.exercises.length!==1?'s':''}</span>`
+          : `<span style="font-size:.6rem;font-family:'Roboto Mono',monospace;color:var(--ink4);">empty</span>`
+        }
+      </div>
+      <input type="date" class="dt-date-inp"
+        value="${sched}"
+        onclick="event.stopPropagation()"
+        onchange="changeScheduledDate(${i},this.value)"
+        style="opacity:0;position:absolute;bottom:6px;right:6px;width:20px;height:20px;cursor:pointer;border:none;background:none;padding:0;"
+        title="Change date">
+      <div style="position:absolute;bottom:6px;right:6px;pointer-events:none;font-size:.65rem;
+        color:${i===curDay?'rgba(255,255,255,.4)':'var(--ink4)'};">✎</div>`;
     c.appendChild(div);
   });
+}
+
+async function changeScheduledDate(dayIdx, newDate){
+  const ws=getWeekStart(weekOffset);
+  const week=await loadWeek(ws);
+  week.days[dayIdx].scheduledDate=newDate;
+  await saveWeekData(ws,week);
+  await renderDayTabs();
+  await updateWeekLabel();
 }
 
 async function updateWeekLabel(){
@@ -1507,8 +1568,62 @@ async function renderDayEditor(){
   const week=await loadWeek(ws);
   const day=week.days[curDay];
   document.getElementById('day-name-inp').value=day.name||DAY_NAMES[curDay];
+
+  // If this day was logged, show a completion summary instead of the plan
+  const planPanel=document.getElementById('plan-panel');
+  let summaryEl=document.getElementById('logged-summary');
+  if(!summaryEl){
+    summaryEl=document.createElement('div');
+    summaryEl.id='logged-summary';
+    summaryEl.style.cssText='margin:0 1rem .875rem;';
+    planPanel.querySelector('.ex-list').before(summaryEl);
+  }
+
+  if(day.logged){
+    // Find entries for this day's scheduled date
+    const entries=await getEntries();
+    const dayEntries=entries.filter(e=>e.date===day.scheduledDate&&e.equipment!=='peloton'&&e.weight>0);
+    const byEx={};
+    dayEntries.forEach(e=>{ if(!byEx[e.ex])byEx[e.ex]=[]; byEx[e.ex].push(e); });
+    const exNames=Object.keys(byEx);
+
+    summaryEl.innerHTML=`
+      <div style="background:var(--sage-lt);border:1px solid var(--sage-md);border-left:3px solid var(--sage);
+        border-radius:0 var(--r) var(--r) 0;padding:.875rem 1rem;">
+        <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--sage2);margin-bottom:.5rem;">
+          ✓ Session completed ${day.scheduledDate?new Date(day.scheduledDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}):''}
+        </div>
+        ${exNames.length?`<div style="display:flex;flex-direction:column;gap:.25rem;">
+          ${exNames.map(ex=>{
+            const sets=byEx[ex];
+            const bestWeight=Math.max(...sets.map(s=>s.weight));
+            const totalSets=sets.length;
+            return `<div style="font-size:.78rem;color:var(--ink2);">
+              <strong>${ex}</strong> — ${totalSets} set${totalSets!==1?'s':''} · best ${bestWeight} lb
+            </div>`;
+          }).join('')}
+        </div>`:'<div style="font-size:.78rem;color:var(--ink3);">No weighted sets recorded.</div>'}
+        <button class="sm-btn" style="margin-top:.625rem;font-size:.75rem;"
+          onclick="unlogDay(${curDay})">Undo completion</button>
+      </div>`;
+    summaryEl.style.display='block';
+    document.getElementById('start-bar').style.display='none';
+  } else {
+    summaryEl.style.display='none';
+  }
+
   renderPlanExList();
   checkStartBar();
+}
+
+async function unlogDay(dayIdx){
+  if(!confirm('Mark this day as not completed?')) return;
+  const ws=getWeekStart(weekOffset);
+  const week=await loadWeek(ws);
+  week.days[dayIdx].logged=false;
+  await saveWeekData(ws,week);
+  await renderDayEditor();
+  await renderDayTabs();
 }
 
 async function renderPlanExList(){

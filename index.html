@@ -878,19 +878,171 @@ body{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 /* ══════════════════════════════════════════════
-   STORAGE (localStorage — lightweight, no backend needed)
+   SUPABASE CONFIG
    ══════════════════════════════════════════════ */
-const STORE = {
-  get(k,def=null){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):def; }catch(e){return def;} },
-  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+const SUPABASE_URL = 'https://afajekqackyoxyqbdirb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmYWpla3FhY2t5b3h5cWJkaXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3OTM1NjksImV4cCI6MjA4OTM2OTU2OX0.3cQcRFOf9QkjoBaercRN9q_iKUsJbRm4cNHN7g14Ew0';
+const USER_ID = 'default';
+
+const sb = {
+  async req(method, path, body){
+    try {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+        method,
+        headers:{
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': method==='POST'
+            ? 'resolution=merge-duplicates,return=representation'
+            : 'return=representation'
+        },
+        body: body ? JSON.stringify(body) : undefined
+      });
+      if(!res.ok){ console.error('Supabase error', res.status, await res.text()); return null; }
+      const text = await res.text();
+      return text ? JSON.parse(text) : null;
+    } catch(e){ console.error('Supabase fetch failed', e); return null; }
+  },
+  get(table, query='')      { return sb.req('GET',    `${table}?${query}`); },
+  post(table, body)         { return sb.req('POST',   table, body); },
+  patch(table, query, body) { return sb.req('PATCH',  `${table}?${query}`, body); },
+  del(table, query)         { return sb.req('DELETE', `${table}?${query}`); },
 };
 
-function getEntries(){ return STORE.get('entries',[]); }
-function saveEntries(e){ STORE.set('entries',e); }
-function getSavedWeeks(){ return STORE.get('savedWeeks',[]); }
-function saveSavedWeeks(w){ STORE.set('savedWeeks',w); }
-function getPullupStage(){ return STORE.get('pullupStage',0); }
-function setPullupStage(s){ STORE.set('pullupStage',s); }
+/* ══════════════════════════════════════════════
+   LOCAL CACHE  (instant UI; Supabase is source of truth)
+   ══════════════════════════════════════════════ */
+const cache = {
+  entries:    null,
+  weeks:      {},
+  savedWeeks: null,
+  settings:   null,
+};
+
+/* ══════════════════════════════════════════════
+   LOADING OVERLAY
+   ══════════════════════════════════════════════ */
+async function showLoading(msg='Loading…'){
+  let el=document.getElementById('sb-loading');
+  if(!el){
+    el=document.createElement('div');
+    el.id='sb-loading';
+    el.style.cssText='position:fixed;inset:0;background:rgba(255,248,251,.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;font-family:\'Outfit\',sans-serif;';
+    el.innerHTML=`
+      <style>@keyframes sb-spin{to{transform:rotate(360deg)}}</style>
+      <div style="width:36px;height:36px;border:3px solid var(--cream3);border-top-color:var(--sage);border-radius:50%;animation:sb-spin .7s linear infinite;"></div>
+      <div id="sb-loading-msg" style="font-size:.85rem;color:var(--ink3);"></div>`;
+    document.body.appendChild(el);
+  }
+  document.getElementById('sb-loading-msg').textContent=msg;
+  el.style.display='flex';
+}
+async function hideLoading(){ const el=document.getElementById('sb-loading'); if(el) el.style.display='none'; }
+
+/* ══════════════════════════════════════════════
+   STORAGE API — all async, cached locally
+   ══════════════════════════════════════════════ */
+async function getEntries(){
+  if(cache.entries) return cache.entries;
+  const rows = await sb.get('progress_entries', `user_id=eq.${USER_ID}&order=date.desc`);
+  cache.entries = rows || [];
+  return cache.entries;
+}
+
+async function saveEntries(entries){
+  cache.entries = entries;
+  // Delete all then re-insert (simple for small datasets)
+  await sb.del('progress_entries', `user_id=eq.${USER_ID}`);
+  if(entries.length > 0){
+    await sb.post('progress_entries', entries.map(e=>({...e, user_id:USER_ID})));
+  }
+}
+
+async function getSavedWeeks(){
+  if(cache.savedWeeks) return cache.savedWeeks;
+  const rows = await sb.get('saved_weeks', `user_id=eq.${USER_ID}`);
+  cache.savedWeeks = rows?.[0]?.data || [];
+  return cache.savedWeeks;
+}
+
+async function saveSavedWeeks(weeks){
+  cache.savedWeeks = weeks;
+  await sb.post('saved_weeks', {user_id:USER_ID, data:weeks, updated_at:new Date().toISOString()});
+}
+
+async function loadWeekRemote(weekStart){
+  if(cache.weeks[weekStart]) return cache.weeks[weekStart];
+  const rows = await sb.get('week_plans', `week_start=eq.${weekStart}&user_id=eq.${USER_ID}`);
+  if(rows?.[0]?.data){
+    cache.weeks[weekStart] = rows[0].data;
+    return cache.weeks[weekStart];
+  }
+  // Fresh week
+  const fresh = {
+    weekStart,
+    days: DAY_NAMES.map((n,i)=>({
+      name:n, exercises:[], logged:false,
+      scheduledDate: addDays(weekStart, DEF_OFFSETS[i])
+    }))
+  };
+  cache.weeks[weekStart] = fresh;
+  return fresh;
+}
+
+async function saveWeekData(weekStart, week){
+  cache.weeks[weekStart] = week;
+  await sb.post('week_plans', {
+    week_start: weekStart,
+    user_id: USER_ID,
+    data: week,
+    updated_at: new Date().toISOString()
+  });
+}
+
+async function getSettings(){
+  if(cache.settings) return cache.settings;
+  const rows = await sb.get('app_settings', `user_id=eq.${USER_ID}`);
+  cache.settings = rows?.[0] || {pull_up_stage:0, start_date:null};
+  return cache.settings;
+}
+
+async function saveSettings(patch){
+  cache.settings = {...(cache.settings||{}), ...patch};
+  await sb.post('app_settings', {
+    user_id: USER_ID,
+    ...cache.settings,
+    updated_at: new Date().toISOString()
+  });
+}
+
+// Pull-up stage — reads/writes via settings table
+async function getPullupStageAsync(){
+  const s = await getSettings();
+  return s.pull_up_stage || 0;
+}
+async function setPullupStageAsync(n){
+  await saveSettings({pull_up_stage: n});
+}
+
+// Sync shims used in places that need a value immediately (after first load)
+function getPullupStage(){ return cache.settings?.pull_up_stage || 0; }
+function setPullupStage(n){
+  if(!cache.settings) cache.settings={};
+  cache.settings.pull_up_stage = n;
+  saveSettings({pull_up_stage: n}); // fire and forget
+}
+
+// Week cache sync shim (used after async load)
+function loadWeekSync(ws){
+  return cache.weeks[ws] || {
+    weekStart:ws,
+    days:DAY_NAMES.map((n,i)=>({
+      name:n, exercises:[], logged:false,
+      scheduledDate:addDays(ws,DEF_OFFSETS[i])
+    }))
+  };
+}
 
 const today = () => new Date().toISOString().split('T')[0];
 
@@ -1112,38 +1264,29 @@ function getWeekStart(off=0){
   const mon=new Date(d.getFullYear(),d.getMonth(),diff+off*7);
   return mon.toISOString().split('T')[0];
 }
-function addDays(ds,n){
+async function addDays(ds,n){
   const d=new Date(ds+'T12:00:00'); d.setDate(d.getDate()+n);
   return d.toISOString().split('T')[0];
 }
 
 /* ══════════════════════════════════════════════
-   WEEK CACHE
+   WEEK HELPERS — aliases to Supabase layer above
    ══════════════════════════════════════════════ */
-const weekCache = {};
-
-function freshWeek(ws){
+async function freshWeek(ws){
   return { weekStart:ws, days:DAY_NAMES.map((n,i)=>({
     name:n, exercises:[], logged:false,
     scheduledDate:addDays(ws,DEF_OFFSETS[i])
   }))};
 }
-function loadWeek(ws){
-  if(weekCache[ws]) return weekCache[ws];
-  const stored=STORE.get('week_'+ws,null);
-  weekCache[ws] = stored || freshWeek(ws);
-  return weekCache[ws];
-}
-function saveWeekData(ws,w){
-  weekCache[ws]=w; STORE.set('week_'+ws,w);
-}
+// loadWeek = async, uses Supabase (defined above as loadWeekRemote)
+const loadWeek = loadWeekRemote;
 
 /* ══════════════════════════════════════════════
    PULL-UP DAY — DYNAMIC STAGE-AWARE BUILDER
    Only the current stage exercise is included,
    plus lat pulldown and supportwork that always apply.
    ══════════════════════════════════════════════ */
-function buildPullupDayTemplate(){
+async function buildPullupDayTemplate(){
   const stage = getPullupStage();
   // Each stage: which exercise to do, sets/reps, and notes
   const stageExercise = [
@@ -1169,7 +1312,7 @@ function buildPullupDayTemplate(){
 /* ══════════════════════════════════════════════
    PULL-UP TRACKER RENDER
    ══════════════════════════════════════════════ */
-function renderPullupTracker(){
+async function renderPullupTracker(){
   const stage=getPullupStage();
   const el=document.getElementById('pullup-tracker');
   const hasPullup=hasAnyPullupEx();
@@ -1192,28 +1335,27 @@ function renderPullupTracker(){
     ${advanceBtn}`;
 }
 
-function advancePullupStage(){
+async function advancePullupStage(){
   const next=Math.min(getPullupStage()+1, PULLUP_STAGES.length-1);
   setPullupStage(next);
-  // Rebuild the pull-up day exercises to match new stage
+  // Rebuild pull-up day if it's in the current week
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
-  // Find any day that looks like a pull-up day and refresh it
+  const week=await loadWeek(ws);
   week.days.forEach((day,i)=>{
     if(day.exercises.some(e=>LIBRARY[e.libIdx]?.pullupStage!==undefined)){
       week.days[i].exercises=buildPullupDayTemplate();
     }
   });
-  saveWeekData(ws,week);
-  renderPlanner();
+  await saveWeekData(ws,week);
+  await renderPlanner();
 }
 
-function hasAnyPullupEx(){
+async function hasAnyPullupEx(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   return week.days[curDay].exercises.some(e=>LIBRARY[e.libIdx]?.pullupStage!==undefined);
 }
-function setPullupStageUI(i){
+async function setPullupStageUI(i){
   setPullupStage(i);
   renderPullupTracker();
   updateHeaderStats();
@@ -1222,15 +1364,17 @@ function setPullupStageUI(i){
 /* ══════════════════════════════════════════════
    RENDER: PLANNER
    ══════════════════════════════════════════════ */
-function renderPlanner(){
+async function renderPlanner(){
+  const ws=getWeekStart(weekOffset);
+  await loadWeek(ws); // ensure cached
   updateWeekLabel();
-  renderDayTabs();
-  renderDayEditor();
-  updateHeaderStats();
+  await renderDayTabs();
+  await renderDayEditor();
+  await updateHeaderStats();
 }
 
-function updateHeaderStats(){
-  const entries=getEntries();
+async function updateHeaderStats(){
+  const entries=await getEntries();
   const daySet=new Set(entries.map(e=>e.date));
   document.getElementById('stat-workouts').textContent=daySet.size;
   const vol=entries.reduce((s,e)=>s+(parseFloat(e.weight)||0)*(e.reps||0)*(e.sets||0),0);
@@ -1239,9 +1383,9 @@ function updateHeaderStats(){
   document.getElementById('stat-streak').textContent=(stage+1)+'/5';
 }
 
-function renderDayTabs(){
+async function renderDayTabs(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const c=document.getElementById('day-tabs'); c.innerHTML='';
   week.days.forEach((day,i)=>{
     const hasEx=day.exercises.length>0;
@@ -1260,9 +1404,9 @@ function renderDayTabs(){
   });
 }
 
-function updateWeekLabel(){
+async function updateWeekLabel(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=loadWeekSync(ws);
   const dates=week.days.map((d,i)=>d.scheduledDate||addDays(ws,DEF_OFFSETS[i])).sort();
   const f=new Date(dates[0]+'T12:00:00'), l=new Date(dates[dates.length-1]+'T12:00:00');
   document.getElementById('week-label').textContent=
@@ -1270,26 +1414,26 @@ function updateWeekLabel(){
     l.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 }
 
-function switchDay(i){
+async function switchDay(i){
   curDay=i; logMode=false; sessionLog={};
   document.getElementById('log-panel').style.display='none';
   document.getElementById('plan-panel').style.display='block';
-  renderDayTabs();
-  renderDayEditor();
+  await renderDayTabs();
+  await renderDayEditor();
 }
 
-function renderDayEditor(){
+async function renderDayEditor(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const day=week.days[curDay];
   document.getElementById('day-name-inp').value=day.name||DAY_NAMES[curDay];
   renderPlanExList();
   checkStartBar();
 }
 
-function renderPlanExList(){
+async function renderPlanExList(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const day=week.days[curDay];
   const list=document.getElementById('plan-ex-list');
   const hasKnee=day.exercises.some(e=>LIBRARY[e.libIdx]?.knee);
@@ -1360,32 +1504,32 @@ function renderPlanExList(){
   checkStartBar();
 }
 
-function updPlanField(ri,field,val){
+async function updPlanField(ri,field,val){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const nums=['sets','reps','targetWeight'];
   week.days[curDay].exercises[ri][field]=nums.includes(field)?(parseFloat(val)||''):val;
   saveWeekData(ws,week);
 }
-function saveDayName(val){
+async function saveDayName(val){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   week.days[curDay].name=val;
   saveWeekData(ws,week);
   renderDayTabs();
 }
-function removeEx(ri){
+async function removeEx(ri){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   week.days[curDay].exercises.splice(ri,1);
   saveWeekData(ws,week);
   renderPlanExList();
   renderDayTabs();
   renderLibrary();
 }
-function checkStartBar(){
+async function checkStartBar(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const day=week.days[curDay];
   document.getElementById('start-bar').style.display=(day.exercises.length>0&&!day.logged)?'block':'none';
 }
@@ -1394,15 +1538,15 @@ function checkStartBar(){
    TEMPLATE MODAL
    No prompt() — uses an inline overlay instead
    ══════════════════════════════════════════════ */
-function loadTemplate(){
+async function loadTemplate(){
   showTemplateModal(null); // show all templates
 }
-function loadDayTemplate(){
+async function loadDayTemplate(){
   const dayDefaults={0:'Full Body A · Push focus',1:'Full Body B · Pull focus',2:'Lower Body & Glutes',3:'pullup'};
   showTemplateModal(dayDefaults[curDay]||null);
 }
 
-function showTemplateModal(highlightKey){
+async function showTemplateModal(highlightKey){
   const old=document.getElementById('tmpl-modal'); if(old) old.remove();
 
   const overlay=document.createElement('div');
@@ -1443,7 +1587,7 @@ function showTemplateModal(highlightKey){
   document.body.appendChild(overlay);
 }
 
-function cardHTML(title, subtitle, highlighted, onclickExpr){
+async function cardHTML(title, subtitle, highlighted, onclickExpr){
   const bc=highlighted?'var(--blush)':'var(--border)';
   const bg=highlighted?'var(--blush-lt)':'white';
   const badge=highlighted?` <span style='font-family:Roboto Mono,monospace;font-size:.58rem;color:var(--blush2);background:var(--blush-lt);padding:2px 6px;border-radius:3px;border:1px solid rgba(212,133,106,.3);'>suggested</span>`:'';
@@ -1456,10 +1600,10 @@ function cardHTML(title, subtitle, highlighted, onclickExpr){
   </div>`;
 }
 
-function applyPullupTemplate(){
+async function applyPullupTemplate(){
   document.getElementById('tmpl-modal')?.remove();
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   week.days[curDay].exercises=buildPullupDayTemplate();
   week.days[curDay].name='Optional · Pull-up Day';
   document.getElementById('day-name-inp').value='Optional · Pull-up Day';
@@ -1468,10 +1612,10 @@ function applyPullupTemplate(){
   renderDayTabs();
 }
 
-function applyTemplate(key, el){
+async function applyTemplate(key, el){
   document.getElementById('tmpl-modal')?.remove();
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   week.days[curDay].exercises=TEMPLATES[key].map(e=>({...e}));
   week.days[curDay].name=key;
   document.getElementById('day-name-inp').value=key;
@@ -1483,14 +1627,14 @@ function applyTemplate(key, el){
 /* ══════════════════════════════════════════════
    LIBRARY
    ══════════════════════════════════════════════ */
-function toggleLibrary(){
+async function toggleLibrary(){
   libOpen=!libOpen;
   document.getElementById('lib-panel').style.display=libOpen?'block':'none';
   if(libOpen) renderLibrary();
 }
-function renderLibrary(){
+async function renderLibrary(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const addedIdxs=new Set(week.days[curDay].exercises.map(e=>e.libIdx));
   const ef=document.getElementById('equip-filter').value;
   const bf=document.getElementById('body-filter').value;
@@ -1526,9 +1670,9 @@ function renderLibrary(){
     grid.appendChild(item);
   });
 }
-function addFromLib(libIdx){
+async function addFromLib(libIdx){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   if(week.days[curDay].exercises.some(e=>e.libIdx===libIdx)) return;
   const libEx=LIBRARY[libIdx];
   const isBW=libEx.equipment==='pullup'||libEx.equipment==='bw';
@@ -1548,7 +1692,7 @@ function addFromLib(libIdx){
    sessionLog[ei] = { sets:[{done,weight,reps,notes}], _prefillW }
                   | { pelotonDone, notes }
    ══════════════════════════════════════════════ */
-function startWorkout(){
+async function startWorkout(){
   logMode=true; sessionLog={};
   document.getElementById('plan-panel').style.display='none';
   document.getElementById('start-bar').style.display='none';
@@ -1557,10 +1701,10 @@ function startWorkout(){
   document.getElementById('complete-btn').classList.remove('done-state');
   document.getElementById('complete-btn').disabled=false;
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const day=week.days[curDay];
   document.getElementById('log-title').textContent=day.name||DAY_NAMES[curDay];
-  const entries=getEntries();
+  const entries=await getEntries();
   const lastWeight={};
   [...entries].sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{ lastWeight[e.ex]=e.weight; });
   day.exercises.forEach((ex,ei)=>{
@@ -1576,7 +1720,7 @@ function startWorkout(){
   renderLogList();
 }
 
-function showPlanPanel(){
+async function showPlanPanel(){
   logMode=false;
   document.getElementById('log-panel').style.display='none';
   document.getElementById('plan-panel').style.display='block';
@@ -1585,9 +1729,9 @@ function showPlanPanel(){
 
 const PELOTON_SVG=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44"><circle cx="22" cy="22" r="20" fill="none" stroke="currentColor" stroke-width="3"/><text x="22" y="29" text-anchor="middle" font-family="'Outfit',Arial,sans-serif" font-weight="700" font-size="22" fill="currentColor">P</text></svg>`;
 
-function renderLogList(){
+async function renderLogList(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const day=week.days[curDay];
   const list=document.getElementById('log-ex-list'); list.innerHTML='';
   day.exercises.forEach((ex,ei)=>{
@@ -1635,7 +1779,7 @@ function renderLogList(){
   updateLogProgress();
 }
 
-function renderSetRows(ei,libEx,exPlan){
+async function renderSetRows(ei,libEx,exPlan){
   const sl=sessionLog[ei]; if(!sl) return;
   const isBW=libEx.equipment==='pullup'||libEx.equipment==='bw';
   const container=document.getElementById(`set-rows-${ei}`); if(!container) return;
@@ -1680,33 +1824,33 @@ function renderSetRows(ei,libEx,exPlan){
   });
 }
 
-function toggleSetDone(ei,si){
+async function toggleSetDone(ei,si){
   const sl=sessionLog[ei]; if(!sl) return;
   sl.sets[si].done=!sl.sets[si].done;
   sl.sets[si]._touched=true;
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const ex=week.days[curDay].exercises[ei];
   renderSetRows(ei,LIBRARY[ex.libIdx],ex);
   updateLogProgress();
 }
-function updateSetWeight(ei,si,val){
+async function updateSetWeight(ei,si,val){
   if(!sessionLog[ei]) return;
   sessionLog[ei].sets[si].weight=val;
   sessionLog[ei].sets[si]._touched=true;
   updateLogProgress();
 }
-function updateSetReps(ei,si,val){
+async function updateSetReps(ei,si,val){
   if(!sessionLog[ei]) return;
   sessionLog[ei].sets[si].reps=parseInt(val)||1;
   updateLogProgress();
 }
-function updateSetNote(ei,si,val){ if(sessionLog[ei]) sessionLog[ei].sets[si].notes=val; }
+async function updateSetNote(ei,si,val){ if(sessionLog[ei]) sessionLog[ei].sets[si].notes=val; }
 
-function addSet(ei){
+async function addSet(ei){
   const sl=sessionLog[ei]; if(!sl) return;
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const ex=week.days[curDay].exercises[ei];
   const libEx=LIBRARY[ex.libIdx]; if(!libEx) return;
   const last=sl.sets[sl.sets.length-1];
@@ -1714,16 +1858,16 @@ function addSet(ei){
   renderSetRows(ei,libEx,ex);
   updateLogProgress();
 }
-function removeSet(ei,si){
+async function removeSet(ei,si){
   const sl=sessionLog[ei]; if(!sl||sl.sets.length<=1) return;
   sl.sets.splice(si,1);
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const ex=week.days[curDay].exercises[ei];
   renderSetRows(ei,LIBRARY[ex.libIdx],ex);
   updateLogProgress();
 }
-function togglePeloton(ei,iconEl){
+async function togglePeloton(ei,iconEl){
   if(!sessionLog[ei]) sessionLog[ei]={pelotonDone:false,notes:''};
   sessionLog[ei].pelotonDone=!sessionLog[ei].pelotonDone;
   const done=sessionLog[ei].pelotonDone;
@@ -1734,9 +1878,9 @@ function togglePeloton(ei,iconEl){
   if(lbl) lbl.textContent=done?'✓ Complete — great work!':'Tap when you\'ve finished your class';
   updateLogProgress();
 }
-function updateLogProgress(){
+async function updateLogProgress(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const day=week.days[curDay];
   let done=0,total=0;
   day.exercises.forEach((ex,ei)=>{
@@ -1747,13 +1891,13 @@ function updateLogProgress(){
   });
   document.getElementById('log-prog').textContent=`${done} of ${total} sets completed`;
 }
-function clearLog(){
+async function clearLog(){
   if(!confirm('Clear this log session?')) return;
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const day=week.days[curDay];
   sessionLog={};
-  const entries=getEntries();
+  const entries=await getEntries();
   const lastWeight={};
   [...entries].sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{ lastWeight[e.ex]=e.weight; });
   day.exercises.forEach((ex,ei)=>{
@@ -1765,12 +1909,15 @@ function clearLog(){
   });
   renderLogList();
 }
-function markComplete(){
+
+async function markComplete(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const day=week.days[curDay];
   const dt=today();
-  const entries=getEntries().filter(e=>e.date!==dt||e.day!==('day'+(curDay+1)));
+  showLoading('Saving session…');
+  const allEntries=await getEntries();
+  const entries=allEntries.filter(e=>e.date!==dt||e.day!==('day'+(curDay+1)));
   const fresh=[];
   day.exercises.forEach((ex,ei)=>{
     const sl=sessionLog[ei]||{};
@@ -1790,11 +1937,12 @@ function markComplete(){
         weight:isBW?0:parseFloat(s.weight)||0,
         reps:s.reps||ex.reps||10,sets:1,
         equipment:libEx.equipment||'dumbbell',
-        date:dt,notes:s.notes||'',source:'weekly',setNum:si+1,
+        date:dt,notes:s.notes||'',source:'weekly',set_num:si+1,
       });
     });
   });
-  saveEntries([...entries,...fresh]);
+  await saveEntries([...entries,...fresh]);
+  hideLoading();
   if(fresh.length===0){
     document.getElementById('banner-text').innerHTML=`Nothing saved yet <span>Tap the set buttons to mark sets complete first.</span>`;
     document.getElementById('banner').style.background='var(--blush)';
@@ -1802,7 +1950,7 @@ function markComplete(){
     return;
   }
   week.days[curDay].logged=true;
-  saveWeekData(ws,week);
+  await saveWeekData(ws,week);
   document.getElementById('banner').style.background='';
   const exCount=new Set(fresh.map(f=>f.ex)).size;
   document.getElementById('banner-text').innerHTML=
@@ -1811,32 +1959,34 @@ function markComplete(){
   document.getElementById('complete-btn').textContent='Session logged ✓';
   document.getElementById('complete-btn').classList.add('done-state');
   document.getElementById('complete-btn').disabled=true;
-  renderDayTabs();
-  updateHeaderStats();
+  await renderDayTabs();
+  await updateHeaderStats();
 }
 
 
 /* ══════════════════════════════════════════════
    WEEK NAV + SAVE
    ══════════════════════════════════════════════ */
-function shiftWeek(delta){
+async function shiftWeek(delta){
   weekOffset+=delta; curDay=0; logMode=false; sessionLog={}; libOpen=false;
   document.getElementById('lib-panel').style.display='none';
   document.getElementById('log-panel').style.display='none';
   document.getElementById('plan-panel').style.display='block';
   document.getElementById('banner').classList.remove('show');
-  renderPlanner();
+  await renderPlanner();
 }
-function saveWeek(){
+async function saveWeek(){
   const ws=getWeekStart(weekOffset);
-  const week=loadWeek(ws);
+  const week=await loadWeek(ws);
   const total=week.days.reduce((s,d)=>s+d.exercises.length,0);
   if(total===0){alert('Add exercises to at least one day before saving.');return;}
-  const weeks=getSavedWeeks();
+  showLoading('Saving week…');
+  const weeks=await getSavedWeeks();
   const ei=weeks.findIndex(w=>w.weekStart===ws);
   const rec={weekStart:ws,savedAt:new Date().toISOString(),days:week.days};
   if(ei>=0) weeks[ei]=rec; else weeks.unshift(rec);
-  saveSavedWeeks(weeks.slice(0,20));
+  await saveSavedWeeks(weeks.slice(0,20));
+  hideLoading();
   const btn=document.querySelector('.btn.primary');
   const orig=btn.textContent;
   btn.textContent='Saved ✓'; btn.style.background='var(--sage)';
@@ -1846,8 +1996,8 @@ function saveWeek(){
 /* ══════════════════════════════════════════════
    HISTORY VIEW
    ══════════════════════════════════════════════ */
-function renderHistoryView(){
-  const weeks=getSavedWeeks();
+async function renderHistoryView(){
+  const weeks=await getSavedWeeks();
   const grid=document.getElementById('hist-grid');
   const empty=document.getElementById('hist-empty');
   grid.innerHTML='';
@@ -1877,15 +2027,15 @@ function renderHistoryView(){
     grid.appendChild(card);
   });
 }
-function loadHistWeek(wi){
-  const weeks=getSavedWeeks(); const w=weeks[wi]; if(!w) return;
+async function loadHistWeek(wi){
+  const weeks=await getSavedWeeks(); const w=weeks[wi]; if(!w) return;
   if(!confirm(`Load the week of ${w.weekStart}? This replaces the current plan.`)) return;
   const ws=getWeekStart(weekOffset);
-  const cur=loadWeek(ws);
+  const cur=await loadWeek(ws);
   const clone={weekStart:ws,days:w.days.map((d,i)=>({...d,logged:false,scheduledDate:cur.days[i]?.scheduledDate||addDays(ws,DEF_OFFSETS[i])}))};
-  saveWeekData(ws,clone);
+  await saveWeekData(ws,clone);
   showView('planner');
-  renderPlanner();
+  await renderPlanner();
 }
 
 /* ══════════════════════════════════════════════
@@ -1894,18 +2044,18 @@ function loadHistWeek(wi){
 let trendChartInst=null, muscleChartInst=null;
 let activeMetric='weight';
 
-function setMetric(metric,btn){
+async function setMetric(metric,btn){
   activeMetric=metric;
   document.querySelectorAll('.p-metric-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  renderTrendChart();
+  await renderTrendChart();
 }
 
 // Epley estimated 1RM formula
-function e1rm(weight,reps){ return reps===1?weight:Math.round(weight*(1+reps/30)); }
+async function e1rm(weight,reps){ return reps===1?weight:Math.round(weight*(1+reps/30)); }
 
-function renderProgressView(){
-  const entries=getEntries().filter(e=>e.equipment!=='peloton'&&(e.weight||0)>0);
+async function renderProgressView(){
+  const entries=(await getEntries()).filter(e=>e.equipment!=='peloton'&&(e.weight||0)>0);
 
   // Summary metrics
   const daySet=new Set(entries.map(e=>e.date));
@@ -1927,7 +2077,7 @@ function renderProgressView(){
     :'<option value="">No exercises logged yet</option>';
   if(!sel.value&&sorted.length) sel.value=sorted[0];
 
-  renderTrendChart();
+  await renderTrendChart();
   renderMuscleChart(entries);
   renderHeatmap(entries);
   renderPRs(entries,freq);
@@ -1935,8 +2085,8 @@ function renderProgressView(){
   renderPullupLadder();
 }
 
-function renderTrendChart(){
-  const entries=getEntries().filter(e=>e.equipment!=='peloton'&&(e.weight||0)>0);
+async function renderTrendChart(){
+  const entries=(await getEntries()).filter(e=>e.equipment!=='peloton'&&(e.weight||0)>0);
   const exName=document.getElementById('p-ex-select')?.value;
   const ctx=document.getElementById('trend-chart')?.getContext('2d');
   if(!ctx) return;
@@ -2163,11 +2313,11 @@ function renderPullupLadder(){
 /* ══════════════════════════════════════════════
    VIEW SWITCHING
    ══════════════════════════════════════════════ */
-function showView(name){
+async function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
-  if(name==='history') renderHistoryView();
-  if(name==='progress') renderProgressView();
+  if(name==='history') await renderHistoryView();
+  if(name==='progress') await renderProgressView();
 }
 
 /* ══════════════════════════════════════════════
@@ -2176,7 +2326,18 @@ function showView(name){
 document.getElementById('hdr-date').textContent=
   new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-renderPlanner();
+(async()=>{
+  showLoading('Connecting…');
+  try {
+    // Load settings first so pull-up stage is available synchronously
+    await getSettings();
+    await renderPlanner();
+  } catch(e) {
+    console.error('Init error', e);
+  } finally {
+    hideLoading();
+  }
+})();
 </script>
 </body>
 </html>

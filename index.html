@@ -1072,6 +1072,8 @@ function showSaveStatus(state){
     el.style.opacity = '1';
   }
 }
+
+async function getSettings(){
   if(cache.settings) return cache.settings;
   const rows = await sb.get('app_settings', `user_id=eq.${USER_ID}`);
   cache.settings = rows?.[0] || {pull_up_stage:0, start_date:null};

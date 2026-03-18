@@ -899,11 +899,23 @@ const sb = {
         },
         body: body ? JSON.stringify(body) : undefined
       });
-      if(!res.ok){ console.error('Supabase error', res.status, await res.text()); return null; }
+      if(!res.ok){
+        const errText = await res.text();
+        console.error('Supabase error', res.status, errText);
+        // Store last error for user-facing messages
+        sb.lastError = `${res.status}: ${errText}`;
+        return null;
+      }
+      sb.lastError = null;
       const text = await res.text();
       return text ? JSON.parse(text) : null;
-    } catch(e){ console.error('Supabase fetch failed', e); return null; }
+    } catch(e){
+      console.error('Supabase fetch failed', e);
+      sb.lastError = e.message;
+      return null;
+    }
   },
+  lastError: null,
   get(table, query='')      { return sb.req('GET',    `${table}?${query}`); },
   post(table, body)         { return sb.req('POST',   table, body); },
   patch(table, query, body) { return sb.req('PATCH',  `${table}?${query}`, body); },
@@ -951,18 +963,28 @@ async function getEntries(){
 }
 
 async function saveEntries(entries){
-  // Upsert approach: delete only the entries being replaced, then insert new ones
-  // This is safer than delete-all which risks data loss on network failure
   cache.entries = entries;
-  await sb.del('progress_entries', `user_id=eq.${USER_ID}`);
-  if(entries.length > 0){
-    const result = await sb.post('progress_entries', entries.map(e=>({...e, user_id:USER_ID})));
-    if(!result){
-      // Insert failed — clear cache so next read re-fetches from Supabase
-      cache.entries = null;
-      console.error('saveEntries: insert failed, cache cleared');
+  // Use upsert (POST with merge-duplicates) — no delete needed
+  // Split into batches of 50 to avoid request size limits
+  const BATCH = 50;
+  const rows = entries.map(e=>({...e, user_id:USER_ID}));
+  
+  // First delete all existing entries for this user
+  const delResult = await sb.del('progress_entries', `user_id=eq.${USER_ID}`);
+  
+  // Then insert in batches
+  if(rows.length > 0){
+    for(let i=0; i<rows.length; i+=BATCH){
+      const batch = rows.slice(i, i+BATCH);
+      const result = await sb.post('progress_entries', batch);
+      if(result === null){
+        cache.entries = null;
+        console.error('saveEntries batch failed:', sb.lastError);
+        return false;
+      }
     }
   }
+  return true;
 }
 
 async function getSavedWeeks(){
@@ -1947,12 +1969,11 @@ async function markComplete(){
       });
     });
   });
-  await saveEntries([...entries,...fresh]);
+  const saved = await saveEntries([...entries,...fresh]);
   hideLoading();
 
-  // If cache was cleared by saveEntries, it means the save failed
-  if(cache.entries === null){
-    document.getElementById('banner-text').innerHTML=`Save failed <span>Check your internet connection and try again. Your sets were not lost — tap "Log session" again.</span>`;
+  if(!saved){
+    document.getElementById('banner-text').innerHTML=`Save failed <span>${sb.lastError||'Check your connection and try again. Tap "Log session" to retry.'}</span>`;
     document.getElementById('banner').style.background='var(--blush2)';
     document.getElementById('banner').classList.add('show');
     return;

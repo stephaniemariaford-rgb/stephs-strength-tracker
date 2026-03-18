@@ -1580,9 +1580,10 @@ async function renderDayEditor(){
   }
 
   if(day.logged){
-    // Find entries for this day's scheduled date
+    // Find entries for this day — use loggedDate if available, else scheduledDate, else today
+    const lookupDate = day.loggedDate || day.scheduledDate || today();
     const entries=await getEntries();
-    const dayEntries=entries.filter(e=>e.date===day.scheduledDate&&e.equipment!=='peloton'&&e.weight>0);
+    const dayEntries=entries.filter(e=>e.date===lookupDate&&e.equipment!=='peloton'&&e.weight>0);
     const byEx={};
     dayEntries.forEach(e=>{ if(!byEx[e.ex])byEx[e.ex]=[]; byEx[e.ex].push(e); });
     const exNames=Object.keys(byEx);
@@ -1591,7 +1592,7 @@ async function renderDayEditor(){
       <div style="background:var(--sage-lt);border:1px solid var(--sage-md);border-left:3px solid var(--sage);
         border-radius:0 var(--r) var(--r) 0;padding:.875rem 1rem;">
         <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--sage2);margin-bottom:.5rem;">
-          ✓ Session completed ${day.scheduledDate?new Date(day.scheduledDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}):''}
+          ✓ Session completed ${lookupDate?new Date(lookupDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}):''}
         </div>
         ${exNames.length?`<div style="display:flex;flex-direction:column;gap:.25rem;">
           ${exNames.map(ex=>{
@@ -2153,6 +2154,12 @@ async function markComplete(){
     return;
   }
   week.days[curDay].logged=true;
+  // Also store the actual date logged so the summary can find the entries
+  week.days[curDay].loggedDate=dt;
+  // If the scheduled date was different from today, update it to match the actual log date
+  if(week.days[curDay].scheduledDate!==dt){
+    week.days[curDay].scheduledDate=dt;
+  }
   await saveWeekData(ws,week);
   document.getElementById('banner').style.background='';
   const exCount=new Set(fresh.map(f=>f.ex)).size;
@@ -2163,6 +2170,7 @@ async function markComplete(){
   document.getElementById('complete-btn').classList.add('done-state');
   document.getElementById('complete-btn').disabled=true;
   await renderDayTabs();
+  await renderDayEditor(); // show completion summary immediately
   await updateHeaderStats();
 }
 

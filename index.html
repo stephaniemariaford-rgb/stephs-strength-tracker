@@ -964,16 +964,21 @@ async function getEntries(){
 
 async function saveEntries(entries){
   cache.entries = entries;
-  // Use upsert (POST with merge-duplicates) — no delete needed
-  // Split into batches of 50 to avoid request size limits
-  const BATCH = 50;
-  const rows = entries.map(e=>({...e, user_id:USER_ID}));
-  
-  // First delete all existing entries for this user
-  const delResult = await sb.del('progress_entries', `user_id=eq.${USER_ID}`);
-  
-  // Then insert in batches
+
+  // Normalize: every row must have identical keys for Supabase batch insert
+  const FIELDS = ['id','user_id','ex','day','weight','reps','sets','equipment','date','notes','source','set_num'];
+  const rows = entries.map(e=>{
+    const row = {};
+    FIELDS.forEach(f => row[f] = e[f] ?? null);
+    row.user_id = USER_ID;
+    return row;
+  });
+
+  // Delete all then reinsert in batches of 50
+  await sb.del('progress_entries', `user_id=eq.${USER_ID}`);
+
   if(rows.length > 0){
+    const BATCH = 50;
     for(let i=0; i<rows.length; i+=BATCH){
       const batch = rows.slice(i, i+BATCH);
       const result = await sb.post('progress_entries', batch);

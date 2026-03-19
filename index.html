@@ -800,16 +800,17 @@ body{
 
       <div id="pullup-tracker" class="pullup-tracker" style="margin:0 1rem .75rem;"></div>
 
-      <div class="ex-list">
-        <div class="col-hdr">
-          <div class="ch">Exercise</div>
-          <div class="ch">Sets</div><div class="ch">Reps</div>
-          <div class="ch">Target lb</div><div class="ch">Notes</div><div class="ch"></div>
+      <div id="plan-section">
+        <div class="ex-list">
+          <div class="col-hdr">
+            <div class="ch">Exercise</div>
+            <div class="ch">Sets</div><div class="ch">Reps</div>
+            <div class="ch">Target lb</div><div class="ch">Notes</div><div class="ch"></div>
+          </div>
+          <div id="plan-ex-list"></div>
         </div>
-        <div id="plan-ex-list"></div>
-      </div>
 
-      <div id="lib-panel" class="lib-panel" style="display:none;margin:0 1rem 1rem;">
+        <div id="lib-panel" class="lib-panel" style="display:none;margin:0 1rem 1rem;">
         <div class="lib-hdr">
           <div class="lib-title">Exercise library <span id="lib-count" style="font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink4);font-weight:400;"></span></div>
           <div class="filter-row">
@@ -837,7 +838,8 @@ body{
         </div>
         <div class="lib-grid" id="lib-grid"></div>
       </div>
-    </div>
+      </div><!-- /plan-section -->
+    </div><!-- /plan-panel -->
 
     <!-- Log panel -->
     <div id="log-panel" style="display:none;">
@@ -1713,7 +1715,15 @@ async function renderDayEditor(){
     // Find entries for this day — use loggedDate if available, else scheduledDate, else today
     const lookupDate = day.loggedDate || day.scheduledDate || today();
     const entries=await getEntries();
-    const dayEntries=entries.filter(e=>e.date===lookupDate&&e.equipment!=='peloton'&&e.weight>0);
+    // Also try matching by day label within this week
+    const ws2=getWeekStart(weekOffset);
+    const weekEnd=addDays(ws2,7);
+    const dayLabel='day'+(curDay+1);
+    const dayEntries=entries.filter(e=>{
+      if(e.equipment==='peloton'||!(e.weight>0)) return false;
+      return e.date===lookupDate
+        || (e.source==='weekly'&&e.day===dayLabel&&e.date>=ws2&&e.date<weekEnd);
+    });
     const byEx={};
     dayEntries.forEach(e=>{ if(!byEx[e.ex])byEx[e.ex]=[]; byEx[e.ex].push(e); });
     const exNames=Object.keys(byEx);
@@ -1721,8 +1731,16 @@ async function renderDayEditor(){
     summaryEl.innerHTML=`
       <div style="background:var(--sage-lt);border:1px solid var(--sage-md);border-left:3px solid var(--sage);
         border-radius:0 var(--r) var(--r) 0;padding:.875rem 1rem;">
-        <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--sage2);margin-bottom:.5rem;">
-          ✓ Session completed ${lookupDate?new Date(lookupDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}):''}
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem;">
+          <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--sage2);">
+            ✓ Session completed ${lookupDate?new Date(lookupDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}):''}
+          </div>
+          <div style="display:flex;gap:.5rem;">
+            <button class="sm-btn" style="font-size:.72rem;" onclick="togglePlanSection()">
+              <span id="plan-toggle-lbl">Show plan ↓</span>
+            </button>
+            <button class="sm-btn" style="font-size:.72rem;" onclick="unlogDay(${curDay})">Undo</button>
+          </div>
         </div>
         ${exNames.length?`<div style="display:flex;flex-direction:column;gap:.25rem;">
           ${exNames.map(ex=>{
@@ -1734,17 +1752,33 @@ async function renderDayEditor(){
             </div>`;
           }).join('')}
         </div>`:'<div style="font-size:.78rem;color:var(--ink3);">No weighted sets recorded.</div>'}
-        <button class="sm-btn" style="margin-top:.625rem;font-size:.75rem;"
-          onclick="unlogDay(${curDay})">Undo completion</button>
       </div>`;
     summaryEl.style.display='block';
     document.getElementById('start-bar').style.display='none';
+
+    // Auto-collapse the plan section
+    const planSection=document.getElementById('plan-section');
+    if(planSection) planSection.style.display='none';
+    const toggleLbl=document.getElementById('plan-toggle-lbl');
+    if(toggleLbl) toggleLbl.textContent='Show plan ↓';
   } else {
     summaryEl.style.display='none';
+    // Ensure plan section is visible for unlogged days
+    const planSection=document.getElementById('plan-section');
+    if(planSection) planSection.style.display='block';
   }
 
   renderPlanExList();
   checkStartBar();
+}
+
+function togglePlanSection(){
+  const el=document.getElementById('plan-section');
+  const lbl=document.getElementById('plan-toggle-lbl');
+  if(!el) return;
+  const collapsed=el.style.display==='none';
+  el.style.display=collapsed?'block':'none';
+  if(lbl) lbl.textContent=collapsed?'Hide plan ↑':'Show plan ↓';
 }
 
 async function unlogDay(dayIdx){

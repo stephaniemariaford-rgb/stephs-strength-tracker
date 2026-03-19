@@ -763,12 +763,12 @@ body{
       <div class="pb-text">
         <div class="pb-title">3-Day Full Body · Pull-up Progression</div>
         <div class="pb-sub">Evidence-based for muscle building & body recomp · Knee-aware · Pull-up ladder included each session</div>
+        <div id="pb-pullup-stage" style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:rgba(255,255,255,.75);margin-top:.375rem;letter-spacing:.04em;"></div>
         <div class="pb-collapse-hint">tap to collapse</div>
       </div>
       <div class="pb-stats">
         <div class="pb-stat"><div class="pb-stat-val" id="stat-workouts">0</div><div class="pb-stat-lbl">Sessions done</div></div>
         <div class="pb-stat"><div class="pb-stat-val" id="stat-volume">0</div><div class="pb-stat-lbl">Total lb lifted</div></div>
-        <div class="pb-stat"><div class="pb-stat-val" id="stat-streak">—</div><div class="pb-stat-lbl">Pull-up stage</div></div>
       </div>
     </div>
 
@@ -797,8 +797,6 @@ body{
       <div id="knee-note" class="knee-note" style="display:none;margin:0 1rem .75rem;">
         <strong>Knee comfort note:</strong> Use controlled range of motion on all leg exercises. Stop short of any discomfort. Prefer hip-dominant movements over deep knee flexion.
       </div>
-
-      <div id="pullup-tracker" class="pullup-tracker" style="margin:0 1rem .75rem;"></div>
 
       <div id="plan-section">
         <div class="ex-list">
@@ -1522,26 +1520,8 @@ function buildPullupDayTemplate(){
    PULL-UP TRACKER RENDER
    ══════════════════════════════════════════════ */
 function renderPullupTracker(){
-  const stage=getPullupStage();
-  const el=document.getElementById('pullup-tracker');
-  const hasPullup=hasAnyPullupEx();
-  el.style.display=hasPullup?'block':'none';
-  if(!hasPullup) return;
-  const s=PULLUP_STAGES[stage]||PULLUP_STAGES[0];
-  const isLast=stage===PULLUP_STAGES.length-1;
-  let pills=PULLUP_STAGES.map((st,i)=>{
-    const cls=i<stage?'done':i===stage?'current':'';
-    return `<button class="stage-pill ${cls}" onclick="setPullupStageUI(${i})" title="${i<stage?'Completed':'Click to jump to this stage'}">${st.name}</button>`;
-  }).join('');
-  const advanceBtn = isLast ? '' :
-    `<button class="sm-btn blush" style="margin-top:.625rem;" onclick="advancePullupStage()">
-      Mark stage complete → ${PULLUP_STAGES[stage+1].name}
-    </button>`;
-  el.innerHTML=`
-    <div class="pt-title">🎯 Pull-up ladder · Stage ${stage+1} of ${PULLUP_STAGES.length}: <em>${s.name}</em></div>
-    <div class="pullup-stages">${pills}</div>
-    <div class="pt-cue">${s.cue}</div>
-    ${advanceBtn}`;
+  // Pull-up tracker moved to banner — this is now a no-op
+  // Stage info shown in pb-pullup-stage via updateHeaderStats()
 }
 
 async function advancePullupStage(){
@@ -1566,7 +1546,6 @@ async function hasAnyPullupEx(){
 }
 function setPullupStageUI(i){
   setPullupStage(i);
-  renderPullupTracker();
   updateHeaderStats();
 }
 
@@ -1588,8 +1567,11 @@ async function updateHeaderStats(){
   document.getElementById('stat-workouts').textContent=daySet.size;
   const vol=entries.reduce((s,e)=>s+(parseFloat(e.weight)||0)*(e.reps||0)*(e.sets||0),0);
   document.getElementById('stat-volume').textContent=vol>999?Math.round(vol/1000)+'k':vol;
+  // Update pull-up stage in banner
   const stage=getPullupStage();
-  document.getElementById('stat-streak').textContent=(stage+1)+'/5';
+  const stageName=PULLUP_STAGES[stage]?.name||'Dead hang';
+  const pbStage=document.getElementById('pb-pullup-stage');
+  if(pbStage) pbStage.textContent=`Pull-up ladder · Stage ${stage+1} of ${PULLUP_STAGES.length}: ${stageName}`;
 }
 
 async function renderDayTabs(){
@@ -1708,21 +1690,31 @@ async function renderDayEditor(){
     summaryEl=document.createElement('div');
     summaryEl.id='logged-summary';
     summaryEl.style.cssText='margin:0 1rem .875rem;';
-    planPanel.querySelector('.ex-list').before(summaryEl);
+    const anchor=document.getElementById('plan-section')||planPanel.querySelector('.ex-list');
+    if(anchor) anchor.before(summaryEl);
   }
 
-  if(day.logged){
-    // Find entries for this day — use loggedDate if available, else scheduledDate, else today
-    const lookupDate = day.loggedDate || day.scheduledDate || today();
-    const entries=await getEntries();
-    // Also try matching by day label within this week
-    const ws2=getWeekStart(weekOffset);
-    const weekEnd=addDays(ws2,7);
-    const dayLabel='day'+(curDay+1);
+  // Robust logged check — same logic as renderDayTabs
+  const entries=await getEntries();
+  const ws2=getWeekStart(weekOffset);
+  const weekEnd=addDays(ws2,7);
+  const dayLabel='day'+(curDay+1);
+  const weeklyEntries=entries.filter(e=>e.source==='weekly'&&e.date>=ws2&&e.date<weekEnd);
+  const loggedDayLabels=new Set(weeklyEntries.map(e=>e.day));
+  const loggedDates=new Set(weeklyEntries.map(e=>e.date));
+  const sched=day.scheduledDate||addDays(ws2,DEF_OFFSETS[curDay]);
+  const isLogged=day.logged
+    ||loggedDayLabels.has(dayLabel)
+    ||loggedDates.has(sched)
+    ||(day.loggedDate&&loggedDates.has(day.loggedDate));
+
+  if(isLogged){
+    // Find entries for this day
+    const lookupDate=day.loggedDate||day.scheduledDate||today();
     const dayEntries=entries.filter(e=>{
       if(e.equipment==='peloton'||!(e.weight>0)) return false;
       return e.date===lookupDate
-        || (e.source==='weekly'&&e.day===dayLabel&&e.date>=ws2&&e.date<weekEnd);
+        ||(e.source==='weekly'&&e.day===dayLabel&&e.date>=ws2&&e.date<weekEnd);
     });
     const byEx={};
     dayEntries.forEach(e=>{ if(!byEx[e.ex])byEx[e.ex]=[]; byEx[e.ex].push(e); });
@@ -1798,7 +1790,6 @@ async function renderPlanExList(){
   const list=document.getElementById('plan-ex-list');
   const hasKnee=day.exercises.some(e=>LIBRARY[e.libIdx]?.knee);
   document.getElementById('knee-note').style.display=hasKnee?'block':'none';
-  renderPullupTracker();
 
   if(day.exercises.length===0){
     list.innerHTML=`<div class="day-empty"><strong>No exercises yet.</strong><br>Tap "Template ✦" to load a pre-built day, or "+ Add exercise" to pick from the library.</div>`;

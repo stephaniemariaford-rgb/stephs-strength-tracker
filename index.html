@@ -1214,7 +1214,15 @@ function loadWeekSync(ws){
   };
 }
 
-const today = () => new Date().toISOString().split('T')[0];
+// Always use LOCAL date — toISOString() returns UTC which causes off-by-one errors
+// for users in timezones behind UTC (e.g. US Pacific) after 4pm–8pm local time
+function localDateStr(d=new Date()){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+const today = () => localDateStr();
 
 /* ══════════════════════════════════════════════
    EQUIPMENT-APPROPRIATE WEIGHT OPTIONS
@@ -1432,11 +1440,11 @@ function getWeekStart(off=0){
   const dow=d.getDay();
   const diff=d.getDate()-dow+(dow===0?-6:1);
   const mon=new Date(d.getFullYear(),d.getMonth(),diff+off*7);
-  return mon.toISOString().split('T')[0];
+  return localDateStr(mon);
 }
 function addDays(ds,n){
   const d=new Date(ds+'T12:00:00'); d.setDate(d.getDate()+n);
-  return d.toISOString().split('T')[0];
+  return localDateStr(d);
 }
 
 async function smartScheduleDates(ws){
@@ -1451,7 +1459,7 @@ async function smartScheduleDates(ws){
   if(lastLogged){
     const d = new Date(lastLogged+'T12:00:00');
     d.setDate(d.getDate()+2); // 1 rest day minimum
-    cursor = d.toISOString().split('T')[0];
+    cursor = localDateStr(d);
     // Don't schedule in the past
     if(cursor < today()) cursor = today();
   } else {
@@ -1464,10 +1472,10 @@ async function smartScheduleDates(ws){
     // Skip Sunday (day 0)
     const d = new Date(cursor+'T12:00:00');
     while(d.getDay()===0) d.setDate(d.getDate()+1);
-    dates.push(d.toISOString().split('T')[0]);
+    dates.push(localDateStr(d));
     // Next workout: 2 days later (1 rest day between)
     d.setDate(d.getDate()+2);
-    cursor = d.toISOString().split('T')[0];
+    cursor = localDateStr(d);
   }
   return dates;
 }
@@ -1586,8 +1594,15 @@ async function renderDayTabs(){
   const ws=getWeekStart(weekOffset);
   const week=await loadWeek(ws);
   const entries=await getEntries();
-  // Build a set of dates that have logged entries — fallback if logged flag wasn't saved
-  const loggedDates=new Set(entries.filter(e=>e.source==='weekly').map(e=>e.date));
+
+  // Get the week's date range (Mon to Sun+1)
+  const weekEnd=addDays(ws,7);
+
+  // Build a map: dayLabel (day1, day2...) → dates logged this week
+  // Also track all dates with weekly entries this week
+  const weeklyEntries=entries.filter(e=>e.source==='weekly'&&e.date>=ws&&e.date<weekEnd);
+  const loggedDayLabels=new Set(weeklyEntries.map(e=>e.day)); // e.g. 'day1','day2'
+  const loggedDates=new Set(weeklyEntries.map(e=>e.date));
 
   const c=document.getElementById('day-tabs'); c.innerHTML='';
   const typeLabels=['Full Body A','Full Body B','Full Body C','Optional'];
@@ -1596,13 +1611,18 @@ async function renderDayTabs(){
     const hasEx=day.exercises.length>0;
     const sched=day.scheduledDate||addDays(ws,DEF_OFFSETS[i]);
     const isToday=sched===today();
-    // Consider logged if flag set OR if we have entries for that date
-    const isLogged=day.logged||loggedDates.has(sched)||loggedDates.has(day.loggedDate||'');
+    const dayLabel='day'+(i+1);
 
-    // Sync the logged flag if entries exist but flag wasn't saved
+    // Logged if: flag set, OR entries exist for this day's label this week,
+    // OR entries exist for the scheduled date, OR entries exist for loggedDate
+    const isLogged = day.logged
+      || loggedDayLabels.has(dayLabel)
+      || loggedDates.has(sched)
+      || (day.loggedDate && loggedDates.has(day.loggedDate));
+
+    // Self-heal: fix the flag if missing
     if(isLogged&&!day.logged){
       day.logged=true;
-      // Save the corrected state back (fire and forget)
       saveWeekData(ws,week);
     }
 
@@ -2423,7 +2443,7 @@ async function renderTrendChart(){
   // Apply date range filter
   const rangeDays=parseInt(document.getElementById('p-date-range')?.value||'90');
   const cutoff=rangeDays>0
-    ? new Date(Date.now()-rangeDays*86400000).toISOString().split('T')[0]
+    ? localDateStr(new Date(Date.now()-rangeDays*86400000))
     : '2000-01-01';
   const entries=allEntries.filter(e=>e.date>=cutoff);
 
@@ -2566,10 +2586,10 @@ function renderHeatmap(entries){
     for(let w=0;w<WEEKS;w++){
       const cellDate=new Date(thisMon);
       cellDate.setDate(thisMon.getDate()-(WEEKS-1-w)*7+row);
-      const ds=cellDate.toISOString().split('T')[0];
+      const ds=localDateStr(cellDate);
       const count=countByDate[ds]||0;
       const c=colour(count);
-      const isToday=ds===now.toISOString().split('T')[0];
+      const isToday=ds===today();
       const cell=document.createElement('div');
       cell.style.cssText=`aspect-ratio:1;border-radius:4px;position:relative;
         background:${c.bg};border:1.5px solid ${c.border};`;

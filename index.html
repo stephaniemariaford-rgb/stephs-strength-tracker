@@ -133,31 +133,46 @@ body{
   gap:.625rem;margin-bottom:1.25rem;
 }
 .day-tab{
-  border:1.5px solid var(--border);background:var(--cream2);
+  border:2px solid var(--border);background:white;
   border-radius:var(--r);padding:.875rem .5rem;
   cursor:pointer;text-align:center;position:relative;
   min-height:96px;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:4px;
-  transition:background .12s,border-color .12s;
+  transition:all .15s;
 }
-.day-tab:active{background:var(--cream3);}
-.day-tab.active{background:var(--ink);border-color:var(--ink);color:var(--cream);}
-.day-tab.has-ex{border-color:var(--sage);}
+.day-tab:active{background:var(--cream2);}
+/* Active/selected — bright pink left border + pink tint, very clear */
+.day-tab.active{
+  background:var(--blush-lt);
+  border-color:var(--blush);
+  border-left-width:4px;
+  box-shadow:0 2px 8px rgba(212,133,106,.2);
+}
+.day-tab.has-ex{border-color:var(--sage-md);}
+/* Logged — green tint */
 .day-tab.logged{border-color:var(--sage);background:var(--sage-lt);}
-.day-tab.active.logged{background:var(--sage2);border-color:var(--sage2);}
+/* Active + logged — green with pink left accent */
+.day-tab.active.logged{
+  background:var(--sage-lt);
+  border-color:var(--sage);
+  border-left-color:var(--sage2);
+  border-left-width:4px;
+  box-shadow:0 2px 8px rgba(90,122,98,.2);
+}
 .dt-type{
   font-family:'Roboto Mono',monospace;font-size:.58rem;letter-spacing:.06em;
   text-transform:uppercase;color:var(--ink4);
 }
-.day-tab.active .dt-type{color:rgba(255,255,255,.55);}
-.dt-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;line-height:1.2;}
+.day-tab.active .dt-type{color:var(--blush2);}
+.dt-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;line-height:1.2;color:var(--ink);}
+.day-tab.active .dt-name{color:var(--ink);}
 .dt-count{font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);}
-.day-tab.active .dt-count{color:var(--blush);}
+.day-tab.active .dt-count{color:var(--blush2);}
 .dt-badge{
   position:absolute;top:6px;right:8px;
   font-family:'Roboto Mono',monospace;font-size:.58rem;color:var(--sage);font-weight:500;
 }
-.day-tab.active .dt-badge{color:rgba(212,133,106,.9);}
+.day-tab.active .dt-badge{color:var(--sage2);}
 
 /* ── EDITOR CARD ──────────────────────── */
 .editor-card{
@@ -646,7 +661,51 @@ body{
   .set-reps-inp{width:56px;}
 }
 
-/* ── TOUCH DEVICE — disable hover ghosts ── */
+/* ── BOTTOM NAV (mobile) ─────────────── */
+.bottom-nav{
+  display:none; /* shown via media query */
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--ink);
+  padding:0;
+  padding-bottom:env(safe-area-inset-bottom);
+  z-index:100;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.bottom-nav-inner{
+  display:flex;align-items:stretch;
+}
+.bnav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:.625rem .25rem;
+  background:none;border:none;cursor:pointer;
+  font-family:'Roboto Mono',monospace;font-size:.58rem;letter-spacing:.05em;
+  color:rgba(255,255,255,.5);transition:color .12s;
+  -webkit-tap-highlight-color:transparent;
+  min-height:56px;
+}
+.bnav-btn.active{color:var(--blush);}
+.bnav-btn:active{color:rgba(255,255,255,.8);}
+.bnav-icon{font-size:1.1rem;line-height:1;}
+
+@media(max-width:768px){
+  .bottom-nav{display:block;}
+  .main{padding-bottom:max(80px,calc(70px + env(safe-area-inset-bottom)));}
+  /* Hide header nav pill on mobile — bottom nav handles it */
+  .nav-pill{display:none;}
+}
+
+/* ── COLLAPSIBLE PROGRAM BANNER ──────── */
+.program-banner{cursor:pointer;}
+.program-banner.collapsed{padding:.75rem 1.5rem;}
+.program-banner.collapsed .pb-sub{display:none;}
+.program-banner.collapsed .pb-stats{display:none;}
+.pb-collapse-hint{
+  font-family:'Roboto Mono',monospace;font-size:.58rem;
+  color:rgba(255,255,255,.4);margin-top:.25rem;
+  transition:opacity .2s;
+}
+.program-banner.collapsed .pb-collapse-hint{display:none;}
+
 @media(hover:none){
   .btn:hover,.sm-btn:hover,.lib-item:hover,.day-tab:hover{
     background:unset!important;border-color:unset!important;color:unset!important;
@@ -659,10 +718,26 @@ body{
 <header class="hdr">
   <div class="hdr-title">Strength Tracker · <em>Pull-up Program</em></div>
   <div class="hdr-right">
+    <div id="save-status-placeholder"></div>
     <div class="hdr-date" id="hdr-date"></div>
     <a href="#" class="nav-pill" onclick="showView('progress');return false;">Progress ↗</a>
   </div>
 </header>
+
+<!-- Sticky bottom nav — mobile only -->
+<nav class="bottom-nav" id="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bnav-btn active" id="bnav-planner" onclick="showView('planner')">
+      <span class="bnav-icon">📋</span>PLANNER
+    </button>
+    <button class="bnav-btn" id="bnav-progress" onclick="showView('progress')">
+      <span class="bnav-icon">📈</span>PROGRESS
+    </button>
+    <button class="bnav-btn" id="bnav-history" onclick="showView('history')">
+      <span class="bnav-icon">📁</span>HISTORY
+    </button>
+  </div>
+</nav>
 
 <main class="main">
 
@@ -672,20 +747,23 @@ body{
     <div class="top-bar">
       <div class="top-left">
         <button class="nav-btn" onclick="shiftWeek(-1)" aria-label="Previous week">←</button>
-        <div class="week-label" id="week-label"></div>
+        <div>
+          <div class="week-label" id="week-label"></div>
+          <div id="week-context" style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);margin-top:1px;"></div>
+        </div>
         <button class="nav-btn" onclick="shiftWeek(1)" aria-label="Next week">→</button>
       </div>
       <div class="top-right">
         <button class="btn" onclick="showView('history')">Saved weeks ↗</button>
-        <button class="btn blush" onclick="loadTemplate()">Load template ✦</button>
-        <button class="btn primary" onclick="saveWeek()">Save week</button>
+        <button class="btn primary" onclick="saveWeek()">Archive week</button>
       </div>
     </div>
 
-    <div class="program-banner">
+    <div class="program-banner" id="program-banner" onclick="toggleBanner()">
       <div class="pb-text">
         <div class="pb-title">3-Day Full Body · Pull-up Progression</div>
         <div class="pb-sub">Evidence-based for muscle building & body recomp · Knee-aware · Pull-up ladder included each session</div>
+        <div class="pb-collapse-hint">tap to collapse</div>
       </div>
       <div class="pb-stats">
         <div class="pb-stat"><div class="pb-stat-val" id="stat-workouts">0</div><div class="pb-stat-lbl">Sessions done</div></div>
@@ -703,8 +781,13 @@ body{
     <!-- Plan panel -->
     <div id="plan-panel" class="editor-card">
       <div class="editor-hdr">
-        <input class="day-name-inp" id="day-name-inp" type="text" placeholder="Name this day…" maxlength="50"
-          oninput="saveDayName(this.value)" autocomplete="off">
+        <div style="flex:1;min-width:0;">
+          <div id="day-name-display" style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--ink);cursor:text;padding:2px 0;"
+            onclick="startEditDayName()" title="Click to rename"></div>
+          <input class="day-name-inp" id="day-name-inp" type="text" placeholder="Name this day…" maxlength="50"
+            oninput="saveDayName(this.value)" onblur="endEditDayName()"
+            autocomplete="off" style="display:none;">
+        </div>
         <div class="editor-actions">
           <button class="sm-btn blush" onclick="loadDayTemplate()">Template ✦</button>
           <button class="sm-btn sage" onclick="toggleLibrary()">+ Add exercise</button>
@@ -759,9 +842,10 @@ body{
     <!-- Log panel -->
     <div id="log-panel" style="display:none;">
       <div class="editor-card">
-        <div class="editor-hdr">
-          <div style="font-family:'Playfair Display',serif;font-size:1rem;" id="log-title"></div>
-          <button class="sm-btn" onclick="showPlanPanel()">← Plan</button>
+        <div class="editor-hdr" style="background:linear-gradient(135deg,#3d0a20,#5c1535);">
+          <div style="font-family:'Playfair Display',serif;font-size:1rem;color:white;" id="log-title"></div>
+          <button class="sm-btn" onclick="confirmBackToPlan()"
+            style="color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.2);font-size:.75rem;">← Exit</button>
         </div>
         <div class="ex-list">
           <div id="log-ex-list"></div>
@@ -769,15 +853,15 @@ body{
       </div>
       <div class="log-footer">
         <div class="prog-txt" id="log-prog"></div>
-        <div style="display:flex;gap:.625rem;">
-          <button class="clear-log-btn" onclick="clearLog()">Clear</button>
-          <button class="complete-btn" id="complete-btn" onclick="markComplete()">Log session</button>
+        <div style="display:flex;gap:.625rem;align-items:center;">
+          <button class="clear-log-btn" onclick="clearLog()" style="font-size:.75rem;min-height:44px;padding:0 .875rem;opacity:.6;">↺ Reset</button>
+          <button class="complete-btn" id="complete-btn" onclick="markComplete()">Log session ✓</button>
         </div>
       </div>
     </div>
 
     <div id="start-bar" class="start-bar" style="display:none;margin-top:.875rem;">
-      <button class="btn primary" style="width:100%;" onclick="startWorkout()">Start today's session →</button>
+      <button class="btn primary" style="width:100%;font-size:1rem;font-weight:600;min-height:58px;border-radius:var(--r);" id="start-btn" onclick="startWorkout()">Start session →</button>
     </div>
 
   </div>
@@ -814,7 +898,13 @@ body{
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
         <div class="sc-title" style="margin:0;">Exercise trend</div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
-          <select id="p-ex-select" class="filter-sel" style="min-width:200px;" onchange="renderTrendChart()"></select>
+          <select id="p-ex-select" class="filter-sel" style="min-width:180px;" onchange="renderTrendChart()"></select>
+          <select id="p-date-range" class="filter-sel" onchange="renderTrendChart()" style="min-width:120px;">
+            <option value="28">Last 4 weeks</option>
+            <option value="90" selected>Last 3 months</option>
+            <option value="180">Last 6 months</option>
+            <option value="0">All time</option>
+          </select>
           <div class="p-metric-btns" style="display:flex;gap:3px;">
             <button class="p-metric-btn active" data-metric="weight" onclick="setMetric('weight',this)">Weight</button>
             <button class="p-metric-btn" data-metric="reps" onclick="setMetric('reps',this)">Reps</button>
@@ -1066,8 +1156,9 @@ function showSaveStatus(state){
   if(!el){
     el = document.createElement('div');
     el.id = 'save-status';
-    el.style.cssText = 'font-family:Roboto Mono,monospace;font-size:.6rem;letter-spacing:.06em;transition:opacity .3s;';
-    document.querySelector('.hdr-right').prepend(el);
+    el.style.cssText = 'font-family:Roboto Mono,monospace;font-size:.6rem;letter-spacing:.06em;transition:opacity .3s;color:rgba(255,255,255,.5);';
+    const anchor = document.querySelector('.hdr-right');
+    if(anchor) anchor.prepend(el);
   }
   clearTimeout(_saveTimer);
   if(state==='saving'){
@@ -1494,6 +1585,10 @@ async function updateHeaderStats(){
 async function renderDayTabs(){
   const ws=getWeekStart(weekOffset);
   const week=await loadWeek(ws);
+  const entries=await getEntries();
+  // Build a set of dates that have logged entries — fallback if logged flag wasn't saved
+  const loggedDates=new Set(entries.filter(e=>e.source==='weekly').map(e=>e.date));
+
   const c=document.getElementById('day-tabs'); c.innerHTML='';
   const typeLabels=['Full Body A','Full Body B','Full Body C','Optional'];
 
@@ -1501,12 +1596,20 @@ async function renderDayTabs(){
     const hasEx=day.exercises.length>0;
     const sched=day.scheduledDate||addDays(ws,DEF_OFFSETS[i]);
     const isToday=sched===today();
-    const isPast=sched<today();
+    // Consider logged if flag set OR if we have entries for that date
+    const isLogged=day.logged||loggedDates.has(sched)||loggedDates.has(day.loggedDate||'');
+
+    // Sync the logged flag if entries exist but flag wasn't saved
+    if(isLogged&&!day.logged){
+      day.logged=true;
+      // Save the corrected state back (fire and forget)
+      saveWeekData(ws,week);
+    }
+
     const div=document.createElement('div');
-    div.className=`day-tab${i===curDay?' active':''}${hasEx?' has-ex':''}${day.logged?' logged':''}`;
+    div.className=`day-tab${i===curDay?' active':''}${hasEx?' has-ex':''}${isLogged?' logged':''}`;
     div.onclick=(e)=>{ if(e.target.tagName!=='INPUT') switchDay(i); };
 
-    // Format date for display
     const schedDate=new Date(sched+'T12:00:00');
     const dateLabel=schedDate.toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'});
 
@@ -1514,14 +1617,15 @@ async function renderDayTabs(){
       <div class="dt-type">${typeLabels[i]||''}</div>
       <div class="dt-name">${day.name&&day.name!==DAY_NAMES[i]?day.name:(i<3?'Day '+(i+1):'Optional')}</div>
       <div class="dt-date" style="font-family:'Roboto Mono',monospace;font-size:.6rem;
-        color:${i===curDay?'rgba(255,255,255,.6)':'var(--ink4)'};margin-top:2px;">
-        ${isToday?'<span style="color:var(--blush);font-weight:600;">Today</span>':dateLabel}
+        color:${isLogged?'var(--sage2)':i===curDay?'var(--blush2)':'var(--ink4)'};margin-top:2px;">
+        ${isToday?'<span style="font-weight:600;">Today</span>':dateLabel}
       </div>
       <div class="dt-count" style="margin-top:2px;">
-        ${day.logged
-          ? `<span style="color:${i===curDay?'rgba(200,168,75,.9)':'var(--sage)'};font-family:'Roboto Mono',monospace;font-size:.6rem;font-weight:600;">✓ completed</span>`
-          : hasEx?`<span style="font-size:.6rem;font-family:'Roboto Mono',monospace;color:${i===curDay?'rgba(255,255,255,.5)':'var(--ink4)'};">${day.exercises.length} exercise${day.exercises.length!==1?'s':''}</span>`
-          : `<span style="font-size:.6rem;font-family:'Roboto Mono',monospace;color:var(--ink4);">empty</span>`
+        ${isLogged
+          ? `<span style="color:var(--sage);font-family:'Roboto Mono',monospace;font-size:.6rem;font-weight:600;">✓ completed</span>`
+          : hasEx
+            ? `<span style="font-size:.6rem;font-family:'Roboto Mono',monospace;color:var(--ink4);">${day.exercises.length} exercise${day.exercises.length!==1?'s':''}</span>`
+            : `<span style="font-size:.6rem;font-family:'Roboto Mono',monospace;color:var(--ink4);">empty</span>`
         }
       </div>
       <input type="date" class="dt-date-inp"
@@ -1531,7 +1635,7 @@ async function renderDayTabs(){
         style="opacity:0;position:absolute;bottom:6px;right:6px;width:20px;height:20px;cursor:pointer;border:none;background:none;padding:0;"
         title="Change date">
       <div style="position:absolute;bottom:6px;right:6px;pointer-events:none;font-size:.65rem;
-        color:${i===curDay?'rgba(255,255,255,.4)':'var(--ink4)'};">✎</div>`;
+        color:${i===curDay?'var(--blush2)':'var(--ink4)'};">✎</div>`;
     c.appendChild(div);
   });
 }
@@ -1553,6 +1657,7 @@ async function updateWeekLabel(){
   document.getElementById('week-label').textContent=
     f.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+
     l.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  updateWeekContext();
 }
 
 async function switchDay(i){
@@ -1567,7 +1672,12 @@ async function renderDayEditor(){
   const ws=getWeekStart(weekOffset);
   const week=await loadWeek(ws);
   const day=week.days[curDay];
-  document.getElementById('day-name-inp').value=day.name||DAY_NAMES[curDay];
+  const nameVal=day.name||DAY_NAMES[curDay];
+  document.getElementById('day-name-inp').value=nameVal;
+  // Update the display span
+  const display=document.getElementById('day-name-display');
+  if(display) display.textContent=nameVal;
+  endEditDayName();
 
   // If this day was logged, show a completion summary instead of the plan
   const planPanel=document.getElementById('plan-panel');
@@ -1727,7 +1837,14 @@ async function checkStartBar(){
   const ws=getWeekStart(weekOffset);
   const week=await loadWeek(ws);
   const day=week.days[curDay];
-  document.getElementById('start-bar').style.display=(day.exercises.length>0&&!day.logged)?'block':'none';
+  const show=day.exercises.length>0&&!day.logged;
+  document.getElementById('start-bar').style.display=show?'block':'none';
+  if(show){
+    const sched=day.scheduledDate||addDays(ws,DEF_OFFSETS[curDay]);
+    const isToday=sched===today();
+    const btn=document.getElementById('start-btn');
+    if(btn) btn.textContent=isToday?'Start today\'s session →':'Start this session →';
+  }
 }
 
 /* ══════════════════════════════════════════════
@@ -2297,11 +2414,18 @@ async function renderProgressView(){
 }
 
 async function renderTrendChart(){
-  const entries=(await getEntries()).filter(e=>e.equipment!=='peloton'&&(e.weight||0)>0);
+  const allEntries=(await getEntries()).filter(e=>e.equipment!=='peloton'&&(e.weight||0)>0);
   const exName=document.getElementById('p-ex-select')?.value;
   const ctx=document.getElementById('trend-chart')?.getContext('2d');
   if(!ctx) return;
   if(trendChartInst){trendChartInst.destroy();trendChartInst=null;}
+
+  // Apply date range filter
+  const rangeDays=parseInt(document.getElementById('p-date-range')?.value||'90');
+  const cutoff=rangeDays>0
+    ? new Date(Date.now()-rangeDays*86400000).toISOString().split('T')[0]
+    : '2000-01-01';
+  const entries=allEntries.filter(e=>e.date>=cutoff);
 
   if(!exName||!entries.length){
     ctx.clearRect(0,0,600,220);
@@ -2312,6 +2436,7 @@ async function renderTrendChart(){
   }
 
   const exEntries=entries.filter(e=>e.ex===exName).sort((a,b)=>a.date.localeCompare(b.date));
+  // Aggregate to best value per SESSION DATE (not per set) — avoids noisy multi-set dots
   const byDate={};
   exEntries.forEach(e=>{
     const val=activeMetric==='weight'?e.weight
@@ -2330,7 +2455,7 @@ async function renderTrendChart(){
       labels:labels.map(d=>{const p=d.split('-');return `${p[1]}/${p[2]}`;}),
       datasets:[{
         data:vals,borderColor:'#d4527a',backgroundColor:'rgba(212,82,122,0.08)',
-        fill:true,tension:0.35,pointRadius:5,
+        fill:true,tension:0.35,pointRadius:vals.length>20?3:5,
         pointBackgroundColor:'#d4527a',pointBorderColor:'white',pointBorderWidth:2,pointHoverRadius:7,
       }]
     },
@@ -2338,7 +2463,7 @@ async function renderTrendChart(){
       responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y} ${metricLabel}`}}},
       scales:{
-        x:{ticks:{font:{size:11},color:'#b899a8'},grid:{display:false}},
+        x:{ticks:{font:{size:11},color:'#b899a8',maxTicksLimit:8},grid:{display:false}},
         y:{ticks:{font:{size:11},color:'#b899a8',callback:v=>v+' '+metricLabel.split(' ')[0]},grid:{color:'rgba(212,82,122,0.07)'}}
       }
     }
@@ -2349,8 +2474,10 @@ async function renderTrendChart(){
     const diff=vals[vals.length-1]-vals[0];
     const pct=vals[0]>0?Math.round((diff/vals[0])*100):0;
     const lbl={weight:'best weight',reps:'reps',volume:'session volume',e1rm:'estimated 1RM'}[activeMetric];
-    insight.textContent=diff===0?`${exName}: ${lbl} holding steady at ${vals[vals.length-1]} ${metricLabel.split(' ')[0]}`
-      :`${exName}: ${lbl} ${diff>0?'↑ up':'↓ down'} ${Math.abs(diff)} ${metricLabel.split(' ')[0]} (${pct>0?'+':''}${pct}%) since first session`;
+    const rangeLabel=rangeDays>0?`last ${rangeDays} days`:'all time';
+    insight.textContent=diff===0
+      ?`${exName}: ${lbl} holding steady at ${vals[vals.length-1]} ${metricLabel.split(' ')[0]} (${rangeLabel})`
+      :`${exName}: ${lbl} ${diff>0?'↑ up':'↓ down'} ${Math.abs(diff)} ${metricLabel.split(' ')[0]} (${pct>0?'+':''}${pct}%) over ${rangeLabel}`;
     insight.style.color=diff>=0?'var(--sage2)':'var(--blush2)';
   } else {
     insight.textContent=vals.length===1?`${exName}: first session logged — keep going to see your trend!`:'';
@@ -2476,11 +2603,14 @@ function renderPRs(entries,freq){
     ${sorted.map(ex=>{
       const pr=prs[ex];
       const delta=pr.delta>0?`<span style="color:var(--sage2);font-weight:600;">+${pr.delta} lb</span>`:`<span style="color:var(--ink4);">—</span>`;
+      const prDate=new Date(pr.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
       return `<tr>
         <td style="padding:7px 0;border-bottom:1px solid var(--border2);color:var(--ink2);">
           ${ex}<br><span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);">${freq[ex]||0}× logged</span>
         </td>
-        <td style="padding:7px 0;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-weight:600;text-align:center;">${pr.best} lb</td>
+        <td style="padding:7px 0;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-weight:600;text-align:center;">
+          ${pr.best} lb<br><span style="font-size:.6rem;font-weight:400;color:var(--ink4);">${prDate}</span>
+        </td>
         <td style="padding:7px 0;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-size:.78rem;text-align:center;color:var(--ink3);">${pr.e1rm} lb</td>
         <td style="padding:7px 0;border-bottom:1px solid var(--border2);text-align:center;">${delta}</td>
       </tr>`;
@@ -2488,44 +2618,62 @@ function renderPRs(entries,freq){
 }
 
 function renderRecentSessions(entries){
-  const recent=[...entries].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,30);
+  const recent=[...entries].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,60);
   const div=document.getElementById('p-history');
   if(!recent.length){
     div.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ink4);font-size:.82rem;">No sessions logged yet.</div>';
     return;
   }
+
+  // Group by date, then by exercise within each date
   const byDate={};
-  recent.forEach(e=>{if(!byDate[e.date])byDate[e.date]=[];byDate[e.date].push(e);});
-  div.innerHTML=Object.entries(byDate).map(([date,exs])=>`
-    <div style="padding:.75rem 0;border-bottom:1px solid var(--border2);">
+  recent.forEach(e=>{
+    if(!byDate[e.date]) byDate[e.date]={};
+    if(!byDate[e.date][e.ex]) byDate[e.date][e.ex]=[];
+    byDate[e.date][e.ex].push(e);
+  });
+
+  div.innerHTML=Object.entries(byDate).map(([date,exMap])=>{
+    const dateLabel=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    const exRows=Object.entries(exMap).map(([exName,sets])=>{
+      const bestWeight=Math.max(...sets.map(s=>s.weight||0));
+      const totalSets=sets.length;
+      const repRange=[...new Set(sets.map(s=>s.reps))];
+      const repLabel=repRange.length===1?`${repRange[0]} reps`:`${Math.min(...repRange)}–${Math.max(...repRange)} reps`;
+      return `<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;
+        padding:6px 10px;background:var(--cream2);border:1px solid var(--border2);
+        border-radius:6px;font-size:.78rem;">
+        <div style="flex:1;min-width:0;">
+          <span style="font-weight:600;color:var(--ink2);">${exName}</span>
+          <span style="color:var(--ink3);margin-left:.5rem;">${totalSets} set${totalSets!==1?'s':''} · ${repLabel}${bestWeight>0?' · best <strong>'+bestWeight+' lb</strong>':''}</span>
+        </div>
+        <button onclick="deleteSessionExercise('${date}','${exName.replace(/'/g,"\\'")}')"
+          style="width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);
+          background:transparent;color:var(--ink4);cursor:pointer;font-size:.7rem;
+          display:flex;align-items:center;justify-content:center;flex-shrink:0;"
+          title="Delete">✕</button>
+      </div>`;
+    }).join('');
+
+    return `<div style="padding:.75rem 0;border-bottom:1px solid var(--border2);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
-        <div style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--ink4);">${date}</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--ink4);">${dateLabel}</div>
         <button onclick="deleteSessionDay('${date}')"
-          style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);
+          style="font-family:'Roboto Mono',monospace;font-size:.58rem;color:var(--ink4);
           background:none;border:1px solid var(--border);border-radius:4px;
-          padding:3px 8px;cursor:pointer;transition:all .12s;"
-          onmouseover="this.style.color='#c0392b';this.style.borderColor='#c0392b'"
-          onmouseout="this.style.color='var(--ink4)';this.style.borderColor='var(--border)'">
-          Delete day
-        </button>
+          padding:2px 6px;cursor:pointer;">Delete day</button>
       </div>
-      <div style="display:flex;flex-direction:column;gap:.375rem;">
-        ${exs.map(e=>`
-          <div style="display:flex;align-items:center;gap:.5rem;">
-            <span style="flex:1;font-size:.78rem;background:var(--cream2);border:1px solid var(--border2);
-              border-radius:4px;padding:5px 10px;color:var(--ink2);">
-              ${e.ex}${e.weight>0?' · <strong>'+e.weight+' lb</strong>':''} · ${e.sets}×${e.reps}${e.set_num?' (set '+e.set_num+')':''}
-            </span>
-            <button onclick="deleteEntry(${e.id})"
-              style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);
-              background:transparent;color:var(--ink4);cursor:pointer;font-size:.75rem;
-              display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;"
-              onmouseover="this.style.borderColor='#c0392b';this.style.color='#c0392b';this.style.background='#fce8e6'"
-              onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink4)';this.style.background='transparent'"
-              title="Delete this set">✕</button>
-          </div>`).join('')}
-      </div>
-    </div>`).join('');
+      <div style="display:flex;flex-direction:column;gap:.375rem;">${exRows}</div>
+    </div>`;
+  }).join('');
+}
+
+async function deleteSessionExercise(date, exName){
+  if(!confirm(`Delete all ${exName} sets from ${date}?`)) return;
+  const entries=await getEntries();
+  await saveEntries(entries.filter(e=>!(e.date===date&&e.ex===exName)));
+  cache.entries=null;
+  await renderProgressView();
 }
 
 async function deleteEntry(id){
@@ -2565,11 +2713,89 @@ function renderPullupLadder(){
 /* ══════════════════════════════════════════════
    VIEW SWITCHING
    ══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   UI UTILITY FUNCTIONS
+   ══════════════════════════════════════════════ */
+
+// Bottom nav active state
+function updateBottomNav(name){
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('bnav-'+name);
+  if(btn) btn.classList.add('active');
+}
+
+// Banner collapse/expand — persisted in localStorage
+function toggleBanner(){
+  const el=document.getElementById('program-banner');
+  if(!el) return;
+  const collapsed=el.classList.toggle('collapsed');
+  try{ localStorage.setItem('bannerCollapsed', collapsed?'1':'0'); }catch(e){}
+}
+function initBanner(){
+  try{
+    const el=document.getElementById('program-banner');
+    if(el&&localStorage.getItem('bannerCollapsed')==='1') el.classList.add('collapsed');
+  }catch(e){}
+}
+
+// Week context label — "This week", "Next week", "2 weeks ago", etc.
+function updateWeekContext(){
+  const el=document.getElementById('week-context');
+  if(!el) return;
+  if(weekOffset===0) el.textContent='This week';
+  else if(weekOffset===1) el.textContent='Next week';
+  else if(weekOffset===-1) el.textContent='Last week';
+  else if(weekOffset>1) el.textContent=`${weekOffset} weeks ahead`;
+  else el.textContent=`${Math.abs(weekOffset)} weeks ago`;
+}
+
+// Start session button — contextual label
+function updateStartBtn(){
+  const btn=document.getElementById('start-btn');
+  if(!btn) return;
+  const sched=document.querySelector('[id="day-tabs"] .day-tab.active .dt-date');
+  const isToday=getWeekStart(weekOffset); // rough check
+  btn.textContent = weekOffset===0 ? 'Start today\'s session →' : 'Start this session →';
+}
+
+// Day name: click to edit
+function startEditDayName(){
+  const display=document.getElementById('day-name-display');
+  const input=document.getElementById('day-name-inp');
+  if(!display||!input) return;
+  display.style.display='none';
+  input.style.display='block';
+  input.focus();
+  input.select();
+}
+function endEditDayName(){
+  const display=document.getElementById('day-name-display');
+  const input=document.getElementById('day-name-inp');
+  if(!display||!input) return;
+  display.textContent=input.value||'Name this day…';
+  display.style.display='block';
+  input.style.display='none';
+}
+
+// Confirm before exiting an in-progress session
+function confirmBackToPlan(){
+  const doneSets=Object.values(sessionLog).reduce((n,sl)=>{
+    if(sl.sets) return n+sl.sets.filter(s=>s.done).length;
+    return n+(sl.pelotonDone?1:0);
+  },0);
+  if(doneSets>0){
+    if(!confirm('Exit session? Your progress so far will not be saved.')) return;
+  }
+  showPlanPanel();
+}
+
 async function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
-  if(name==='history') await renderHistoryView();
+  updateBottomNav(name);
+  if(name==='history')  await renderHistoryView();
   if(name==='progress') await renderProgressView();
+  if(name==='planner')  await renderPlanner();
 }
 
 /* ══════════════════════════════════════════════
@@ -2577,6 +2803,15 @@ async function showView(name){
    ══════════════════════════════════════════════ */
 document.getElementById('hdr-date').textContent=
   new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// Move save-status into the header right
+(()=>{
+  const placeholder=document.getElementById('save-status-placeholder');
+  if(placeholder) placeholder.id='save-status-anchor';
+})();
+
+initBanner();
+updateBottomNav('planner');
 
 // Re-fetch from Supabase whenever the tab becomes visible again
 // This ensures cross-device data is always fresh (phone logs → computer sees it)

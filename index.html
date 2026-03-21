@@ -917,16 +917,23 @@ body{
       <div id="trend-insight" style="margin-top:.75rem;font-size:.75rem;color:var(--ink3);font-family:'Roboto Mono',monospace;min-height:1.2em;"></div>
     </div>
 
-    <!-- Two-col: PRs + training split balance -->
+    <!-- Two-col: PRs + two split charts -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;" class="two-col-cards">
       <div class="section-card" style="margin:0;">
         <div class="sc-title">Personal records <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">sorted by frequency</span></div>
         <div id="p-prs"></div>
       </div>
-      <div class="section-card" style="margin:0;">
-        <div class="sc-title">Training split <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">volume by focus</span></div>
-        <div style="position:relative;height:180px;"><canvas id="muscle-chart"></canvas></div>
-        <div id="split-balance" style="margin-top:.625rem;font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--ink3);line-height:1.7;"></div>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="section-card" style="margin:0;">
+          <div class="sc-title">Push vs Pull <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">volume by tag</span></div>
+          <div style="position:relative;height:140px;"><canvas id="pushpull-chart"></canvas></div>
+          <div id="pushpull-balance" style="margin-top:.5rem;font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink3);line-height:1.6;"></div>
+        </div>
+        <div class="section-card" style="margin:0;">
+          <div class="sc-title">Upper vs Lower <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">volume by tag</span></div>
+          <div style="position:relative;height:140px;"><canvas id="upperlower-chart"></canvas></div>
+          <div id="upperlower-balance" style="margin-top:.5rem;font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink3);line-height:1.6;"></div>
+        </div>
       </div>
     </div>
 
@@ -1654,12 +1661,12 @@ async function changeScheduledDate(dayIdx, newDate){
 
 async function updateWeekLabel(){
   const ws=getWeekStart(weekOffset);
-  const week=await loadWeek(ws);
-  const dates=week.days.map((d,i)=>d.scheduledDate||addDays(ws,DEF_OFFSETS[i])).sort();
-  const f=new Date(dates[0]+'T12:00:00'), l=new Date(dates[dates.length-1]+'T12:00:00');
+  // Derive the week range directly from the Monday (ws) — Mon to Sun
+  const mon=new Date(ws+'T12:00:00');
+  const sun=new Date(ws+'T12:00:00'); sun.setDate(mon.getDate()+6);
   document.getElementById('week-label').textContent=
-    f.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+
-    l.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    mon.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+
+    sun.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   updateWeekContext();
 }
 
@@ -2580,91 +2587,109 @@ async function renderTrendChart(){
   }
 }
 
-function renderMuscleChart(entries){
-  const ctx=document.getElementById('muscle-chart')?.getContext('2d');
+let pushPullChartInst=null, upperLowerChartInst=null;
+
+function makeSplitDonut(canvasId, data, colors, labels, balanceElId, balanceText){
+  const ctx=document.getElementById(canvasId)?.getContext('2d');
   if(!ctx) return;
-  if(muscleChartInst){muscleChartInst.destroy();muscleChartInst=null;}
 
-  // Use only the 4 training focus categories — mutually exclusive, meaningful split
-  // Priority: if exercise has push → push, pull → pull, lower → lower, else core
-  const SPLITS={push:0, pull:0, lower:0, core:0};
-  const PRIORITY=['lower','push','pull','core']; // lower first so leg exercises aren't swallowed by pull
-
-  entries.forEach(e=>{
-    const libEx=LIBRARY.find(l=>l.name===e.ex); if(!libEx) return;
-    const vol=(e.weight||0)*(e.reps||0)*(e.sets||0); if(!vol) return;
-    // Find highest-priority matching tag
-    const tag=PRIORITY.find(t=>libEx.tags.includes(t))||'core';
-    SPLITS[tag]=(SPLITS[tag]||0)+vol;
-  });
-
-  const labels=Object.keys(SPLITS).filter(k=>SPLITS[k]>0);
-  const vals=labels.map(k=>Math.round(SPLITS[k]));
-  const total=vals.reduce((s,v)=>s+v,0);
-
-  const COLORS={
-    push:'#e8829f',
-    pull:'#d4527a',
-    lower:'#f5bcd0',
-    core:'#c2547e',
-  };
-  const DISPLAY={push:'Push',pull:'Pull',lower:'Lower',core:'Core'};
-
-  if(!labels.length){
+  const total=data.reduce((s,v)=>s+v,0);
+  if(!total){
+    ctx.clearRect(0,0,300,140);
     ctx.fillStyle='#b899a8';ctx.font='12px Outfit,sans-serif';ctx.textAlign='center';
-    ctx.fillText('No data yet',100,80);
-    return;
+    ctx.fillText('No data yet',150,70);
+    return null;
   }
 
-  muscleChartInst=new Chart(ctx,{
+  const chart=new Chart(ctx,{
     type:'doughnut',
     data:{
-      labels:labels.map(l=>DISPLAY[l]||l),
-      datasets:[{
-        data:vals,
-        backgroundColor:labels.map(l=>COLORS[l]),
-        borderWidth:3,
-        borderColor:'white',
-      }]
+      labels,
+      datasets:[{data,backgroundColor:colors,borderWidth:3,borderColor:'white'}]
     },
     options:{
       responsive:true,maintainAspectRatio:false,
-      cutout:'60%',
+      cutout:'55%',
       plugins:{
         legend:{
           position:'right',
-          labels:{font:{size:12,family:'Outfit'},color:'#3d2030',padding:12,
-            generateLabels:(chart)=>chart.data.labels.map((label,i)=>({
-              text:`${label}  ${total?Math.round(vals[i]/total*100)+'%':''}`,
-              fillStyle:labels.map(l=>COLORS[l])[i],
-              strokeStyle:'white',
-              hidden:false,index:i,
+          labels:{
+            font:{size:12,family:'Outfit'},color:'#3d2030',padding:10,
+            generateLabels:()=>labels.map((lbl,i)=>({
+              text:`${lbl}  ${Math.round(data[i]/total*100)}%`,
+              fillStyle:colors[i],strokeStyle:'white',hidden:false,index:i,
             }))
           }
         },
         tooltip:{callbacks:{
           label:c=>{
-            const pct=total?Math.round(c.parsed/total*100):0;
-            return ` ${c.label}: ${c.parsed>=1000?(c.parsed/1000).toFixed(1)+'k':c.parsed} lb (${pct}%)`;
+            const pct=Math.round(c.parsed/total*100);
+            const vol=c.parsed>=1000?(c.parsed/1000).toFixed(1)+'k lb':c.parsed+' lb';
+            return ` ${c.label}: ${vol} (${pct}%)`;
           }
         }}
       }
     }
   });
 
-  // Balance note below chart
-  const balanceEl=document.getElementById('split-balance');
-  if(balanceEl&&total>0){
-    const pushPct=Math.round((SPLITS.push||0)/total*100);
-    const pullPct=Math.round((SPLITS.pull||0)/total*100);
-    const lowerPct=Math.round((SPLITS.lower||0)/total*100);
-    const ratio=SPLITS.pull>0?(SPLITS.push/SPLITS.pull).toFixed(1):'—';
-    let note='';
-    if(Math.abs(pushPct-pullPct)>15) note=pushPct>pullPct?'↑ More pull work would balance this out':'↑ More push work would balance this out';
-    else note='✓ Push/pull ratio looks balanced';
-    balanceEl.innerHTML=`Push:Pull ratio ${ratio} · ${note}`;
-  }
+  const el=document.getElementById(balanceElId);
+  if(el) el.textContent=balanceText;
+  return chart;
 }
+
+function renderSplitCharts(entries){
+  // Destroy existing instances
+  if(pushPullChartInst){pushPullChartInst.destroy();pushPullChartInst=null;}
+  if(upperLowerChartInst){upperLowerChartInst.destroy();upperLowerChartInst=null;}
+  // Also handle old single chart
+  if(muscleChartInst){muscleChartInst.destroy();muscleChartInst=null;}
+
+  const push={vol:0}, pull={vol:0}, upper={vol:0}, lower={vol:0}, core={vol:0};
+
+  entries.forEach(e=>{
+    const libEx=LIBRARY.find(l=>l.name===e.ex); if(!libEx) return;
+    const vol=(e.weight||0)*(e.reps||0)*(e.sets||0); if(!vol) return;
+    const tags=libEx.tags;
+    if(tags.includes('push'))  push.vol+=vol;
+    if(tags.includes('pull'))  pull.vol+=vol;
+    if(tags.includes('upper')) upper.vol+=vol;
+    if(tags.includes('lower')) lower.vol+=vol;
+    if(tags.includes('core'))  core.vol+=vol;
+  });
+
+  // Push vs Pull
+  const ppRatio=pull.vol>0?(push.vol/pull.vol).toFixed(1):'—';
+  const ppDiff=Math.abs(push.vol-pull.vol)/(push.vol+pull.vol||1)*100;
+  const ppNote=push.vol===0&&pull.vol===0?'':
+    ppDiff>15?(push.vol>pull.vol?'↑ Add more pull work':'↑ Add more push work'):
+    '✓ Balanced';
+  pushPullChartInst=makeSplitDonut(
+    'pushpull-chart',
+    [Math.round(push.vol), Math.round(pull.vol)],
+    ['#e8829f','#d4527a'],
+    ['Push','Pull'],
+    'pushpull-balance',
+    push.vol||pull.vol ? `Push:Pull ratio ${ppRatio} · ${ppNote}` : ''
+  );
+
+  // Upper vs Lower (core excluded — it's neither)
+  const ulTotal=upper.vol+lower.vol;
+  const ulNote=ulTotal===0?'':
+    Math.abs(upper.vol-lower.vol)/ulTotal*100>20?
+    (upper.vol>lower.vol?'↑ Add more lower body work':'↑ Add more upper body work'):
+    '✓ Balanced';
+  upperLowerChartInst=makeSplitDonut(
+    'upperlower-chart',
+    [Math.round(upper.vol), Math.round(lower.vol)],
+    ['#c2547e','#f5bcd0'],
+    ['Upper','Lower'],
+    'upperlower-balance',
+    ulTotal ? ulNote : ''
+  );
+}
+
+// Keep renderMuscleChart as a no-op alias so nothing breaks
+function renderMuscleChart(entries){ renderSplitCharts(entries); }
 
 function renderHeatmap(entries){
   // Binary: did you work out that day or not?

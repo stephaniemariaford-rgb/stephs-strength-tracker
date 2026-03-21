@@ -917,21 +917,25 @@ body{
       <div id="trend-insight" style="margin-top:.75rem;font-size:.75rem;color:var(--ink3);font-family:'Roboto Mono',monospace;min-height:1.2em;"></div>
     </div>
 
-    <!-- Two-col: PRs + volume by muscle -->
+    <!-- Two-col: PRs + training split balance -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;" class="two-col-cards">
       <div class="section-card" style="margin:0;">
         <div class="sc-title">Personal records <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">sorted by frequency</span></div>
         <div id="p-prs"></div>
       </div>
       <div class="section-card" style="margin:0;">
-        <div class="sc-title">Volume by muscle group</div>
-        <div style="position:relative;height:200px;"><canvas id="muscle-chart"></canvas></div>
+        <div class="sc-title">Training split <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">volume by focus</span></div>
+        <div style="position:relative;height:180px;"><canvas id="muscle-chart"></canvas></div>
+        <div id="split-balance" style="margin-top:.625rem;font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--ink3);line-height:1.7;"></div>
       </div>
     </div>
 
     <!-- Consistency heatmap -->
     <div class="section-card">
-      <div class="sc-title">Workout consistency — last 12 weeks</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
+        <div class="sc-title" style="margin:0;">Workout consistency — last 12 weeks</div>
+        <div id="heatmap-streak" style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--sage2);"></div>
+      </div>
       <!-- Day-of-week labels -->
       <div style="display:grid;grid-template-columns:32px repeat(12,1fr);gap:4px;margin-bottom:3px;" class="hm-label-row">
         <div></div>
@@ -942,11 +946,8 @@ body{
       <!-- Legend -->
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);margin-top:.75rem;align-items:center;">
         <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#f0e4ea;border-color:#e0c8d4;outline:2.5px solid #2d7dd2;outline-offset:2px;"></span>Today</span>
-        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#f0e4ea;border-color:#e0c8d4;"></span>Rest</span>
-        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#f5bcd0;border-color:#e8829f;"></span>1 session</span>
-        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#e8829f;border-color:#d4527a;"></span>2 sessions</span>
-        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#d4527a;border-color:#c2547e;"></span>3 sessions</span>
-        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#a83058;border-color:#7a1a38;"></span>4+ sessions</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#f0e4ea;border-color:#e0c8d4;"></span>Rest day</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#d4527a;border-color:#a83058;"></span>Session logged</span>
       </div>
     </div>
 
@@ -1381,6 +1382,7 @@ const LIBRARY = [
   {name:'Barbell hip thrust',    detail:'Rack · bar across hips · padded · powerful glute drive · 3×10',    tags:['lower'],        knee:false, equipment:'rack'},
   {name:'Band squat',            detail:'Band under feet · stand on it · add resistance to squat',          tags:['lower'],        knee:true,  equipment:'band'},
   {name:'Band hip abduction',    detail:'Band around thighs above knees · seated or clamshell · glute med', tags:['lower'],        knee:false, equipment:'band'},
+  {name:'DB Stiff-leg deadlift', detail:'Both DBs · minimal knee bend · full hamstring lengthening · slow eccentric',tags:['lower','glutes'],knee:false, equipment:'dumbbell', weightMode:'pair'},
   {name:'DB Calf raise',         detail:'One DB each hand · standing · full range plantarflexion · 3×15',   tags:['lower'],        knee:false, equipment:'dumbbell', weightMode:'pair'},
   // ── CORE ─────────────────────────────────────────────
   // Core work done via Peloton — tracked as a class reminder, no weight needed
@@ -1389,40 +1391,37 @@ const LIBRARY = [
 
 /* ══════════════════════════════════════════════
    PROGRAM TEMPLATES
-   Week A: Full Body Push focus
-   Week B: Full Body Pull focus
-   Day 4: Optional pull-up + accessory
    ══════════════════════════════════════════════ */
 const idx = name => LIBRARY.findIndex(l=>l.name===name);
 
 const TEMPLATES = {
-  'Full Body A · Push focus': [
-    {libIdx:idx('DB Bench press'),        sets:3,reps:10,targetWeight:30,notes:'15 lb each'},
-    {libIdx:idx('DB Shoulder press'),     sets:3,reps:10,targetWeight:20,notes:'10 lb each'},
-    {libIdx:idx('DB Single-arm row'),     sets:3,reps:10,targetWeight:15,notes:'each side'},
-    {libIdx:idx('Romanian deadlift'),     sets:3,reps:10,targetWeight:40,notes:'20 lb each'},
-    {libIdx:idx('DB Hip thrust'),         sets:3,reps:12,targetWeight:25,notes:'one DB on hips'},
-    {libIdx:idx('Peloton 10-min Core'),   sets:1,reps:1, targetWeight:'',notes:'10 min class after lifting'},
-  ],
-  'Full Body B · Pull focus': [
-    {libIdx:idx('DB Bent-over row'),      sets:3,reps:10,targetWeight:40,notes:'20 lb each'},
-    {libIdx:idx('DB Lateral raise'),      sets:3,reps:12,targetWeight:16,notes:'8 lb each'},
-    {libIdx:idx('DB Incline press'),      sets:3,reps:10,targetWeight:30,notes:'15 lb each'},
-    {libIdx:idx('DB Sumo deadlift'),      sets:3,reps:10,targetWeight:30,notes:'both hands'},
-    {libIdx:idx('DB Hip thrust'),        sets:3,reps:12,targetWeight:25,notes:'one DB on hips'},
-    {libIdx:idx('Peloton 10-min Core'),   sets:1,reps:1, targetWeight:'',notes:'10 min class after lifting'},
-  ],
-  'Lower Body & Glutes': [
-    {libIdx:idx('BellaBooty hip thrust'), sets:4,reps:12, targetWeight:50,notes:'25+25 lb'},
-    {libIdx:idx('Romanian deadlift'),     sets:3,reps:10, targetWeight:40,notes:'20 lb each'},
-    {libIdx:idx('DB Sumo deadlift'),      sets:3,reps:12, targetWeight:30,notes:'both hands'},
-    {libIdx:idx('DB Step-up'),            sets:3,reps:10, targetWeight:20,notes:'10 lb each'},
-    {libIdx:idx('Band hip abduction'),    sets:3,reps:20, targetWeight:'Medium',notes:'seated'},
-    {libIdx:idx('Peloton 10-min Core'),   sets:1,reps:1,  targetWeight:'',notes:'10 min class after lifting'},
-  ],
+'Full Body A · Hip Hinge & Push': [
+  {libIdx:idx('DB Bench press'),        sets:3,reps:12,targetWeight:20,notes:'FLOOR PRESS — lie flat on floor · no bench needed · 10 lb each'},
+  {libIdx:idx('DB Arnold press'),       sets:3,reps:12,targetWeight:16,notes:'8 lb each · rotate palms in to out as you press'},
+  {libIdx:idx('DB Single-arm row'),     sets:3,reps:12,targetWeight:20,notes:'each side · brace on wall or couch'},
+  {libIdx:idx('Romanian deadlift'),     sets:3,reps:12,targetWeight:40,notes:'20 lb each · slow 3-sec lower · push hips back'},
+  {libIdx:idx('BellaBooty hip thrust'), sets:3,reps:15,targetWeight:30,notes:'15+15 lb · 1-sec squeeze at top'},
+  {libIdx:idx('Peloton 10-min Core'),   sets:1,reps:1, targetWeight:'', notes:'10 min class after lifting'},
+],
+'Full Body B · Pull & Triceps': [
+  {libIdx:idx('DB Bent-over row'),      sets:3,reps:12,targetWeight:40,notes:'20 lb each · flat back · squeeze shoulder blades'},
+  {libIdx:idx('DB Rear delt fly'),      sets:3,reps:15,targetWeight:10, notes:'5 lb each · hinge forward · arms wide · posture work'},
+  {libIdx:idx('DB Overhead tricep ext'),sets:3,reps:12,targetWeight:15, notes:'one DB both hands · elbows in · long head focus'},
+  {libIdx:idx('DB Sumo deadlift'),      sets:3,reps:12,targetWeight:30, notes:'both hands · wide stance · inner thigh + glutes'},
+  {libIdx:idx('BellaBooty hip thrust'), sets:3,reps:15,targetWeight:30, notes:'15+15 lb · drive hips fully at top'},
+  {libIdx:idx('Peloton 10-min Core'),   sets:1,reps:1, targetWeight:'', notes:'10 min class after lifting'},
+],
+'Lower Body & Glutes': [
+  {libIdx:idx('BellaBooty hip thrust'), sets:4,reps:12,targetWeight:50, notes:'25+25 lb · heaviest hip thrust day'},
+  {libIdx:idx('Romanian deadlift'),     sets:3,reps:12,targetWeight:40, notes:'20 lb each · hinge anchor for this day'},
+  {libIdx:idx('DB Sumo deadlift'),      sets:3,reps:12,targetWeight:30, notes:'both hands · wide stance · knees track toes'},
+  {libIdx:idx('DB Stiff-leg deadlift'), sets:3,reps:12,targetWeight:26, notes:'13 lb each · full hamstring stretch · lighter than RDL'},
+  {libIdx:idx('Band hip abduction'),    sets:3,reps:20,targetWeight:'Medium',notes:'seated · glute med activation · keep knees tracking'},
+  {libIdx:idx('Peloton 10-min Core'),   sets:1,reps:1, targetWeight:'', notes:'10 min class after lifting'},
+],
 };
 
-const DAY_NAMES    = ['Day A · Full Body','Day B · Full Body','Day C · Full Body','Day 4 · Optional'];
+const DAY_NAMES    = ['Day A · Hip Hinge & Push','Day B · Pull & Triceps','Day C · Lower Body & Glutes','Day 4 · Optional'];
 const DEF_OFFSETS  = [0,2,4,6];
 const DAY_LABELS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
@@ -1893,18 +1892,55 @@ async function checkStartBar(){
 }
 
 /* ══════════════════════════════════════════════
-   TEMPLATE MODAL
-   No prompt() — uses an inline overlay instead
+   ROTATION ENGINE
+   A → B → C → A → B → C…
+   Looks at saved week plans to find the last
+   template used in each slot and suggests the next.
    ══════════════════════════════════════════════ */
-async function loadTemplate(){
-  showTemplateModal(null); // show all templates
-}
-async function loadDayTemplate(){
-  const dayDefaults={0:'Full Body A · Push focus',1:'Full Body B · Pull focus',2:'Lower Body & Glutes',3:'pullup'};
-  showTemplateModal(dayDefaults[curDay]||null);
+const ROTATION_KEYS = [
+  'Full Body A · Hip Hinge & Push',
+  'Full Body B · Pull & Triceps',
+  'Lower Body & Glutes',
+];
+const ROTATION_SHORT = {'Full Body A · Hip Hinge & Push':'A','Full Body B · Pull & Triceps':'B','Lower Body & Glutes':'C'};
+
+async function getNextRotationTemplate(slotIdx){
+  // Find the most recent template used in this slot across all saved weeks
+  // by scanning week_plans for non-empty days with a recognisable name
+  const ws=getWeekStart(weekOffset);
+
+  // Collect all weeks from cache + current
+  // Walk back up to 12 weeks to find last used template for this slot
+  let lastKey=null;
+  for(let off=weekOffset-1; off>=weekOffset-12; off--){
+    const pastWs=getWeekStart(off);
+    // Only check if cached — don't fire 12 Supabase requests
+    const cached=cache.weeks[pastWs];
+    if(!cached) continue;
+    const day=cached.days[slotIdx];
+    if(!day||!day.exercises.length) continue;
+    // Match day name to a known template key
+    const match=ROTATION_KEYS.find(k=>day.name===k||day.name===k.split(' · ')[0]);
+    if(match){ lastKey=match; break; }
+  }
+
+  if(!lastKey){
+    // No history — default by slot position
+    return ROTATION_KEYS[slotIdx % 3];
+  }
+
+  // Next in cycle
+  const i=ROTATION_KEYS.indexOf(lastKey);
+  return ROTATION_KEYS[(i+1)%3];
 }
 
-async function showTemplateModal(highlightKey){
+async function loadDayTemplate(){
+  if(curDay===3){ showTemplateModal('pullup'); return; }
+  const suggested=await getNextRotationTemplate(curDay);
+  showTemplateModal(suggested, curDay);
+}
+
+async function showTemplateModal(highlightKey, slotIdx=null){
   const old=document.getElementById('tmpl-modal'); if(old) old.remove();
 
   const overlay=document.createElement('div');
@@ -1914,20 +1950,34 @@ async function showTemplateModal(highlightKey){
   const box=document.createElement('div');
   box.style.cssText='background:var(--cream);border-radius:12px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.25);';
 
+  // Build rotation context line
+  let rotationHint='';
+  if(slotIdx!==null&&slotIdx<3&&highlightKey&&ROTATION_KEYS.includes(highlightKey)){
+    const letter=ROTATION_SHORT[highlightKey];
+    // Show the full 3-week rotation table briefly
+    rotationHint=`<div style="font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink4);
+      background:var(--cream2);border-radius:6px;padding:.5rem .75rem;margin:.625rem .625rem 0;line-height:1.8;">
+      Next in rotation: <strong style="color:var(--sage2);">Day ${letter}</strong>
+      &nbsp;·&nbsp; A → B → C → A → B → C
+    </div>`;
+  }
+
   const header=`<div style="padding:1.25rem 1.25rem .75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
     <div style="font-family:'Playfair Display',serif;font-size:1rem;">Choose a template</div>
     <button onclick="document.getElementById('tmpl-modal').remove()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ink3);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">✕</button>
-  </div>`;
+  </div>${rotationHint}`;
 
   // Static templates
   const staticCards=Object.keys(TEMPLATES).map(key=>{
     const exs=TEMPLATES[key];
     const isHighlighted=(key===highlightKey);
+    const letter=ROTATION_SHORT[key]||'';
     const exNames=exs.map(e=>LIBRARY[e.libIdx]?.name||'').filter(Boolean).slice(0,4).join(', ')+(exs.length>4?'…':'');
-    return cardHTML(key, exNames, isHighlighted, `applyTemplate('${key.replace(/'/g,"\\'")}',this)`);
+    const title=letter?`Day ${letter} · ${key.split(' · ').slice(1).join(' · ')||key}`:key;
+    return cardHTML(title, exNames, isHighlighted, `applyTemplate('${key.replace(/'/g,"\\'")}',this)`);
   }).join('');
 
-  // Pull-up day — dynamic, always shown
+  // Pull-up day
   const stage=getPullupStage();
   const stageName=PULLUP_STAGES[stage]?.name||'Dead hang';
   const pullupPreview=`${stageName} · Lat pulldown · Single-arm row · Hammer curl · Band pull-apart`;
@@ -2534,57 +2584,107 @@ function renderMuscleChart(entries){
   const ctx=document.getElementById('muscle-chart')?.getContext('2d');
   if(!ctx) return;
   if(muscleChartInst){muscleChartInst.destroy();muscleChartInst=null;}
-  const volByMuscle={};
+
+  // Use only the 4 training focus categories — mutually exclusive, meaningful split
+  // Priority: if exercise has push → push, pull → pull, lower → lower, else core
+  const SPLITS={push:0, pull:0, lower:0, core:0};
+  const PRIORITY=['lower','push','pull','core']; // lower first so leg exercises aren't swallowed by pull
+
   entries.forEach(e=>{
     const libEx=LIBRARY.find(l=>l.name===e.ex); if(!libEx) return;
-    const muscles=libEx.tags.filter(t=>['upper','lower','pull','push','core'].includes(t));
-    const vol=(e.weight||0)*(e.reps||0)*(e.sets||0);
-    muscles.forEach(m=>{volByMuscle[m]=(volByMuscle[m]||0)+vol;});
+    const vol=(e.weight||0)*(e.reps||0)*(e.sets||0); if(!vol) return;
+    // Find highest-priority matching tag
+    const tag=PRIORITY.find(t=>libEx.tags.includes(t))||'core';
+    SPLITS[tag]=(SPLITS[tag]||0)+vol;
   });
-  const labels=Object.keys(volByMuscle);
-  const vals=labels.map(l=>Math.round(volByMuscle[l]));
+
+  const labels=Object.keys(SPLITS).filter(k=>SPLITS[k]>0);
+  const vals=labels.map(k=>Math.round(SPLITS[k]));
+  const total=vals.reduce((s,v)=>s+v,0);
+
+  const COLORS={
+    push:'#e8829f',
+    pull:'#d4527a',
+    lower:'#f5bcd0',
+    core:'#c2547e',
+  };
+  const DISPLAY={push:'Push',pull:'Pull',lower:'Lower',core:'Core'};
+
   if(!labels.length){
-    ctx.fillStyle='#b899a8';ctx.font='12px Outfit';ctx.textAlign='center';
-    ctx.fillText('No data yet',150,100);return;
+    ctx.fillStyle='#b899a8';ctx.font='12px Outfit,sans-serif';ctx.textAlign='center';
+    ctx.fillText('No data yet',100,80);
+    return;
   }
+
   muscleChartInst=new Chart(ctx,{
     type:'doughnut',
     data:{
-      labels:labels.map(l=>l.charAt(0).toUpperCase()+l.slice(1)),
-      datasets:[{data:vals,backgroundColor:['#d4527a','#e8829f','#c2547e','#a83058','#f5bcd0','#fce8ef'].slice(0,labels.length),borderWidth:2,borderColor:'white'}]
+      labels:labels.map(l=>DISPLAY[l]||l),
+      datasets:[{
+        data:vals,
+        backgroundColor:labels.map(l=>COLORS[l]),
+        borderWidth:3,
+        borderColor:'white',
+      }]
     },
     options:{
       responsive:true,maintainAspectRatio:false,
+      cutout:'60%',
       plugins:{
-        legend:{position:'right',labels:{font:{size:11},color:'#3d2030',padding:10}},
-        tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed>=1000?Math.round(c.parsed/1000)+'k':c.parsed} lb vol`}}
+        legend:{
+          position:'right',
+          labels:{font:{size:12,family:'Outfit'},color:'#3d2030',padding:12,
+            generateLabels:(chart)=>chart.data.labels.map((label,i)=>({
+              text:`${label}  ${total?Math.round(vals[i]/total*100)+'%':''}`,
+              fillStyle:labels.map(l=>COLORS[l])[i],
+              strokeStyle:'white',
+              hidden:false,index:i,
+            }))
+          }
+        },
+        tooltip:{callbacks:{
+          label:c=>{
+            const pct=total?Math.round(c.parsed/total*100):0;
+            return ` ${c.label}: ${c.parsed>=1000?(c.parsed/1000).toFixed(1)+'k':c.parsed} lb (${pct}%)`;
+          }
+        }}
       }
     }
   });
+
+  // Balance note below chart
+  const balanceEl=document.getElementById('split-balance');
+  if(balanceEl&&total>0){
+    const pushPct=Math.round((SPLITS.push||0)/total*100);
+    const pullPct=Math.round((SPLITS.pull||0)/total*100);
+    const lowerPct=Math.round((SPLITS.lower||0)/total*100);
+    const ratio=SPLITS.pull>0?(SPLITS.push/SPLITS.pull).toFixed(1):'—';
+    let note='';
+    if(Math.abs(pushPct-pullPct)>15) note=pushPct>pullPct?'↑ More pull work would balance this out':'↑ More push work would balance this out';
+    else note='✓ Push/pull ratio looks balanced';
+    balanceEl.innerHTML=`Push:Pull ratio ${ratio} · ${note}`;
+  }
 }
 
 function renderHeatmap(entries){
-  const countByDate={};
-  entries.forEach(e=>{countByDate[e.date]=(countByDate[e.date]||0)+1;});
+  // Binary: did you work out that day or not?
+  // Use unique dates only — one session per day regardless of how many sets
+  const workedDates=new Set(entries.filter(e=>e.source==='weekly').map(e=>e.date));
 
-  const COLOURS=[
-    {bg:'#f0e4ea',border:'#e0c8d4'},
-    {bg:'#f5bcd0',border:'#e8829f'},
-    {bg:'#e8829f',border:'#d4527a'},
-    {bg:'#d4527a',border:'#c2547e'},
-    {bg:'#a83058',border:'#7a1a38'},
-  ];
-  function colour(n){ return COLOURS[Math.min(n,4)]; }
+  const REST  ={bg:'#f0e4ea',border:'#e0c8d4'};
+  const WORKED={bg:'#d4527a',border:'#a83058'};
+  const FUTURE={bg:'#f7f3f5',border:'#ede8eb'};
 
   // Responsive week count
   const W=window.innerWidth;
-  const WEEKS = W<=600 ? 6 : W<=900 ? 8 : 12;
+  const WEEKS=W<=600?6:W<=900?8:12;
 
   const grid=document.getElementById('p-heatmap-grid');
   const weekLabels=document.getElementById('p-heatmap-week-labels');
   grid.innerHTML=''; weekLabels.innerHTML='';
 
   const DOW_LABELS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const todayStr=today();
 
   const now=new Date();
   const todayDow=now.getDay();
@@ -2593,6 +2693,7 @@ function renderHeatmap(entries){
   thisMon.setDate(now.getDate()-daysToMon);
   thisMon.setHours(12,0,0,0);
 
+  // Week labels
   for(let w=0;w<WEEKS;w++){
     const mon=new Date(thisMon);
     mon.setDate(thisMon.getDate()-(WEEKS-1-w)*7);
@@ -2602,6 +2703,7 @@ function renderHeatmap(entries){
     weekLabels.appendChild(lbl);
   }
 
+  // Grid cells
   for(let row=0;row<7;row++){
     const rowLbl=document.createElement('div');
     rowLbl.style.cssText='font-family:Roboto Mono,monospace;font-size:.55rem;color:var(--ink4);display:flex;align-items:center;justify-content:flex-end;padding-right:4px;white-space:nowrap;';
@@ -2612,19 +2714,43 @@ function renderHeatmap(entries){
       const cellDate=new Date(thisMon);
       cellDate.setDate(thisMon.getDate()-(WEEKS-1-w)*7+row);
       const ds=localDateStr(cellDate);
-      const count=countByDate[ds]||0;
-      const c=colour(count);
-      const isToday=ds===today();
+      const isToday=ds===todayStr;
+      const isFuture=ds>todayStr;
+      const worked=workedDates.has(ds);
+
+      const c=isFuture?FUTURE:worked?WORKED:REST;
       const cell=document.createElement('div');
-      cell.style.cssText=`aspect-ratio:1;border-radius:4px;position:relative;
-        background:${c.bg};border:1.5px solid ${c.border};`;
+      cell.style.cssText=`aspect-ratio:1;border-radius:4px;background:${c.bg};border:1.5px solid ${c.border};`;
       if(isToday){
         cell.style.outline='2.5px solid #2d7dd2';
         cell.style.outlineOffset='2px';
       }
-      cell.title=`${cellDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}${count?` · ${count} session${count!==1?'s':''}`:' · rest'}${isToday?' (today)':''}`;
+      const dayLabel=cellDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      cell.title=`${dayLabel}${isToday?' (today)':''}${isFuture?'':worked?' · ✓ session logged':' · rest day'}`;
       grid.appendChild(cell);
     }
+  }
+
+  // Calculate current streak and show it
+  const streakEl=document.getElementById('heatmap-streak');
+  if(streakEl){
+    let streak=0;
+    // Walk backwards from yesterday (or today if worked today)
+    const startFrom=workedDates.has(todayStr)?todayStr:addDays(todayStr,-1);
+    let cursor=startFrom;
+    for(let i=0;i<84;i++){
+      if(workedDates.has(cursor)) streak++;
+      else if(streak>0) break; // first gap ends the streak
+      cursor=addDays(cursor,-1);
+    }
+    // Count total sessions in the window
+    const windowStart=addDays(todayStr,-(WEEKS*7-1));
+    const sessionsInWindow=[...workedDates].filter(d=>d>=windowStart&&d<=todayStr).length;
+    const totalDays=[...workedDates].filter(d=>d<=todayStr).length;
+
+    streakEl.textContent=streak>1
+      ?`${streak}-day streak · ${sessionsInWindow} sessions this period`
+      :`${sessionsInWindow} sessions in last ${WEEKS} weeks · ${totalDays} total`;
   }
 }
 

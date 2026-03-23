@@ -896,9 +896,8 @@ body{
     <!-- Exercise trend chart -->
     <div class="section-card">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
-        <div class="sc-title" style="margin:0;">Exercise trend</div>
+        <div class="sc-title" style="margin:0;">Exercise trends</div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
-          <select id="p-ex-select" class="filter-sel" style="min-width:180px;" onchange="renderTrendChart()"></select>
           <select id="p-date-range" class="filter-sel" onchange="renderTrendChart()" style="min-width:120px;">
             <option value="28">Last 4 weeks</option>
             <option value="90" selected>Last 3 months</option>
@@ -913,7 +912,9 @@ body{
           </div>
         </div>
       </div>
-      <div style="position:relative;height:220px;"><canvas id="trend-chart"></canvas></div>
+      <!-- Exercise toggle pills — populated by JS -->
+      <div id="ex-toggle-row" style="display:flex;flex-wrap:wrap;gap:.375rem;margin-bottom:.875rem;"></div>
+      <div style="position:relative;height:240px;"><canvas id="trend-chart"></canvas></div>
       <div id="trend-insight" style="margin-top:.75rem;font-size:.75rem;color:var(--ink3);font-family:'Roboto Mono',monospace;min-height:1.2em;"></div>
     </div>
 
@@ -1309,6 +1310,25 @@ function rackOptions(sel){
   return h;
 }
 
+// Plates-only rack (e.g. lat pulldown — no bar weight)
+// Available plates: 15, 25, 35, 45 lb, added in pairs
+function platesOnlyOptions(sel){
+  const PLATES=[15,25,35,45];
+  const combos=new Set([0]);
+  PLATES.forEach(p=>{
+    const w1=p*2; combos.add(w1);
+    PLATES.forEach(p2=>{ const w2=w1+p2*2; combos.add(w2);
+      PLATES.forEach(p3=>combos.add(w2+p3*2));
+    });
+  });
+  const sorted=[...combos].filter(v=>v>0).sort((a,b)=>a-b);
+  let h='<option value="">— lb</option>';
+  sorted.forEach(total=>{
+    h+=`<option value="${total}"${parseFloat(sel)===total?' selected':''}>${total} lb</option>`;
+  });
+  return h;
+}
+
 function bandOptions(sel){
   let h='<option value="">— band</option>';
   BAND_OPTS.forEach(b=>{
@@ -1322,14 +1342,15 @@ function bandOptions(sel){
 function buildWeightOpts(ex, sel=''){
   const eq = ex.equipment;
   const wm = ex.weightMode || 'single';
-  if(eq==='peloton')            return '<option value="peloton">Peloton class</option>';
-  if(eq==='rack')               return rackOptions(sel);
-  if(eq==='band')               return bandOptions(sel);
-  if(eq==='pullup'||eq==='bw') return '<option value="BW">Bodyweight</option>';
-  if(eq==='bb')                 return bbOptions(sel);
-  if(wm==='pair')               return dbOptionsPair(sel);
-  if(wm==='bothhands')          return dbOptionsBothHands(sel);
-  return dbOptionsSingle(sel); // default: single per-arm
+  if(eq==='peloton')                   return '<option value="peloton">Peloton class</option>';
+  if(eq==='rack'&&ex.rackStyle==='plates_only') return platesOnlyOptions(sel);
+  if(eq==='rack')                      return rackOptions(sel);
+  if(eq==='band')                      return bandOptions(sel);
+  if(eq==='pullup'||eq==='bw')         return '<option value="BW">Bodyweight</option>';
+  if(eq==='bb')                        return bbOptions(sel);
+  if(wm==='pair')                      return dbOptionsPair(sel);
+  if(wm==='bothhands')                 return dbOptionsBothHands(sel);
+  return dbOptionsSingle(sel);
 }
 
 /* ══════════════════════════════════════════════
@@ -1356,7 +1377,7 @@ const LIBRARY = [
   {name:'Band-assisted pull-up', detail:'Heavy band on bar · knee in band · full pull-up range',            tags:['pull','upper'], knee:false, equipment:'band',    pullupStage:2},
   {name:'Negative pull-up',      detail:'Jump to top · lower slowly 5 sec · builds strength fast',         tags:['pull','upper'], knee:false, equipment:'pullup',  pullupStage:3},
   {name:'Pull-up',               detail:'Strict overhand · chin over bar · full hang at bottom',            tags:['pull','upper'], knee:false, equipment:'pullup',  pullupStage:4},
-  {name:'Lat pulldown',          detail:'Rack lat bar · wide overhand grip · pull to upper chest · both hands on bar', tags:['pull','upper'], knee:false, equipment:'rack'},
+  {name:'Lat pulldown',          detail:'Plate-loaded lat bar · wide overhand grip · pull to upper chest', tags:['pull','upper'], knee:false, equipment:'rack', rackStyle:'plates_only'},
   {name:'DB Single-arm row',     detail:'Knee on bench · one DB per arm · elbow in · full lat stretch',     tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'single'},
   {name:'DB Bent-over row',      detail:'Hip hinge · one DB each hand · squeeze shoulder blades at top',    tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
   {name:'DB Rear delt fly',      detail:'Hinged forward · one DB each hand · arms out · rear delts',        tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
@@ -1718,7 +1739,8 @@ async function renderDayEditor(){
     // Find entries for this day
     const lookupDate=day.loggedDate||day.scheduledDate||today();
     const dayEntries=entries.filter(e=>{
-      if(e.equipment==='peloton'||!(e.weight>0)) return false;
+      if(e.equipment==='peloton') return false;
+      // Include band (weight=1), BW (weight=0), and weighted exercises
       return e.date===lookupDate
         ||(e.source==='weekly'&&e.day===dayLabel&&e.date>=ws2&&e.date<weekEnd);
     });
@@ -1743,10 +1765,15 @@ async function renderDayEditor(){
         ${exNames.length?`<div style="display:flex;flex-direction:column;gap:.25rem;">
           ${exNames.map(ex=>{
             const sets=byEx[ex];
-            const bestWeight=Math.max(...sets.map(s=>s.weight));
             const totalSets=sets.length;
+            const isBandEx=sets[0]?.equipment==='band';
+            const isBWEx=sets[0]?.equipment==='pullup'||sets[0]?.equipment==='bw';
+            // Extract band resistance from notes (stored as "Medium band, ...")
+            const bandNote=isBandEx&&sets[0]?.notes?sets[0].notes.split(' band')[0]:'';
+            const bestWeight=isBandEx||isBWEx?null:Math.max(...sets.map(s=>s.weight||0));
+            const weightLabel=isBandEx?` · ${bandNote} band`:isBWEx?' · bodyweight':bestWeight>0?` · best ${bestWeight} lb`:'';
             return `<div style="font-size:.78rem;color:var(--ink2);">
-              <strong>${ex}</strong> — ${totalSets} set${totalSets!==1?'s':''} · best ${bestWeight} lb
+              <strong>${ex}</strong> — ${totalSets} set${totalSets!==1?'s':''}${weightLabel}
             </div>`;
           }).join('')}
         </div>`:'<div style="font-size:.78rem;color:var(--ink3);">No weighted sets recorded.</div>'}
@@ -1850,7 +1877,7 @@ async function renderPlanExList(){
         value="${ex.reps||10}" oninput="updPlanField(${ri},'reps',this.value)">
       ${isBW
         ? `<select class="wt-select" disabled style="opacity:.5;"><option>Bodyweight</option></select>`
-        : `<select class="wt-select" onchange="updPlanField(${ri},'targetWeight',this.value)">${buildWeightOpts(libEx,ex.targetWeight)}</select>`
+        : `<select class="wt-select" onchange="updPlanField(${ri},'targetWeight',this.value);updPlanNote(${ri},this.value)">${buildWeightOpts(libEx,ex.targetWeight)}</select>`
       }
       <input class="note-inp" type="text" maxlength="50"
         value="${ex.notes||''}" placeholder="notes…"
@@ -1867,6 +1894,20 @@ async function updPlanField(ri,field,val){
   const nums=['sets','reps','targetWeight'];
   week.days[curDay].exercises[ri][field]=nums.includes(field)?(parseFloat(val)||''):val;
   await saveWeekData(ws,week);
+}
+
+async function updPlanNote(ri, newWeight){
+  const ws=getWeekStart(weekOffset);
+  const week=await loadWeek(ws);
+  const ex=week.days[curDay].exercises[ri];
+  const libEx=LIBRARY[ex.libIdx]; if(!libEx) return;
+  const note=buildWeightNote(libEx, parseFloat(newWeight), ex.notes);
+  if(!note) return;
+  week.days[curDay].exercises[ri].notes=note;
+  await saveWeekData(ws,week);
+  // Update the note input in place
+  const noteInp=document.querySelector(`#plan-ex-list .ex-row:nth-child(${ri+1}) .note-inp`);
+  if(noteInp) noteInp.value=note;
 }
 async function saveDayName(val){
   const ws=getWeekStart(weekOffset);
@@ -1965,7 +2006,8 @@ async function showTemplateModal(highlightKey, slotIdx=null){
     rotationHint=`<div style="font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink4);
       background:var(--cream2);border-radius:6px;padding:.5rem .75rem;margin:.625rem .625rem 0;line-height:1.8;">
       Next in rotation: <strong style="color:var(--sage2);">Day ${letter}</strong>
-      &nbsp;·&nbsp; A → B → C → A → B → C
+      &nbsp;·&nbsp;
+      Wk1: A/B/C &nbsp;·&nbsp; Wk2: B/C/A &nbsp;·&nbsp; Wk3: C/A/B
     </div>`;
   }
 
@@ -2031,12 +2073,53 @@ async function applyTemplate(key, el){
   document.getElementById('tmpl-modal')?.remove();
   const ws=getWeekStart(weekOffset);
   const week=await loadWeek(ws);
-  week.days[curDay].exercises=TEMPLATES[key].map(e=>({...e}));
+  const entries=await getEntries();
+
+  // Build PR map: exercise name → best weight ever
+  const prs={};
+  entries.forEach(e=>{
+    if(e.weight>0&&(!prs[e.ex]||e.weight>prs[e.ex])) prs[e.ex]=e.weight;
+  });
+
+  week.days[curDay].exercises=TEMPLATES[key].map(tmplEx=>{
+    const ex={...tmplEx};
+    const libEx=LIBRARY[ex.libIdx];
+    if(!libEx) return ex;
+    // Item 2: use PR weight if available (progressive overload)
+    const pr=prs[libEx.name];
+    if(pr&&libEx.equipment!=='peloton'&&libEx.equipment!=='band'&&libEx.equipment!=='pullup'&&libEx.equipment!=='bw'){
+      ex.targetWeight=pr;
+      // Item 1: update note to reflect the PR weight distribution
+      ex.notes=buildWeightNote(libEx, pr, tmplEx.notes);
+    }
+    return ex;
+  });
+
   week.days[curDay].name=key;
+  const display=document.getElementById('day-name-display');
+  if(display) display.textContent=key;
   document.getElementById('day-name-inp').value=key;
   await saveWeekData(ws,week);
   renderPlanExList();
   renderDayTabs();
+}
+
+// Item 1: generate a weight distribution note based on weightMode and total weight
+function buildWeightNote(libEx, totalWeight, fallbackNote){
+  const wm=libEx.weightMode||'single';
+  const eq=libEx.equipment;
+  if(eq==='peloton'||eq==='band'||eq==='pullup'||eq==='bw') return fallbackNote||'';
+  if(eq==='bb') {
+    const each=totalWeight/2;
+    return `${each}+${each} lb`;
+  }
+  if(wm==='pair'){
+    const each=totalWeight/2;
+    return `${each} lb each`;
+  }
+  if(wm==='bothhands') return `${totalWeight} lb (one DB)`;
+  if(wm==='single') return `${totalWeight} lb each side`;
+  return fallbackNote||'';
 }
 
 /* ══════════════════════════════════════════════
@@ -2219,13 +2302,14 @@ function renderSetRows(ei,libEx,exPlan){
         title="${isPrefilled?'↺ Pre-filled from last session — change if needed':''}"
         >${buildWeightOpts(libEx,set.weight)}</select>`;
     }
-    const repsEl=`<div style="display:flex;flex-direction:column;gap:2px;align-items:center;">
-      <input class="set-reps-inp ${set.done?'done-inp':''}"
-        type="number" inputmode="numeric" min="1" max="100" step="1"
-        value="${set.reps||exPlan.reps||10}"
-        onchange="updateSetReps(${ei},${si},this.value)">
-      <div style="font-family:'Roboto Mono',monospace;font-size:.58rem;color:var(--ink4);">reps</div>
-    </div>`;
+    // Reps dropdown (1–30)
+    const repsOpts=Array.from({length:30},(_,i)=>i+1).map(n=>
+      `<option value="${n}"${(set.reps||exPlan.reps||10)===n?' selected':''}>${n}</option>`
+    ).join('');
+    const repsEl=`<select class="set-weight-sel ${set.done?'done-sel':''}"
+      style="width:72px;flex-shrink:0;"
+      onchange="updateSetReps(${ei},${si},this.value)"
+      title="Reps">${repsOpts}</select>`;
     const showNote=si===sl.sets.length-1||set.notes;
     const noteEl=showNote
       ?`<input class="set-note-inp" type="text" maxlength="40" placeholder="note…"
@@ -2343,16 +2427,21 @@ async function markComplete(){
       return;
     }
     const isBW=libEx.equipment==='pullup'||libEx.equipment==='bw';
+    const isBand=libEx.equipment==='band';
     const doneSets=(sl.sets||[]).filter(s=>s.done);
     if(!doneSets.length) return;
     doneSets.forEach((s,si)=>{
+      // For bands: store the resistance string (e.g. "Medium") as weight_label, numeric weight=1
+      // For BW: weight=0. For everything else: numeric weight.
+      const numWeight=isBW?0:isBand?1:parseFloat(s.weight)||0;
       fresh.push({
         id:Date.now()+ei*100+si,
         ex:libEx.name,day:'day'+(curDay+1),
-        weight:isBW?0:parseFloat(s.weight)||0,
+        weight:numWeight,
         reps:s.reps||ex.reps||10,sets:1,
         equipment:libEx.equipment||'dumbbell',
-        date:dt,notes:s.notes||'',source:'weekly',set_num:si+1,
+        date:dt,notes:(isBand?s.weight+' band'+(s.notes?', '+s.notes:''):s.notes)||'',
+        source:'weekly',set_num:si+1,
       });
     });
   });
@@ -2484,6 +2573,8 @@ async function setMetric(metric,btn){
 // Epley estimated 1RM formula
 function e1rm(weight,reps){ return reps===1?weight:Math.round(weight*(1+reps/30)); }
 
+let selectedExercises = new Set(); // exercises shown on trend chart
+
 async function renderProgressView(){
   const entries=(await getEntries()).filter(e=>e.equipment!=='peloton'&&(e.weight||0)>0);
 
@@ -2496,16 +2587,38 @@ async function renderProgressView(){
   document.getElementById('p-vol').textContent=vol>=1000?Math.round(vol/1000)+'k lb':vol+' lb';
   document.getElementById('p-pullup').textContent=(getPullupStage()+1)+'/5';
 
-  // Exercise selector — sorted by frequency
+  // Build sorted exercise list by frequency
   const freq={};
   entries.forEach(e=>{ freq[e.ex]=(freq[e.ex]||0)+1; });
   const sorted=Object.keys(freq).sort((a,b)=>freq[b]-freq[a]);
-  const sel=document.getElementById('p-ex-select');
-  const prev=sel.value;
-  sel.innerHTML=sorted.length
-    ?sorted.map(ex=>`<option value="${ex}"${ex===prev?' selected':''}>${ex} (${freq[ex]}×)</option>`).join('')
-    :'<option value="">No exercises logged yet</option>';
-  if(!sel.value&&sorted.length) sel.value=sorted[0];
+
+  // Build toggle pills — all selected by default on first load
+  if(selectedExercises.size===0) sorted.forEach(ex=>selectedExercises.add(ex));
+  // Remove any exercises no longer in entries
+  [...selectedExercises].forEach(ex=>{ if(!freq[ex]) selectedExercises.delete(ex); });
+
+  const toggleRow=document.getElementById('ex-toggle-row');
+  if(toggleRow){
+    toggleRow.innerHTML='';
+    if(!sorted.length){
+      toggleRow.innerHTML='<span style="font-family:\'Roboto Mono\',monospace;font-size:.65rem;color:var(--ink4);">Log sessions to see your trends</span>';
+    } else {
+      sorted.forEach(ex=>{
+        const active=selectedExercises.has(ex);
+        const pill=document.createElement('button');
+        pill.className='p-metric-btn'+(active?' active':'');
+        pill.style.cssText='font-size:.62rem;padding:4px 10px;border-radius:20px;';
+        pill.textContent=ex;
+        pill.onclick=()=>{
+          if(selectedExercises.has(ex)) selectedExercises.delete(ex);
+          else selectedExercises.add(ex);
+          pill.classList.toggle('active', selectedExercises.has(ex));
+          renderTrendChart();
+        };
+        toggleRow.appendChild(pill);
+      });
+    }
+  }
 
   await renderTrendChart();
   renderMuscleChart(entries);
@@ -2517,72 +2630,119 @@ async function renderProgressView(){
 
 async function renderTrendChart(){
   const allEntries=(await getEntries()).filter(e=>e.equipment!=='peloton'&&(e.weight||0)>0);
-  const exName=document.getElementById('p-ex-select')?.value;
   const ctx=document.getElementById('trend-chart')?.getContext('2d');
   if(!ctx) return;
   if(trendChartInst){trendChartInst.destroy();trendChartInst=null;}
 
-  // Apply date range filter
   const rangeDays=parseInt(document.getElementById('p-date-range')?.value||'90');
   const cutoff=rangeDays>0
     ? localDateStr(new Date(Date.now()-rangeDays*86400000))
     : '2000-01-01';
   const entries=allEntries.filter(e=>e.date>=cutoff);
+  const metricLabel={weight:'lb',reps:'reps',volume:'lb vol',e1rm:'lb est.1RM'}[activeMetric];
 
-  if(!exName||!entries.length){
-    ctx.clearRect(0,0,600,220);
+  const activeExs=[...selectedExercises].filter(ex=>entries.some(e=>e.ex===ex));
+
+  if(!activeExs.length){
+    ctx.clearRect(0,0,600,240);
     ctx.fillStyle='#b899a8';ctx.font='13px Outfit,sans-serif';ctx.textAlign='center';
-    ctx.fillText('Log some sessions to see your trend',300,110);
+    ctx.fillText('Select exercises above to see trends',300,120);
     document.getElementById('trend-insight').textContent='';
     return;
   }
 
-  const exEntries=entries.filter(e=>e.ex===exName).sort((a,b)=>a.date.localeCompare(b.date));
-  // Aggregate to best value per SESSION DATE (not per set) — avoids noisy multi-set dots
-  const byDate={};
-  exEntries.forEach(e=>{
-    const val=activeMetric==='weight'?e.weight
-      :activeMetric==='reps'?e.reps
-      :activeMetric==='volume'?(e.weight*e.reps*e.sets)
-      :e1rm(e.weight,e.reps);
-    if(!byDate[e.date]||val>byDate[e.date]) byDate[e.date]=val;
+  // Palette — enough colours for typical exercise count
+  const PALETTE=[
+    '#d4527a','#5b8fd4','#5ec49a','#e8a03e','#9b6dd6',
+    '#e85e8a','#3a9bd5','#2ecc8a','#f0b429','#7c5cbf',
+    '#c2547e','#2d7dd2','#27ae60','#e67e22','#8e44ad',
+  ];
+
+  // Collect all unique dates across selected exercises, sorted
+  const allDates=[...new Set(
+    activeExs.flatMap(ex=>entries.filter(e=>e.ex===ex).map(e=>e.date))
+  )].sort();
+
+  const datasets=activeExs.map((ex,i)=>{
+    const color=PALETTE[i%PALETTE.length];
+    const exEntries=entries.filter(e=>e.ex===ex);
+    // Best per date
+    const byDate={};
+    exEntries.forEach(e=>{
+      const val=activeMetric==='weight'?e.weight
+        :activeMetric==='reps'?e.reps
+        :activeMetric==='volume'?(e.weight*e.reps*e.sets)
+        :e1rm(e.weight,e.reps);
+      if(!byDate[e.date]||val>byDate[e.date]) byDate[e.date]=val;
+    });
+    return {
+      label:ex,
+      data:allDates.map(d=>byDate[d]??null),
+      borderColor:color,
+      backgroundColor:color+'18',
+      fill:false,
+      tension:0.35,
+      pointRadius:allDates.length>20?2:4,
+      pointBackgroundColor:color,
+      pointBorderColor:'white',
+      pointBorderWidth:1.5,
+      pointHoverRadius:6,
+      spanGaps:false,
+    };
   });
-  const labels=Object.keys(byDate);
-  const vals=labels.map(d=>byDate[d]);
-  const metricLabel={weight:'lb',reps:'reps',volume:'lb vol',e1rm:'lb est.1RM'}[activeMetric];
 
   trendChartInst=new Chart(ctx,{
     type:'line',
     data:{
-      labels:labels.map(d=>{const p=d.split('-');return `${p[1]}/${p[2]}`;}),
-      datasets:[{
-        data:vals,borderColor:'#d4527a',backgroundColor:'rgba(212,82,122,0.08)',
-        fill:true,tension:0.35,pointRadius:vals.length>20?3:5,
-        pointBackgroundColor:'#d4527a',pointBorderColor:'white',pointBorderWidth:2,pointHoverRadius:7,
-      }]
+      labels:allDates.map(d=>{const p=d.split('-');return `${p[1]}/${p[2]}`;}),
+      datasets,
     },
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y} ${metricLabel}`}}},
+      plugins:{
+        legend:{
+          display:activeExs.length>1,
+          position:'bottom',
+          labels:{font:{size:10,family:'Outfit'},color:'#3d2030',padding:8,boxWidth:12}
+        },
+        tooltip:{
+          mode:'index',intersect:false,
+          callbacks:{label:c=>c.parsed.y!==null?` ${c.dataset.label}: ${c.parsed.y} ${metricLabel.split(' ')[0]}`:null}
+        }
+      },
       scales:{
-        x:{ticks:{font:{size:11},color:'#b899a8',maxTicksLimit:8},grid:{display:false}},
-        y:{ticks:{font:{size:11},color:'#b899a8',callback:v=>v+' '+metricLabel.split(' ')[0]},grid:{color:'rgba(212,82,122,0.07)'}}
+        x:{ticks:{font:{size:10},color:'#b899a8',maxTicksLimit:8},grid:{display:false}},
+        y:{ticks:{font:{size:10},color:'#b899a8',callback:v=>v+' '+metricLabel.split(' ')[0]},grid:{color:'rgba(212,82,122,0.07)'}}
       }
     }
   });
 
+  // Insight — show for single selected exercise only
   const insight=document.getElementById('trend-insight');
-  if(vals.length>=2){
-    const diff=vals[vals.length-1]-vals[0];
-    const pct=vals[0]>0?Math.round((diff/vals[0])*100):0;
-    const lbl={weight:'best weight',reps:'reps',volume:'session volume',e1rm:'estimated 1RM'}[activeMetric];
-    const rangeLabel=rangeDays>0?`last ${rangeDays} days`:'all time';
-    insight.textContent=diff===0
-      ?`${exName}: ${lbl} holding steady at ${vals[vals.length-1]} ${metricLabel.split(' ')[0]} (${rangeLabel})`
-      :`${exName}: ${lbl} ${diff>0?'↑ up':'↓ down'} ${Math.abs(diff)} ${metricLabel.split(' ')[0]} (${pct>0?'+':''}${pct}%) over ${rangeLabel}`;
-    insight.style.color=diff>=0?'var(--sage2)':'var(--blush2)';
+  if(activeExs.length===1){
+    const ex=activeExs[0];
+    const exEntries=entries.filter(e=>e.ex===ex);
+    const byDate={};
+    exEntries.forEach(e=>{
+      const val=activeMetric==='weight'?e.weight:activeMetric==='reps'?e.reps:activeMetric==='volume'?(e.weight*e.reps*e.sets):e1rm(e.weight,e.reps);
+      if(!byDate[e.date]||val>byDate[e.date]) byDate[e.date]=val;
+    });
+    const vals=Object.values(byDate);
+    if(vals.length>=2){
+      const diff=vals[vals.length-1]-vals[0];
+      const pct=vals[0]>0?Math.round((diff/vals[0])*100):0;
+      const lbl={weight:'best weight',reps:'reps',volume:'session volume',e1rm:'estimated 1RM'}[activeMetric];
+      const rangeLabel=rangeDays>0?`last ${rangeDays} days`:'all time';
+      insight.textContent=diff===0
+        ?`${ex}: ${lbl} steady at ${vals[vals.length-1]} ${metricLabel.split(' ')[0]} (${rangeLabel})`
+        :`${ex}: ${lbl} ${diff>0?'↑ up':'↓ down'} ${Math.abs(diff)} ${metricLabel.split(' ')[0]} (${pct>0?'+':''}${pct}%) over ${rangeLabel}`;
+      insight.style.color=diff>=0?'var(--sage2)':'var(--blush2)';
+    } else {
+      insight.textContent=vals.length===1?`${ex}: first session logged — keep going!`:'';
+      insight.style.color='var(--ink4)';
+    }
   } else {
-    insight.textContent=vals.length===1?`${exName}: first session logged — keep going to see your trend!`:'';
+    insight.textContent=`Showing ${activeExs.length} exercises · tap a pill above to show/hide`;
     insight.style.color='var(--ink4)';
   }
 }
@@ -2836,12 +2996,16 @@ function renderRecentSessions(entries){
       const totalSets=sets.length;
       const repRange=[...new Set(sets.map(s=>s.reps))];
       const repLabel=repRange.length===1?`${repRange[0]} reps`:`${Math.min(...repRange)}–${Math.max(...repRange)} reps`;
+      const isBandEx=sets[0]?.equipment==='band';
+      const isBWEx=sets[0]?.equipment==='pullup'||sets[0]?.equipment==='bw';
+      const bandNote=isBandEx&&sets[0]?.notes?sets[0].notes.split(' band')[0]:'';
+      const weightLabel=isBandEx?` · ${bandNote} band`:isBWEx?' · bodyweight':bestWeight>0?` · best <strong>${bestWeight} lb</strong>`:'';
       return `<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;
         padding:6px 10px;background:var(--cream2);border:1px solid var(--border2);
         border-radius:6px;font-size:.78rem;">
         <div style="flex:1;min-width:0;">
           <span style="font-weight:600;color:var(--ink2);">${exName}</span>
-          <span style="color:var(--ink3);margin-left:.5rem;">${totalSets} set${totalSets!==1?'s':''} · ${repLabel}${bestWeight>0?' · best <strong>'+bestWeight+' lb</strong>':''}</span>
+          <span style="color:var(--ink3);margin-left:.5rem;">${totalSets} set${totalSets!==1?'s':''} · ${repLabel}${weightLabel}</span>
         </div>
         <button onclick="deleteSessionExercise('${date}','${exName.replace(/'/g,"\\'")}')"
           style="width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);
@@ -2990,7 +3154,7 @@ async function showView(name){
   document.getElementById('view-'+name).classList.add('active');
   updateBottomNav(name);
   if(name==='history')  await renderHistoryView();
-  if(name==='progress') await renderProgressView();
+  if(name==='progress'){ selectedExercises=new Set(); await renderProgressView(); }
   if(name==='planner')  await renderPlanner();
 }
 

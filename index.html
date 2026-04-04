@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Strength Tracker · Pull-up Program</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Strength">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#3d0a20">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -210,8 +215,8 @@ body{
 .ex-list{padding:.25rem 1rem .875rem;}
 .col-hdr{
   display:grid;
-  grid-template-columns:1fr 56px 56px 190px 160px 44px;
-  gap:.4rem;padding:.5rem 0;
+  grid-template-columns:1fr 56px 56px 190px 160px 72px;
+  gap:.4rem;padding:.5rem 0;padding-left:2rem;
   border-bottom:1px solid var(--border2);margin-bottom:.25rem;
 }
 .ch{
@@ -222,7 +227,7 @@ body{
 
 .ex-row{
   display:grid;
-  grid-template-columns:1fr 56px 56px 190px 160px 44px;
+  grid-template-columns:1fr 56px 56px 190px 160px 72px;
   gap:.4rem;align-items:center;
   padding:.625rem 0;border-bottom:1px solid var(--border2);
   animation:fadeUp .2s ease;
@@ -615,10 +620,12 @@ body{
   .ex-row{
     grid-template-columns:1fr 1fr;
     grid-template-rows:auto auto auto;
-    row-gap:.5rem;padding:.875rem 0;
+    row-gap:.5rem;padding:.875rem 0;padding-left:0!important;
   }
   .ex-row > div:first-child{grid-column:1/-1;}
-  .rm-btn{grid-column:2;grid-row:3;justify-self:end;}
+  .drag-handle{display:none;}
+  /* Last cell (reorder+remove) spans full width on mobile, right-aligned */
+  .ex-row > div:last-child{grid-column:1/-1;justify-content:flex-end;display:flex;gap:.375rem;}
 
   /* Log set rows — only wrap on very small phones */
   .set-row{ gap:.375rem; }
@@ -705,6 +712,41 @@ body{
   transition:opacity .2s;
 }
 .program-banner.collapsed .pb-collapse-hint{display:none;}
+
+/* ── DRAG REORDER ─────────────────────── */
+.ex-row{position:relative;}
+.drag-handle{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:20px;height:44px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  cursor:grab;color:var(--ink4);flex-shrink:0;padding:0 2px;
+  touch-action:none;
+}
+.drag-handle:active{cursor:grabbing;}
+.drag-handle svg{pointer-events:none;}
+.ex-row.dragging{opacity:.4;border:1.5px dashed var(--blush);}
+.ex-row.drag-over{border-top:2.5px solid var(--blush);background:var(--blush-lt);}
+
+/* Reorder up/down buttons (mobile-friendly alternative) */
+.reorder-btns{
+  display:flex;flex-direction:column;gap:2px;flex-shrink:0;
+}
+.reorder-btn{
+  width:22px;height:20px;border-radius:4px;
+  border:1px solid var(--border);background:var(--cream2);
+  color:var(--ink4);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;line-height:1;padding:0;
+}
+.reorder-btn:active{background:var(--blush-lt);color:var(--blush2);border-color:var(--blush);}
+.reorder-btn:disabled{opacity:.25;cursor:default;}
+
+@media(max-width:768px){
+  .drag-handle{display:none;}
+}
+@media(min-width:769px){
+  .reorder-btns{display:none;}
+}
 
 @media(hover:none){
   .btn:hover,.sm-btn:hover,.lib-item:hover,.day-tab:hover{
@@ -799,43 +841,45 @@ body{
       </div>
 
       <div id="plan-section">
+
+        <div id="lib-panel" class="lib-panel" style="display:none;margin:0 1rem .75rem;">
+          <div class="lib-hdr">
+            <div class="lib-title">Exercise library <span id="lib-count" style="font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink4);font-weight:400;"></span></div>
+            <div class="filter-row">
+              <select class="filter-sel" id="equip-filter" onchange="renderLibrary()">
+                <option value="all">All equipment</option>
+                <option value="dumbbell">Free weights</option>
+                <option value="rack">Squat rack</option>
+                <option value="band">Resistance bands</option>
+                <option value="pullup">Pull-up bar</option>
+                <option value="peloton">Peloton</option>
+                <option value="bw">Bodyweight</option>
+                <option value="bb">BellaBooty belt</option>
+              </select>
+              <select class="filter-sel" id="body-filter" onchange="renderLibrary()">
+                <option value="all">All muscles</option>
+                <option value="upper">Upper body</option>
+                <option value="lower">Lower body</option>
+                <option value="pull">Pull / Back / Biceps</option>
+                <option value="push">Push / Chest / Triceps</option>
+                <option value="core">Core</option>
+              </select>
+              <input class="search-inp" id="lib-search" type="search" placeholder="Search…"
+                oninput="renderLibrary()" autocomplete="off">
+            </div>
+          </div>
+          <div class="lib-grid" id="lib-grid"></div>
+        </div>
+
         <div class="ex-list">
           <div class="col-hdr">
-            <div class="ch">Exercise</div>
+            <div class="ch" style="padding-left:2rem;">Exercise</div>
             <div class="ch">Sets</div><div class="ch">Reps</div>
             <div class="ch">Target lb</div><div class="ch">Notes</div><div class="ch"></div>
           </div>
           <div id="plan-ex-list"></div>
         </div>
 
-        <div id="lib-panel" class="lib-panel" style="display:none;margin:0 1rem 1rem;">
-        <div class="lib-hdr">
-          <div class="lib-title">Exercise library <span id="lib-count" style="font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink4);font-weight:400;"></span></div>
-          <div class="filter-row">
-            <select class="filter-sel" id="equip-filter" onchange="renderLibrary()">
-              <option value="all">All equipment</option>
-              <option value="dumbbell">Free weights</option>
-              <option value="rack">Squat rack</option>
-              <option value="band">Resistance bands</option>
-              <option value="pullup">Pull-up bar</option>
-              <option value="peloton">Peloton</option>
-              <option value="bw">Bodyweight</option>
-              <option value="bb">BellaBooty belt</option>
-            </select>
-            <select class="filter-sel" id="body-filter" onchange="renderLibrary()">
-              <option value="all">All muscles</option>
-              <option value="upper">Upper body</option>
-              <option value="lower">Lower body</option>
-              <option value="pull">Pull / Back / Biceps</option>
-              <option value="push">Push / Chest / Triceps</option>
-              <option value="core">Core</option>
-            </select>
-            <input class="search-inp" id="lib-search" type="search" placeholder="Search…"
-              oninput="renderLibrary()" autocomplete="off">
-          </div>
-        </div>
-        <div class="lib-grid" id="lib-grid"></div>
-      </div>
       </div><!-- /plan-section -->
     </div><!-- /plan-panel -->
 
@@ -888,9 +932,32 @@ body{
     <!-- Summary metrics -->
     <div class="metrics-row">
       <div class="metric-card"><div class="m-lbl">Sessions done</div><div class="m-val" id="p-sessions">0</div><div class="m-sub">total logged</div></div>
-      <div class="metric-card"><div class="m-lbl">This month</div><div class="m-val" id="p-month">0</div><div class="m-sub">workouts</div></div>
+      <!-- This month ring -->
+      <div class="metric-card" style="display:flex;flex-direction:column;align-items:center;padding:.75rem .5rem;">
+        <div class="m-lbl" style="align-self:flex-start;margin-left:.25rem;">This month</div>
+        <svg viewBox="0 0 72 72" width="72" height="72" style="display:block;margin:.25rem auto 4px;" id="month-ring-svg">
+          <circle cx="36" cy="36" r="28" fill="none" stroke="#f5bcd0" stroke-width="6"/>
+          <circle cx="36" cy="36" r="28" fill="none" stroke="#d4527a" stroke-width="6"
+            stroke-linecap="round" transform="rotate(-90 36 36)"
+            stroke-dasharray="175.9" stroke-dashoffset="175.9" id="month-ring-arc"/>
+          <text x="36" y="40" text-anchor="middle" font-family="'Playfair Display',serif" font-size="17" font-weight="700" fill="#2a1520" id="month-ring-val">0</text>
+        </svg>
+        <div class="m-sub" id="month-ring-sub" style="text-align:center;">of 16 goal</div>
+      </div>
       <div class="metric-card"><div class="m-lbl">Total volume</div><div class="m-val" id="p-vol">0</div><div class="m-sub">lb lifted all-time</div></div>
-      <div class="metric-card"><div class="m-lbl">Pull-up stage</div><div class="m-val" id="p-pullup">1</div><div class="m-sub">of 5 stages</div></div>
+      <!-- Pull-up stage ring -->
+      <div class="metric-card" style="display:flex;flex-direction:column;align-items:center;padding:.75rem .5rem;">
+        <div class="m-lbl" style="align-self:flex-start;margin-left:.25rem;">Pull-up stage</div>
+        <svg viewBox="0 0 72 72" width="72" height="72" style="display:block;margin:.25rem auto 4px;" id="pullup-ring-svg">
+          <circle cx="36" cy="36" r="28" fill="none" stroke="#fce8ef" stroke-width="6"/>
+          <circle cx="36" cy="36" r="28" fill="none" stroke="#a83058" stroke-width="6"
+            stroke-linecap="round" transform="rotate(-90 36 36)"
+            stroke-dasharray="175.9" stroke-dashoffset="175.9" id="pullup-ring-arc"/>
+          <text x="36" y="34" text-anchor="middle" font-family="'Playfair Display',serif" font-size="17" font-weight="700" fill="#2a1520" id="pullup-ring-val">1/5</text>
+          <text x="36" y="48" text-anchor="middle" font-family="'Outfit',sans-serif" font-size="8" fill="#7a5568" id="pullup-ring-name">Dead hang</text>
+        </svg>
+        <div class="m-sub" style="text-align:center;">of 5 stages</div>
+      </div>
     </div>
 
     <!-- Exercise trend chart -->
@@ -918,7 +985,7 @@ body{
       <div id="trend-insight" style="margin-top:.75rem;font-size:.75rem;color:var(--ink3);font-family:'Roboto Mono',monospace;min-height:1.2em;"></div>
     </div>
 
-    <!-- Two-col: PRs + two split charts -->
+    <!-- Two-col: PRs + split bars -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;" class="two-col-cards">
       <div class="section-card" style="margin:0;">
         <div class="sc-title">Personal records <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">sorted by frequency</span></div>
@@ -926,13 +993,13 @@ body{
       </div>
       <div style="display:flex;flex-direction:column;gap:1rem;">
         <div class="section-card" style="margin:0;">
-          <div class="sc-title">Push vs Pull <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">volume by tag</span></div>
-          <div style="position:relative;height:140px;"><canvas id="pushpull-chart"></canvas></div>
+          <div class="sc-title">Push vs Pull <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">volume balance</span></div>
+          <div id="pushpull-stacked"></div>
           <div id="pushpull-balance" style="margin-top:.5rem;font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink3);line-height:1.6;"></div>
         </div>
         <div class="section-card" style="margin:0;">
-          <div class="sc-title">Upper vs Lower <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">volume by tag</span></div>
-          <div style="position:relative;height:140px;"><canvas id="upperlower-chart"></canvas></div>
+          <div class="sc-title">Upper vs Lower <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">volume balance</span></div>
+          <div id="upperlower-stacked"></div>
           <div id="upperlower-balance" style="margin-top:.5rem;font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink3);line-height:1.6;"></div>
         </div>
       </div>
@@ -955,7 +1022,10 @@ body{
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);margin-top:.75rem;align-items:center;">
         <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#f0e4ea;border-color:#e0c8d4;outline:2.5px solid #2d7dd2;outline-offset:2px;"></span>Today</span>
         <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#f0e4ea;border-color:#e0c8d4;"></span>Rest day</span>
-        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#d4527a;border-color:#a83058;"></span>Session logged</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#f5bcd0;border-color:#e8829f;"></span>Light</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#e8829f;border-color:#d4527a;"></span>Moderate</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#d4527a;border-color:#a83058;"></span>Full session</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span class="hm-swatch" style="background:#a83058;border-color:#7a1a40;"></span>High volume</span>
       </div>
     </div>
 
@@ -968,7 +1038,10 @@ body{
     <!-- Recent sessions log -->
     <div class="section-card">
       <div class="sc-title">Recent sessions</div>
-      <div id="p-history"></div>
+      <div style="position:relative;padding-left:28px;" id="p-history-timeline">
+        <div style="position:absolute;left:10px;top:0;bottom:0;width:1.5px;background:var(--border);border-radius:2px;"></div>
+        <div id="p-history"></div>
+      </div>
     </div>
   </div>
 
@@ -1834,6 +1907,8 @@ async function renderPlanExList(){
     return;
   }
   list.innerHTML='';
+  const total=day.exercises.length;
+
   day.exercises.forEach((ex,ri)=>{
     const libEx=LIBRARY[ex.libIdx];
     if(!libEx) return;
@@ -1841,8 +1916,10 @@ async function renderPlanExList(){
     // ── Peloton class: compact reminder row ──
     if(libEx.equipment==='peloton'){
       const row=document.createElement('div');
-      row.style.cssText='display:grid;grid-template-columns:36px 1fr 44px;align-items:center;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--border2);';
+      row.style.cssText='display:grid;grid-template-columns:36px 1fr 44px;align-items:center;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--border2);position:relative;padding-left:2rem;';
+      row.setAttribute('data-ri', ri);
       row.innerHTML=`
+        ${_dragHandleSVG(ri, total)}
         <div style="background:var(--sage);color:white;border-radius:8px;width:36px;height:36px;
           display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           ${PELOTON_SVG.replace('width="44" height="44"','width="22" height="22"')}
@@ -1856,10 +1933,18 @@ async function renderPlanExList(){
             value="${ex.notes||''}" placeholder="notes…"
             onchange="updPlanField(${ri},'notes',this.value)">
         </div>
-        <button class="rm-btn" onclick="removeEx(${ri})" aria-label="Remove">✕</button>`;
+        <div style="display:flex;align-items:center;gap:.375rem;">
+          <div class="reorder-btns">
+            <button class="reorder-btn" onclick="moveEx(${ri},-1)" ${ri===0?'disabled':''} title="Move up">↑</button>
+            <button class="reorder-btn" onclick="moveEx(${ri},1)" ${ri===total-1?'disabled':''} title="Move down">↓</button>
+          </div>
+          <button class="rm-btn" onclick="removeEx(${ri})" aria-label="Remove">✕</button>
+        </div>`;
+      _addDragListeners(row, ri);
       list.appendChild(row);
       return;
     }
+
     const tagHTMLparts=[];
     libEx.tags.forEach(t=>tagHTMLparts.push(`<span class="tag tag-${t}">${t}</span>`));
     if(libEx.knee) tagHTMLparts.push('<span class="tag tag-knee">knee-aware</span>');
@@ -1870,7 +1955,11 @@ async function renderPlanExList(){
     const isBW=(libEx.equipment==='pullup'||libEx.equipment==='bw');
     const row=document.createElement('div');
     row.className='ex-row';
+    row.style.paddingLeft='2rem';
+    row.setAttribute('data-ri', ri);
+    row.setAttribute('draggable','true');
     row.innerHTML=`
+      ${_dragHandleSVG(ri, total)}
       <div>
         <div class="ex-name">${libEx.name}</div>
         <div class="ex-detail">${libEx.detail}</div>
@@ -1887,10 +1976,128 @@ async function renderPlanExList(){
       <input class="note-inp" type="text" maxlength="50"
         value="${ex.notes||''}" placeholder="notes…"
         onchange="updPlanField(${ri},'notes',this.value)">
-      <button class="rm-btn" onclick="removeEx(${ri})" aria-label="Remove">✕</button>`;
+      <div style="display:flex;align-items:center;gap:.375rem;">
+        <div class="reorder-btns">
+          <button class="reorder-btn" onclick="moveEx(${ri},-1)" ${ri===0?'disabled':''} title="Move up">↑</button>
+          <button class="reorder-btn" onclick="moveEx(${ri},1)" ${ri===total-1?'disabled':''} title="Move down">↓</button>
+        </div>
+        <button class="rm-btn" onclick="removeEx(${ri})" aria-label="Remove">✕</button>
+      </div>`;
+    _addDragListeners(row, ri);
     list.appendChild(row);
   });
   checkStartBar();
+}
+
+/* Drag-and-drop handle SVG */
+function _dragHandleSVG(ri, total){
+  return `<div class="drag-handle" title="Drag to reorder">
+    <svg width="12" height="18" viewBox="0 0 12 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="4" cy="4" r="1.5" fill="currentColor"/>
+      <circle cx="8" cy="4" r="1.5" fill="currentColor"/>
+      <circle cx="4" cy="9" r="1.5" fill="currentColor"/>
+      <circle cx="8" cy="9" r="1.5" fill="currentColor"/>
+      <circle cx="4" cy="14" r="1.5" fill="currentColor"/>
+      <circle cx="8" cy="14" r="1.5" fill="currentColor"/>
+    </svg>
+  </div>`;
+}
+
+/* Drag-and-drop event wiring */
+let _dragSrcRi = null;
+
+function _addDragListeners(row, ri){
+  row.addEventListener('dragstart', e=>{
+    _dragSrcRi = ri;
+    row.classList.add('dragging');
+    e.dataTransfer.effectAllowed='move';
+  });
+  row.addEventListener('dragend', ()=>{
+    row.classList.remove('dragging');
+    document.querySelectorAll('.ex-row.drag-over,[data-ri].drag-over').forEach(el=>el.classList.remove('drag-over'));
+  });
+  row.addEventListener('dragover', e=>{
+    e.preventDefault();
+    e.dataTransfer.dropEffect='move';
+    if(_dragSrcRi!==ri){
+      document.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'));
+      row.classList.add('drag-over');
+    }
+  });
+  row.addEventListener('dragleave', ()=>row.classList.remove('drag-over'));
+  row.addEventListener('drop', e=>{
+    e.preventDefault();
+    row.classList.remove('drag-over');
+    if(_dragSrcRi===null||_dragSrcRi===ri) return;
+    _dropExercise(_dragSrcRi, ri);
+    _dragSrcRi=null;
+  });
+
+  // Touch reorder — long-press on handle to enable touch drag
+  const handle=row.querySelector('.drag-handle');
+  if(!handle) return;
+  let _touchY=0, _touchTimer=null, _touchActive=false;
+  handle.addEventListener('touchstart', e=>{
+    _touchY=e.touches[0].clientY;
+    _touchActive=false;
+    _touchTimer=setTimeout(()=>{
+      _touchActive=true;
+      _dragSrcRi=ri;
+      row.classList.add('dragging');
+    }, 200);
+  },{passive:true});
+  handle.addEventListener('touchmove', e=>{
+    if(!_touchActive) return;
+    e.preventDefault();
+    const y=e.touches[0].clientY;
+    // Find which row we're over
+    const els=[...document.querySelectorAll('#plan-ex-list [data-ri]')];
+    document.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'));
+    let target=null;
+    els.forEach(el=>{
+      const rect=el.getBoundingClientRect();
+      if(y>=rect.top&&y<=rect.bottom) target=el;
+    });
+    if(target&&parseInt(target.getAttribute('data-ri'))!==ri){
+      target.classList.add('drag-over');
+    }
+  },{passive:false});
+  handle.addEventListener('touchend', e=>{
+    clearTimeout(_touchTimer);
+    if(!_touchActive){_dragSrcRi=null;return;}
+    const y=e.changedTouches[0].clientY;
+    const els=[...document.querySelectorAll('#plan-ex-list [data-ri]')];
+    let targetRi=null;
+    els.forEach(el=>{
+      const rect=el.getBoundingClientRect();
+      if(y>=rect.top&&y<=rect.bottom) targetRi=parseInt(el.getAttribute('data-ri'));
+    });
+    document.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'));
+    row.classList.remove('dragging');
+    if(targetRi!==null&&targetRi!==ri) _dropExercise(ri,targetRi);
+    _dragSrcRi=null; _touchActive=false;
+  },{passive:true});
+}
+
+async function _dropExercise(fromRi, toRi){
+  const ws=getWeekStart(weekOffset);
+  const week=await loadWeek(ws);
+  const exs=week.days[curDay].exercises;
+  const [moved]=exs.splice(fromRi,1);
+  exs.splice(toRi,0,moved);
+  await saveWeekData(ws,week);
+  renderPlanExList();
+}
+
+async function moveEx(ri, dir){
+  const ws=getWeekStart(weekOffset);
+  const week=await loadWeek(ws);
+  const exs=week.days[curDay].exercises;
+  const newRi=ri+dir;
+  if(newRi<0||newRi>=exs.length) return;
+  [exs[ri],exs[newRi]]=[exs[newRi],exs[ri]];
+  await saveWeekData(ws,week);
+  renderPlanExList();
 }
 
 async function updPlanField(ri,field,val){
@@ -2132,8 +2339,13 @@ function buildWeightNote(libEx, totalWeight, fallbackNote){
    ══════════════════════════════════════════════ */
 async function toggleLibrary(){
   libOpen=!libOpen;
-  document.getElementById('lib-panel').style.display=libOpen?'block':'none';
-  if(libOpen) renderLibrary();
+  const panel=document.getElementById('lib-panel');
+  panel.style.display=libOpen?'block':'none';
+  if(libOpen){
+    renderLibrary();
+    // Scroll the library panel into view smoothly
+    setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+  }
 }
 async function renderLibrary(){
   const ws=getWeekStart(weekOffset);
@@ -2587,18 +2799,60 @@ async function renderProgressView(){
   const daySet=new Set(entries.map(e=>e.date));
   document.getElementById('p-sessions').textContent=daySet.size;
   const now=new Date(); const ms=now.toISOString().substring(0,7);
-  document.getElementById('p-month').textContent=new Set(entries.filter(e=>e.date.startsWith(ms)).map(e=>e.date)).size;
+  const monthCount=new Set(entries.filter(e=>e.date.startsWith(ms)).map(e=>e.date)).size;
+  const MONTH_GOAL=16;
+
+  // Month ring
+  const monthArc=document.getElementById('month-ring-arc');
+  const monthVal=document.getElementById('month-ring-val');
+  const monthSub=document.getElementById('month-ring-sub');
+  if(monthArc&&monthVal){
+    const pct=Math.min(1,monthCount/MONTH_GOAL);
+    const circ=175.9;
+    monthArc.style.transition='stroke-dashoffset .7s cubic-bezier(.4,0,.2,1)';
+    monthArc.setAttribute('stroke-dashoffset', String(Math.round(circ*(1-pct))));
+    monthVal.textContent=monthCount;
+    if(monthSub) monthSub.textContent=monthCount>=MONTH_GOAL?'Goal reached! 🎯':`of ${MONTH_GOAL} goal`;
+    monthArc.setAttribute('stroke', monthCount>=MONTH_GOAL?'#5ec49a':'#d4527a');
+  }
+
   const vol=entries.reduce((s,e)=>s+(e.weight||0)*(e.reps||0)*(e.sets||0),0);
   document.getElementById('p-vol').textContent=vol>=1000?Math.round(vol/1000)+'k lb':vol+' lb';
-  document.getElementById('p-pullup').textContent=(getPullupStage()+1)+'/5';
 
-  // Build sorted exercise list by frequency
+  // Pull-up ring
+  const stage=getPullupStage();
+  const pullupArc=document.getElementById('pullup-ring-arc');
+  const pullupVal=document.getElementById('pullup-ring-val');
+  const pullupName=document.getElementById('pullup-ring-name');
+  if(pullupArc&&pullupVal){
+    const pct=(stage)/(PULLUP_STAGES.length-1);
+    const circ=175.9;
+    pullupArc.style.transition='stroke-dashoffset .7s cubic-bezier(.4,0,.2,1)';
+    pullupArc.setAttribute('stroke-dashoffset', String(Math.round(circ*(1-pct))));
+    pullupVal.textContent=`${stage+1}/5`;
+    if(pullupName) pullupName.textContent=PULLUP_STAGES[stage]?.name||'';
+  }
+
+  // Build frequency map
   const freq={};
   entries.forEach(e=>{ freq[e.ex]=(freq[e.ex]||0)+1; });
+  // Count unique dates per exercise (distinct sessions)
+  const dateCounts={};
+  entries.forEach(e=>{
+    if(!dateCounts[e.ex]) dateCounts[e.ex]=new Set();
+    dateCounts[e.ex].add(e.date);
+  });
   const sorted=Object.keys(freq).sort((a,b)=>freq[b]-freq[a]);
 
-  // Build toggle pills — all selected by default on first load
-  if(selectedExercises.size===0) sorted.forEach(ex=>selectedExercises.add(ex));
+  // On first load: auto-select exercises with >=3 unique session dates, up to top 5 by frequency
+  // Exercises with 1-2 datapoints start hidden
+  if(selectedExercises.size===0){
+    const eligible=sorted.filter(ex=>(dateCounts[ex]?.size||0)>=3);
+    const autoSelect=eligible.slice(0,5);
+    // If nothing qualifies, show top 3 anyway
+    if(autoSelect.length===0) sorted.slice(0,3).forEach(ex=>selectedExercises.add(ex));
+    else autoSelect.forEach(ex=>selectedExercises.add(ex));
+  }
   // Remove any exercises no longer in entries
   [...selectedExercises].forEach(ex=>{ if(!freq[ex]) selectedExercises.delete(ex); });
 
@@ -2610,14 +2864,18 @@ async function renderProgressView(){
     } else {
       sorted.forEach(ex=>{
         const active=selectedExercises.has(ex);
+        const sessions=dateCounts[ex]?.size||0;
+        const fewData=sessions<3;
         const pill=document.createElement('button');
         pill.className='p-metric-btn'+(active?' active':'');
-        pill.style.cssText='font-size:.62rem;padding:4px 10px;border-radius:20px;';
-        pill.textContent=ex;
+        pill.style.cssText='font-size:.62rem;padding:4px 10px;border-radius:20px;'+(fewData&&!active?'opacity:.55;':'');
+        pill.title=fewData?`${sessions} session${sessions!==1?'s':''} — log more to see a trend`:'';
+        pill.textContent=ex+(fewData?` (${sessions})` :'');
         pill.onclick=()=>{
           if(selectedExercises.has(ex)) selectedExercises.delete(ex);
           else selectedExercises.add(ex);
           pill.classList.toggle('active', selectedExercises.has(ex));
+          pill.style.opacity=(!selectedExercises.has(ex)&&fewData)?'.55':'1';
           renderTrendChart();
         };
         toggleRow.appendChild(pill);
@@ -2656,14 +2914,12 @@ async function renderTrendChart(){
     return;
   }
 
-  // Palette — enough colours for typical exercise count
   const PALETTE=[
     '#d4527a','#5b8fd4','#5ec49a','#e8a03e','#9b6dd6',
     '#e85e8a','#3a9bd5','#2ecc8a','#f0b429','#7c5cbf',
     '#c2547e','#2d7dd2','#27ae60','#e67e22','#8e44ad',
   ];
 
-  // Collect all unique dates across selected exercises, sorted
   const allDates=[...new Set(
     activeExs.flatMap(ex=>entries.filter(e=>e.ex===ex).map(e=>e.date))
   )].sort();
@@ -2671,7 +2927,6 @@ async function renderTrendChart(){
   const datasets=activeExs.map((ex,i)=>{
     const color=PALETTE[i%PALETTE.length];
     const exEntries=entries.filter(e=>e.ex===ex);
-    // Best per date
     const byDate={};
     exEntries.forEach(e=>{
       const val=activeMetric==='weight'?e.weight
@@ -2680,18 +2935,23 @@ async function renderTrendChart(){
         :e1rm(e.weight,e.reps);
       if(!byDate[e.date]||val>byDate[e.date]) byDate[e.date]=val;
     });
+    // Build gradient fill
+    const grad=ctx.createLinearGradient(0,0,0,240);
+    grad.addColorStop(0, color+'50');
+    grad.addColorStop(1, color+'00');
     return {
       label:ex,
       data:allDates.map(d=>byDate[d]??null),
       borderColor:color,
-      backgroundColor:color+'18',
-      fill:false,
-      tension:0.35,
+      backgroundColor:grad,
+      fill:true,
+      tension:0.4,
       pointRadius:allDates.length>20?2:4,
       pointBackgroundColor:color,
       pointBorderColor:'white',
       pointBorderWidth:1.5,
       pointHoverRadius:6,
+      borderWidth:2.5,
       spanGaps:false,
     };
   });
@@ -2704,6 +2964,7 @@ async function renderTrendChart(){
     },
     options:{
       responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
       plugins:{
         legend:{
           display:activeExs.length>1,
@@ -2722,7 +2983,7 @@ async function renderTrendChart(){
     }
   });
 
-  // Insight — show for single selected exercise only
+  // Insight
   const insight=document.getElementById('trend-insight');
   if(activeExs.length===1){
     const ex=activeExs[0];
@@ -2752,64 +3013,8 @@ async function renderTrendChart(){
   }
 }
 
-let pushPullChartInst=null, upperLowerChartInst=null;
-
-function makeSplitDonut(canvasId, data, colors, labels, balanceElId, balanceText){
-  const ctx=document.getElementById(canvasId)?.getContext('2d');
-  if(!ctx) return;
-
-  const total=data.reduce((s,v)=>s+v,0);
-  if(!total){
-    ctx.clearRect(0,0,300,140);
-    ctx.fillStyle='#b899a8';ctx.font='12px Outfit,sans-serif';ctx.textAlign='center';
-    ctx.fillText('No data yet',150,70);
-    return null;
-  }
-
-  const chart=new Chart(ctx,{
-    type:'doughnut',
-    data:{
-      labels,
-      datasets:[{data,backgroundColor:colors,borderWidth:3,borderColor:'white'}]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      cutout:'55%',
-      plugins:{
-        legend:{
-          position:'right',
-          labels:{
-            font:{size:12,family:'Outfit'},color:'#3d2030',padding:10,
-            generateLabels:()=>labels.map((lbl,i)=>({
-              text:`${lbl}  ${Math.round(data[i]/total*100)}%`,
-              fillStyle:colors[i],strokeStyle:'white',hidden:false,index:i,
-            }))
-          }
-        },
-        tooltip:{callbacks:{
-          label:c=>{
-            const pct=Math.round(c.parsed/total*100);
-            const vol=c.parsed>=1000?(c.parsed/1000).toFixed(1)+'k lb':c.parsed+' lb';
-            return ` ${c.label}: ${vol} (${pct}%)`;
-          }
-        }}
-      }
-    }
-  });
-
-  const el=document.getElementById(balanceElId);
-  if(el) el.textContent=balanceText;
-  return chart;
-}
-
 function renderSplitCharts(entries){
-  // Destroy existing instances
-  if(pushPullChartInst){pushPullChartInst.destroy();pushPullChartInst=null;}
-  if(upperLowerChartInst){upperLowerChartInst.destroy();upperLowerChartInst=null;}
-  // Also handle old single chart
-  if(muscleChartInst){muscleChartInst.destroy();muscleChartInst=null;}
-
-  const push={vol:0}, pull={vol:0}, upper={vol:0}, lower={vol:0}, core={vol:0};
+  const push={vol:0}, pull={vol:0}, upper={vol:0}, lower={vol:0};
 
   entries.forEach(e=>{
     const libEx=LIBRARY.find(l=>l.name===e.ex); if(!libEx) return;
@@ -2819,53 +3024,108 @@ function renderSplitCharts(entries){
     if(tags.includes('pull'))  pull.vol+=vol;
     if(tags.includes('upper')) upper.vol+=vol;
     if(tags.includes('lower')) lower.vol+=vol;
-    if(tags.includes('core'))  core.vol+=vol;
   });
 
-  // Push vs Pull
-  const ppRatio=pull.vol>0?(push.vol/pull.vol).toFixed(1):'—';
-  const ppDiff=Math.abs(push.vol-pull.vol)/(push.vol+pull.vol||1)*100;
-  const ppNote=push.vol===0&&pull.vol===0?'':
-    ppDiff>15?(push.vol>pull.vol?'↑ Add more pull work':'↑ Add more push work'):
-    '✓ Balanced';
-  pushPullChartInst=makeSplitDonut(
-    'pushpull-chart',
-    [Math.round(push.vol), Math.round(pull.vol)],
-    ['#e8829f','#d4527a'],
-    ['Push','Pull'],
-    'pushpull-balance',
-    push.vol||pull.vol ? `Push:Pull ratio ${ppRatio} · ${ppNote}` : ''
-  );
+  function renderStackedBar(containerId, aVol, bVol, aLabel, bLabel, aColor, bColor, balanceElId, noteText){
+    const el=document.getElementById(containerId);
+    const balEl=document.getElementById(balanceElId);
+    if(!el) return;
+    const total=aVol+bVol;
+    if(!total){
+      el.innerHTML='<div style="font-size:.78rem;color:var(--ink4);padding:.5rem 0;">Log sessions to see balance.</div>';
+      if(balEl) balEl.textContent='';
+      return;
+    }
+    const aPct=Math.round((aVol/total)*100);
+    const bPct=100-aPct;
+    el.innerHTML=`
+      <div style="display:flex;gap:0;border-radius:6px;overflow:hidden;height:30px;margin:.25rem 0 .5rem;">
+        <div style="background:${aColor};width:${aPct}%;display:flex;align-items:center;justify-content:center;
+          font-family:'Roboto Mono',monospace;font-size:.65rem;font-weight:500;color:white;
+          min-width:${aPct>12?'auto':'0'};overflow:hidden;white-space:nowrap;">
+          ${aPct>15?aLabel+' '+aPct+'%':''}
+        </div>
+        <div style="background:${bColor};width:${bPct}%;display:flex;align-items:center;justify-content:center;
+          font-family:'Roboto Mono',monospace;font-size:.65rem;font-weight:500;
+          color:${bPct>25?'white':'var(--ink2)'};
+          min-width:${bPct>12?'auto':'0'};overflow:hidden;white-space:nowrap;">
+          ${bPct>15?bLabel+' '+bPct+'%':''}
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);">
+        <span style="display:flex;align-items:center;gap:4px;">
+          <span style="width:8px;height:8px;border-radius:2px;background:${aColor};display:inline-block;"></span>${aLabel} ${aPct}%
+        </span>
+        <span style="display:flex;align-items:center;gap:4px;">
+          <span style="width:8px;height:8px;border-radius:2px;background:${bColor};display:inline-block;"></span>${bLabel} ${bPct}%
+        </span>
+      </div>`;
+    if(balEl) balEl.textContent=noteText;
+  }
 
-  // Upper vs Lower (core excluded — it's neither)
+  // Push vs Pull
+  const ppDiff=Math.abs(push.vol-pull.vol)/(push.vol+pull.vol||1)*100;
+  const ppRatio=pull.vol>0?(push.vol/pull.vol).toFixed(1):'—';
+  const ppNote=push.vol===0&&pull.vol===0?'':
+    ppDiff>15?(push.vol>pull.vol?'Push-heavy · add more pull work':'Pull-heavy · add more push work'):
+    '✓ Well balanced';
+  renderStackedBar('pushpull-stacked',
+    Math.round(push.vol), Math.round(pull.vol),
+    'Push','Pull','#e8829f','#d4527a',
+    'pushpull-balance',
+    push.vol||pull.vol?`Push:Pull ratio ${ppRatio} · ${ppNote}`:'');
+
+  // Upper vs Lower
   const ulTotal=upper.vol+lower.vol;
+  const ulDiff=ulTotal?Math.abs(upper.vol-lower.vol)/ulTotal*100:0;
   const ulNote=ulTotal===0?'':
-    Math.abs(upper.vol-lower.vol)/ulTotal*100>20?
-    (upper.vol>lower.vol?'↑ Add more lower body work':'↑ Add more upper body work'):
-    '✓ Balanced';
-  upperLowerChartInst=makeSplitDonut(
-    'upperlower-chart',
-    [Math.round(upper.vol), Math.round(lower.vol)],
-    ['#c2547e','#f5bcd0'],
-    ['Upper','Lower'],
+    ulDiff>20?(upper.vol>lower.vol?'Upper-heavy · add more lower body work':'Lower-heavy · add more upper body work'):
+    '✓ Well balanced';
+  renderStackedBar('upperlower-stacked',
+    Math.round(upper.vol), Math.round(lower.vol),
+    'Upper','Lower','#c2547e','#f5bcd0',
     'upperlower-balance',
-    ulTotal ? ulNote : ''
-  );
+    ulTotal?ulNote:'');
 }
 
-// Keep renderMuscleChart as a no-op alias so nothing breaks
+// Keep renderMuscleChart as alias
 function renderMuscleChart(entries){ renderSplitCharts(entries); }
 
 function renderHeatmap(entries){
-  // Binary: did you work out that day or not?
-  // Use unique dates only — one session per day regardless of how many sets
-  const workedDates=new Set(entries.filter(e=>e.source==='weekly').map(e=>e.date));
+  // Volume per date — used for 4-level intensity
+  const workedEntries=entries.filter(e=>e.source==='weekly');
+  const volByDate={};
+  workedEntries.forEach(e=>{
+    const vol=(e.weight||0)*(e.reps||0)*(e.sets||0);
+    volByDate[e.date]=(volByDate[e.date]||0)+vol;
+  });
+  const workedDates=new Set(Object.keys(volByDate));
 
-  const REST  ={bg:'#f0e4ea',border:'#e0c8d4'};
-  const WORKED={bg:'#d4527a',border:'#a83058'};
+  // 4-level intensity palette
+  const LEVELS=[
+    {bg:'#f0e4ea',border:'#e0c8d4'}, // rest
+    {bg:'#f5bcd0',border:'#e8829f'}, // light (1–33rd pctile of worked days)
+    {bg:'#e8829f',border:'#d4527a'}, // moderate
+    {bg:'#d4527a',border:'#a83058'}, // full
+    {bg:'#a83058',border:'#7a1a40'}, // high volume (top 10%)
+  ];
   const FUTURE={bg:'#f7f3f5',border:'#ede8eb'};
 
-  // Responsive week count
+  // Compute volume percentiles across worked dates
+  const vols=[...workedDates].map(d=>volByDate[d]).filter(v=>v>0).sort((a,b)=>a-b);
+  const p33=vols[Math.floor(vols.length*0.33)]||1;
+  const p66=vols[Math.floor(vols.length*0.66)]||2;
+  const p90=vols[Math.floor(vols.length*0.90)]||3;
+
+  function getLevel(ds){
+    if(!workedDates.has(ds)) return 0;
+    const v=volByDate[ds]||0;
+    if(v>=p90) return 4;
+    if(v>=p66) return 3;
+    if(v>=p33) return 2;
+    return 1;
+  }
+
   const W=window.innerWidth;
   const WEEKS=W<=600?6:W<=900?8:12;
 
@@ -2883,7 +3143,6 @@ function renderHeatmap(entries){
   thisMon.setDate(now.getDate()-daysToMon);
   thisMon.setHours(12,0,0,0);
 
-  // Week labels
   for(let w=0;w<WEEKS;w++){
     const mon=new Date(thisMon);
     mon.setDate(thisMon.getDate()-(WEEKS-1-w)*7);
@@ -2893,7 +3152,6 @@ function renderHeatmap(entries){
     weekLabels.appendChild(lbl);
   }
 
-  // Grid cells
   for(let row=0;row<7;row++){
     const rowLbl=document.createElement('div');
     rowLbl.style.cssText='font-family:Roboto Mono,monospace;font-size:.55rem;color:var(--ink4);display:flex;align-items:center;justify-content:flex-end;padding-right:4px;white-space:nowrap;';
@@ -2906,9 +3164,8 @@ function renderHeatmap(entries){
       const ds=localDateStr(cellDate);
       const isToday=ds===todayStr;
       const isFuture=ds>todayStr;
-      const worked=workedDates.has(ds);
-
-      const c=isFuture?FUTURE:worked?WORKED:REST;
+      const level=isFuture?-1:getLevel(ds);
+      const c=isFuture?FUTURE:LEVELS[level];
       const cell=document.createElement('div');
       cell.style.cssText=`aspect-ratio:1;border-radius:4px;background:${c.bg};border:1.5px solid ${c.border};`;
       if(isToday){
@@ -2916,28 +3173,26 @@ function renderHeatmap(entries){
         cell.style.outlineOffset='2px';
       }
       const dayLabel=cellDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-      cell.title=`${dayLabel}${isToday?' (today)':''}${isFuture?'':worked?' · ✓ session logged':' · rest day'}`;
+      const volLabel=level>0?` · ${Math.round(volByDate[ds]||0).toLocaleString()} lb vol`:'';
+      cell.title=`${dayLabel}${isToday?' (today)':''}${isFuture?'':level>0?' · ✓ session logged'+volLabel:' · rest day'}`;
       grid.appendChild(cell);
     }
   }
 
-  // Calculate current streak and show it
+  // Streak and stats
   const streakEl=document.getElementById('heatmap-streak');
   if(streakEl){
     let streak=0;
-    // Walk backwards from yesterday (or today if worked today)
     const startFrom=workedDates.has(todayStr)?todayStr:addDays(todayStr,-1);
     let cursor=startFrom;
     for(let i=0;i<84;i++){
       if(workedDates.has(cursor)) streak++;
-      else if(streak>0) break; // first gap ends the streak
+      else if(streak>0) break;
       cursor=addDays(cursor,-1);
     }
-    // Count total sessions in the window
     const windowStart=addDays(todayStr,-(WEEKS*7-1));
     const sessionsInWindow=[...workedDates].filter(d=>d>=windowStart&&d<=todayStr).length;
     const totalDays=[...workedDates].filter(d=>d<=todayStr).length;
-
     streakEl.textContent=streak>1
       ?`${streak}-day streak · ${sessionsInWindow} sessions this period`
       :`${sessionsInWindow} sessions in last ${WEEKS} weeks · ${totalDays} total`;
@@ -2949,50 +3204,57 @@ function renderPRs(entries,freq){
   [...entries].sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{
     const libEx=LIBRARY.find(l=>l.name===e.ex);
     const isBW=libEx?.equipment==='pullup'||libEx?.equipment==='bw';
-    // For BW exercises track max reps; for weighted track max weight
     const val=isBW?e.reps:e.weight;
     if(!first[e.ex]) first[e.ex]=val;
     if(!prs[e.ex]||val>prs[e.ex].best)
-      prs[e.ex]={best:val,date:e.date,delta:val-first[e.ex],isBW,e1rm:isBW?null:e1rm(e.weight,e.reps||10)};
+      prs[e.ex]={best:val,date:e.date,delta:val-first[e.ex],start:first[e.ex],isBW,e1rm:isBW?null:e1rm(e.weight,e.reps||10)};
   });
   const sorted=Object.keys(prs).sort((a,b)=>(freq[b]||0)-(freq[a]||0));
   const div=document.getElementById('p-prs');
-  if(!sorted.length){div.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ink4);font-size:.82rem;">Log sessions to see your records.</div>';return;}
-  div.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:.8rem;">
-    <thead><tr>
-      <th style="font-family:'Roboto Mono',monospace;font-size:.57rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);padding:0 0 8px;text-align:left;border-bottom:1px solid var(--border);">Exercise</th>
-      <th style="font-family:'Roboto Mono',monospace;font-size:.57rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);padding:0 0 8px;text-align:center;border-bottom:1px solid var(--border);">Best</th>
-      <th style="font-family:'Roboto Mono',monospace;font-size:.57rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);padding:0 0 8px;text-align:center;border-bottom:1px solid var(--border);">Est. 1RM</th>
-      <th style="font-family:'Roboto Mono',monospace;font-size:.57rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);padding:0 0 8px;text-align:center;border-bottom:1px solid var(--border);">Progress</th>
-    </tr></thead><tbody>
-    ${sorted.map(ex=>{
-      const pr=prs[ex];
-      const prDate=new Date(pr.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      const bestLabel=pr.isBW?`${pr.best} reps`:`${pr.best} lb`;
-      const e1rmLabel=pr.isBW?'—':`${pr.e1rm} lb`;
-      const deltaVal=pr.delta>0?`<span style="color:var(--sage2);font-weight:600;">+${pr.delta} ${pr.isBW?'reps':'lb'}</span>`:`<span style="color:var(--ink4);">—</span>`;
-      return `<tr>
-        <td style="padding:7px 0;border-bottom:1px solid var(--border2);color:var(--ink2);">
-          ${ex}<br><span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);">${freq[ex]||0}× logged</span>
-        </td>
-        <td style="padding:7px 0;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-weight:600;text-align:center;">
-          ${bestLabel}<br><span style="font-size:.6rem;font-weight:400;color:var(--ink4);">${prDate}</span>
-        </td>
-        <td style="padding:7px 0;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-size:.78rem;text-align:center;color:var(--ink3);">${e1rmLabel}</td>
-        <td style="padding:7px 0;border-bottom:1px solid var(--border2);text-align:center;">${deltaVal}</td>
-      </tr>`;
-    }).join('')}</tbody></table>`;
+  if(!sorted.length){
+    div.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ink4);font-size:.82rem;">Log sessions to see your records.</div>';
+    return;
+  }
+  div.innerHTML=sorted.map(ex=>{
+    const pr=prs[ex];
+    const prDate=new Date(pr.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const unit=pr.isBW?'reps':'lb';
+    const bestLabel=`${pr.best} ${unit}`;
+    const e1rmLabel=pr.isBW?'':` · est. 1RM: ${pr.e1rm} lb`;
+    // Progress bar: fill from start to best, relative to start × 2 (so hitting 2× start = full bar)
+    const barPct=pr.start>0?Math.min(100,Math.round((pr.best/pr.start/2)*100)):50;
+    const pct=pr.start>0?Math.round(((pr.best-pr.start)/pr.start)*100):0;
+    const deltaBadge=pr.delta>0
+      ?`<span style="font-family:'Roboto Mono',monospace;font-size:.6rem;background:var(--sage-lt);color:var(--sage2);padding:2px 7px;border-radius:10px;font-weight:500;">+${pr.delta} ${unit}</span>`
+      :'';
+    return `<div style="padding:.75rem 0;border-bottom:1px solid var(--border2);">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.375rem;">
+        <div style="font-size:.83rem;font-weight:600;color:var(--ink2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ex}</div>
+        <div style="display:flex;gap:5px;align-items:center;flex-shrink:0;">
+          ${deltaBadge}
+          <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);">${freq[ex]||0}×</span>
+        </div>
+      </div>
+      <div style="position:relative;height:7px;background:var(--cream3);border-radius:4px;overflow:hidden;margin-bottom:.375rem;">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:${barPct}%;background:linear-gradient(90deg,#e8829f,#d4527a);border-radius:4px;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);">
+        <span>Start: ${pr.start} ${unit}</span>
+        <span style="color:var(--sage2);font-weight:500;">PR: ${bestLabel} · ${prDate}${e1rmLabel}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderRecentSessions(entries){
-  const recent=[...entries].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,60);
+  const recent=[...entries].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,80);
   const div=document.getElementById('p-history');
   if(!recent.length){
     div.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ink4);font-size:.82rem;">No sessions logged yet.</div>';
     return;
   }
 
-  // Group by date, then by exercise within each date
+  // Group by date, then by exercise
   const byDate={};
   recent.forEach(e=>{
     if(!byDate[e.date]) byDate[e.date]={};
@@ -3000,42 +3262,56 @@ function renderRecentSessions(entries){
     byDate[e.date][e.ex].push(e);
   });
 
-  div.innerHTML=Object.entries(byDate).map(([date,exMap])=>{
+  div.innerHTML=Object.entries(byDate).map(([date,exMap],di)=>{
     const dateLabel=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
-    const exRows=Object.entries(exMap).map(([exName,sets])=>{
+    const isFirst=di===0;
+
+    // Mini bar chart data per exercise — use session volume for bar width
+    const exList=Object.entries(exMap);
+    const maxVol=Math.max(...exList.map(([,sets])=>sets.reduce((s,e)=>(s+(e.weight||0)*(e.reps||0)*(e.sets||1)),0)));
+
+    const exRows=exList.map(([exName,sets])=>{
       const bestWeight=Math.max(...sets.map(s=>s.weight||0));
       const totalSets=sets.length;
       const repRange=[...new Set(sets.map(s=>s.reps))];
-      const repLabel=repRange.length===1?`${repRange[0]} reps`:`${Math.min(...repRange)}–${Math.max(...repRange)} reps`;
+      const repLabel=repRange.length===1?`${repRange[0]}r`:`${Math.min(...repRange)}–${Math.max(...repRange)}r`;
       const isBandEx=sets[0]?.equipment==='band';
       const isBWEx=sets[0]?.equipment==='pullup'||sets[0]?.equipment==='bw';
       const bandNote=isBandEx&&sets[0]?.notes?sets[0].notes.split(' band')[0]:'';
       const maxReps=isBWEx?Math.max(...sets.map(s=>s.reps||0)):null;
-      const weightLabel=isBandEx?` · ${bandNote} band`:isBWEx?` · ${maxReps} reps max`:bestWeight>0?` · best <strong>${bestWeight} lb</strong>`:'';
-      return `<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;
-        padding:6px 10px;background:var(--cream2);border:1px solid var(--border2);
-        border-radius:6px;font-size:.78rem;">
-        <div style="flex:1;min-width:0;">
-          <span style="font-weight:600;color:var(--ink2);">${exName}</span>
-          <span style="color:var(--ink3);margin-left:.5rem;">${totalSets} set${totalSets!==1?'s':''} · ${repLabel}${weightLabel}</span>
+      const sessionVol=sets.reduce((s,e)=>(s+(e.weight||0)*(e.reps||0)*(e.sets||1)),0);
+      const barPct=maxVol>0?Math.max(8,Math.round((sessionVol/maxVol)*100)):8;
+
+      const weightLabel=isBandEx?` ${bandNote}`:isBWEx?` ${maxReps}r max`:bestWeight>0?` ${bestWeight}lb`:'';
+
+      return `<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem;">
+        <div style="width:90px;font-size:.68rem;color:var(--ink2);font-weight:500;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${exName}">${exName.replace(/^(DB |Barbell |BellaBooty )/,'')}</div>
+        <div style="flex:1;height:6px;background:var(--cream3);border-radius:3px;overflow:hidden;min-width:30px;">
+          <div style="height:100%;width:${barPct}%;background:linear-gradient(90deg,#e8829f,#d4527a);border-radius:3px;"></div>
         </div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);white-space:nowrap;flex-shrink:0;">${totalSets}s${weightLabel}</div>
         <button onclick="deleteSessionExercise('${date}','${exName.replace(/'/g,"\\'")}')"
-          style="width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);
-          background:transparent;color:var(--ink4);cursor:pointer;font-size:.7rem;
-          display:flex;align-items:center;justify-content:center;flex-shrink:0;"
-          title="Delete">✕</button>
+          style="width:22px;height:22px;border-radius:50%;border:1px solid var(--border);
+          background:transparent;color:var(--ink4);cursor:pointer;font-size:.6rem;
+          display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;" title="Delete">✕</button>
       </div>`;
     }).join('');
 
-    return `<div style="padding:.75rem 0;border-bottom:1px solid var(--border2);">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
-        <div style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--ink4);">${dateLabel}</div>
-        <button onclick="deleteSessionDay('${date}')"
-          style="font-family:'Roboto Mono',monospace;font-size:.58rem;color:var(--ink4);
-          background:none;border:1px solid var(--border);border-radius:4px;
-          padding:2px 6px;cursor:pointer;">Delete day</button>
+    return `<div style="position:relative;margin-bottom:1rem;">
+      <div style="position:absolute;left:-22px;top:12px;width:10px;height:10px;border-radius:50%;
+        background:${isFirst?'#d4527a':'var(--cream3)'};
+        border:2px solid ${isFirst?'#a83058':'var(--border)'};
+        z-index:1;"></div>
+      <div style="background:var(--cream2);border:1px solid var(--border2);border-radius:var(--r);padding:.875rem 1rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.625rem;flex-wrap:wrap;gap:.375rem;">
+          <div style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--ink4);">${dateLabel}</div>
+          <button onclick="deleteSessionDay('${date}')"
+            style="font-family:'Roboto Mono',monospace;font-size:.57rem;color:var(--ink4);
+            background:none;border:1px solid var(--border);border-radius:4px;
+            padding:2px 6px;cursor:pointer;">Delete</button>
+        </div>
+        ${exRows}
       </div>
-      <div style="display:flex;flex-direction:column;gap:.375rem;">${exRows}</div>
     </div>`;
   }).join('');
 }

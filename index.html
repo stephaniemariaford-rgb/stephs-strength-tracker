@@ -972,9 +972,9 @@ body{
             <option value="0">All time</option>
           </select>
           <div class="p-metric-btns" style="display:flex;gap:3px;">
-            <button class="p-metric-btn active" data-metric="weight" onclick="setMetric('weight',this)">Weight</button>
+            <button class="p-metric-btn" data-metric="weight" onclick="setMetric('weight',this)">Weight</button>
             <button class="p-metric-btn" data-metric="reps" onclick="setMetric('reps',this)">Reps</button>
-            <button class="p-metric-btn" data-metric="volume" onclick="setMetric('volume',this)">Volume</button>
+            <button class="p-metric-btn active" data-metric="volume" onclick="setMetric('volume',this)">Volume</button>
             <button class="p-metric-btn" data-metric="e1rm" onclick="setMetric('e1rm',this)">Est. 1RM</button>
           </div>
         </div>
@@ -988,7 +988,7 @@ body{
     <!-- Two-col: PRs + split bars -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;" class="two-col-cards">
       <div class="section-card" style="margin:0;">
-        <div class="sc-title">Personal records <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">sorted by frequency</span></div>
+        <div class="sc-title">Personal records <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);font-weight:400;">top gains</span></div>
         <div id="p-prs"></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:1rem;">
@@ -1031,16 +1031,26 @@ body{
 
     <!-- Pull-up ladder -->
     <div class="section-card">
-      <div class="sc-title">Pull-up progression ladder</div>
-      <div id="progress-pullup-stages"></div>
+      <div class="sc-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:0;" onclick="toggleCollapse('pullup-ladder-body','pullup-ladder-chevron')">
+        <span>Pull-up progression ladder</span>
+        <span id="pullup-ladder-chevron" style="font-family:'Roboto Mono',monospace;font-size:.7rem;color:var(--ink4);transition:transform .2s;">▼</span>
+      </div>
+      <div id="pullup-ladder-body" style="display:none;margin-top:.875rem;">
+        <div id="progress-pullup-stages"></div>
+      </div>
     </div>
 
     <!-- Recent sessions log -->
     <div class="section-card">
-      <div class="sc-title">Recent sessions</div>
-      <div style="position:relative;padding-left:28px;" id="p-history-timeline">
-        <div style="position:absolute;left:10px;top:0;bottom:0;width:1.5px;background:var(--border);border-radius:2px;"></div>
-        <div id="p-history"></div>
+      <div class="sc-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:0;" onclick="toggleCollapse('recent-sessions-body','recent-sessions-chevron')">
+        <span>Recent sessions</span>
+        <span id="recent-sessions-chevron" style="font-family:'Roboto Mono',monospace;font-size:.7rem;color:var(--ink4);transition:transform .2s;">▼</span>
+      </div>
+      <div id="recent-sessions-body" style="display:none;margin-top:.875rem;">
+        <div style="position:relative;padding-left:28px;" id="p-history-timeline">
+          <div style="position:absolute;left:10px;top:0;bottom:0;width:1.5px;background:var(--border);border-radius:2px;"></div>
+          <div id="p-history"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -2778,7 +2788,7 @@ async function loadHistWeek(wi){
    PROGRESS DASHBOARD
    ══════════════════════════════════════════════ */
 let trendChartInst=null, muscleChartInst=null;
-let activeMetric='weight';
+let activeMetric='volume';
 
 async function setMetric(metric,btn){
   activeMetric=metric;
@@ -2952,7 +2962,7 @@ async function renderTrendChart(){
       pointBorderWidth:1.5,
       pointHoverRadius:6,
       borderWidth:2.5,
-      spanGaps:false,
+      spanGaps:true,
     };
   });
 
@@ -3209,23 +3219,28 @@ function renderPRs(entries,freq){
     if(!prs[e.ex]||val>prs[e.ex].best)
       prs[e.ex]={best:val,date:e.date,delta:val-first[e.ex],start:first[e.ex],isBW,e1rm:isBW?null:e1rm(e.weight,e.reps||10)};
   });
-  const sorted=Object.keys(prs).sort((a,b)=>(freq[b]||0)-(freq[a]||0));
+  // Sort by most absolute progress made (delta), then by pct gain
+  const sorted=Object.keys(prs).sort((a,b)=>{
+    const pa=prs[a], pb=prs[b];
+    const pctA=pa.start>0?((pa.best-pa.start)/pa.start):0;
+    const pctB=pb.start>0?((pb.best-pb.start)/pb.start):0;
+    return pctB-pctA;
+  });
   const div=document.getElementById('p-prs');
   if(!sorted.length){
     div.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ink4);font-size:.82rem;">Log sessions to see your records.</div>';
     return;
   }
-  div.innerHTML=sorted.map(ex=>{
+  function prRowHTML(ex){
     const pr=prs[ex];
     const prDate=new Date(pr.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
     const unit=pr.isBW?'reps':'lb';
     const bestLabel=`${pr.best} ${unit}`;
     const e1rmLabel=pr.isBW?'':` · est. 1RM: ${pr.e1rm} lb`;
-    // Progress bar: fill from start to best, relative to start × 2 (so hitting 2× start = full bar)
     const barPct=pr.start>0?Math.min(100,Math.round((pr.best/pr.start/2)*100)):50;
     const pct=pr.start>0?Math.round(((pr.best-pr.start)/pr.start)*100):0;
     const deltaBadge=pr.delta>0
-      ?`<span style="font-family:'Roboto Mono',monospace;font-size:.6rem;background:var(--sage-lt);color:var(--sage2);padding:2px 7px;border-radius:10px;font-weight:500;">+${pr.delta} ${unit}</span>`
+      ?`<span style="font-family:'Roboto Mono',monospace;font-size:.6rem;background:var(--sage-lt);color:var(--sage2);padding:2px 7px;border-radius:10px;font-weight:500;">+${pr.delta} ${unit}${pct>0?' ('+pct+'%)':''}</span>`
       :'';
     return `<div style="padding:.75rem 0;border-bottom:1px solid var(--border2);">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.375rem;">
@@ -3243,7 +3258,21 @@ function renderPRs(entries,freq){
         <span style="color:var(--sage2);font-weight:500;">PR: ${bestLabel} · ${prDate}${e1rmLabel}</span>
       </div>
     </div>`;
-  }).join('');
+  }
+  const top3=sorted.slice(0,3);
+  const rest=sorted.slice(3);
+  let html=top3.map(prRowHTML).join('');
+  if(rest.length){
+    html+=`<div id="pr-rest" style="display:none;">${rest.map(prRowHTML).join('')}</div>
+    <button onclick="toggleCollapse('pr-rest','pr-chevron')"
+      style="margin-top:.5rem;width:100%;min-height:36px;background:none;border:1.5px solid var(--border);border-radius:var(--r);
+      font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink4);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:.375rem;">
+      <span id="pr-chevron">▼</span>
+      <span id="pr-toggle-lbl">Show ${rest.length} more</span>
+    </button>`;
+  }
+  div.innerHTML=html;
 }
 
 function renderRecentSessions(entries){
@@ -3437,6 +3466,26 @@ function confirmBackToPlan(){
   showPlanPanel();
 }
 
+
+// Generic collapse toggle — used for PR list, pull-up ladder, recent sessions
+function toggleCollapse(bodyId, chevronId){
+  const body=document.getElementById(bodyId);
+  const chev=document.getElementById(chevronId);
+  if(!body) return;
+  const opening=body.style.display==='none';
+  body.style.display=opening?'block':'none';
+  if(chev){
+    chev.style.transform=opening?'rotate(180deg)':'rotate(0deg)';
+  }
+  // Update PR toggle label if present
+  if(bodyId==='pr-rest'){
+    const lbl=document.getElementById('pr-toggle-lbl');
+    if(lbl){
+      const rows=body.querySelectorAll('[style*="border-bottom"]').length;
+      lbl.textContent=opening?'Show less':('Show '+rows+' more');
+    }
+  }
+}
 async function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');

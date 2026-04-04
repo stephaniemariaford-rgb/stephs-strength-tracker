@@ -1412,6 +1412,7 @@ const LIBRARY = [
   {name:'Band hip abduction',    detail:'Band around thighs above knees · seated or clamshell · glute med', tags:['lower'],        knee:false, equipment:'band'},
   {name:'DB Stiff-leg deadlift', detail:'Both DBs · minimal knee bend · full hamstring lengthening · slow eccentric',tags:['lower','glutes'],knee:false, equipment:'dumbbell', weightMode:'pair'},
   {name:'DB Calf raise',         detail:'One DB each hand · standing · full range plantarflexion · 3×15',   tags:['lower'],        knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'Push-ups',             detail:'Bodyweight · chest to floor · full lockout · scale with knee push-ups if needed', tags:['push','upper'], knee:false, equipment:'bw'},
   // ── CORE ─────────────────────────────────────────────
   // Core work done via Peloton — tracked as a class reminder, no weight needed
   {name:'Peloton 10-min Core',   detail:'Open Peloton app · Strength → Core · 10 min class · any instructor', tags:['core'], knee:false, equipment:'peloton'},
@@ -1423,33 +1424,35 @@ const LIBRARY = [
 const idx = name => LIBRARY.findIndex(l=>l.name===name);
 
 const TEMPLATES = {
-'Full Body A · Hip Hinge & Push': [
-  {libIdx:idx('DB Bench press'),        sets:3,reps:12,targetWeight:20,notes:'FLOOR PRESS — lie flat on floor · no bench needed · 10 lb each'},
-  {libIdx:idx('DB Arnold press'),       sets:3,reps:12,targetWeight:16,notes:'8 lb each · rotate palms in to out as you press'},
-  {libIdx:idx('DB Single-arm row'),     sets:3,reps:12,targetWeight:20,notes:'each side · brace on wall or couch'},
-  {libIdx:idx('Romanian deadlift'),     sets:3,reps:12,targetWeight:40,notes:'20 lb each · slow 3-sec lower · push hips back'},
-  {libIdx:idx('BellaBooty hip thrust'), sets:3,reps:15,targetWeight:30,notes:'15+15 lb · 1-sec squeeze at top'},
-  {libIdx:idx('Peloton 10-min Core'),   sets:1,reps:1, targetWeight:'', notes:'10 min class after lifting'},
+'Full Body A · Push focus': [
+  {libIdx:idx('DB Bench press'),        sets:3, reps:10, targetWeight:30,  notes:'15 lb each'},
+  {libIdx:idx('DB Shoulder press'),     sets:3, reps:10, targetWeight:20,  notes:'10 lb each'},
+  {libIdx:idx('DB Lateral raise'),      sets:3, reps:12, targetWeight:16,  notes:'8 lb each · slow 3-sec lower'},
+  {libIdx:idx('DB Tricep kickback'),    sets:3, reps:12, targetWeight:10,  notes:'5 lb each · hinge at hip · both arms'},
+  {libIdx:idx('Barbell back squat'),    sets:3, reps:10, targetWeight:45,  notes:'bar only to start · knee-aware · controlled depth'},
+  {libIdx:idx('Push-ups'),              sets:3, reps:10, targetWeight:'BW',notes:'chest finisher · after bench · full range'},
+  {libIdx:idx('Peloton 10-min Core'),   sets:1, reps:1,  targetWeight:'',  notes:'10 min class after lifting'},
 ],
-'Full Body B · Pull & Triceps': [
-  {libIdx:idx('DB Bent-over row'),      sets:3,reps:12,targetWeight:40,notes:'20 lb each · flat back · squeeze shoulder blades'},
-  {libIdx:idx('DB Rear delt fly'),      sets:3,reps:15,targetWeight:10, notes:'5 lb each · hinge forward · arms wide · posture work'},
-  {libIdx:idx('DB Overhead tricep ext'),sets:3,reps:12,targetWeight:15, notes:'one DB both hands · elbows in · long head focus'},
-  {libIdx:idx('DB Sumo deadlift'),      sets:3,reps:12,targetWeight:30, notes:'both hands · wide stance · inner thigh + glutes'},
-  {libIdx:idx('BellaBooty hip thrust'), sets:3,reps:15,targetWeight:30, notes:'15+15 lb · drive hips fully at top'},
-  {libIdx:idx('Peloton 10-min Core'),   sets:1,reps:1, targetWeight:'', notes:'10 min class after lifting'},
+'Full Body B · Pull focus': [
+  {libIdx:idx('DB Bent-over row'),      sets:3, reps:10, targetWeight:40,  notes:'20 lb each · flat back · squeeze shoulder blades'},
+  {libIdx:idx('DB Rear delt fly'),      sets:3, reps:12, targetWeight:16,  notes:'8 lb each · hinge forward · arms wide'},
+  {libIdx:idx('DB Hammer curl'),        sets:3, reps:12, targetWeight:20,  notes:'10 lb each'},
+  {libIdx:idx('DB Curl'),               sets:3, reps:10, targetWeight:20,  notes:'10 lb each · supinated grip · peak contraction'},
+  {libIdx:idx('Romanian deadlift'),     sets:3, reps:10, targetWeight:40,  notes:'20 lb each'},
+  {libIdx:idx('DB Step-up'),            sets:3, reps:10, targetWeight:20,  notes:'10 lb each · drive through heel'},
+  {libIdx:idx('Peloton 10-min Core'),   sets:1, reps:1,  targetWeight:'',  notes:'10 min class after lifting'},
 ],
 'Lower Body & Glutes': [
-  {libIdx:idx('BellaBooty hip thrust'), sets:4,reps:12,targetWeight:50, notes:'25+25 lb · heaviest hip thrust day'},
-  {libIdx:idx('Romanian deadlift'),     sets:3,reps:12,targetWeight:40, notes:'20 lb each · hinge anchor for this day'},
-  {libIdx:idx('DB Sumo deadlift'),      sets:3,reps:12,targetWeight:30, notes:'both hands · wide stance · knees track toes'},
-  {libIdx:idx('DB Stiff-leg deadlift'), sets:3,reps:12,targetWeight:26, notes:'13 lb each · full hamstring stretch · lighter than RDL'},
-  {libIdx:idx('Band hip abduction'),    sets:3,reps:20,targetWeight:'Medium',notes:'seated · glute med activation · keep knees tracking'},
-  {libIdx:idx('Peloton 10-min Core'),   sets:1,reps:1, targetWeight:'', notes:'10 min class after lifting'},
+  {libIdx:idx('BellaBooty hip thrust'), sets:4, reps:12, targetWeight:50,  notes:'25+25 lb'},
+  {libIdx:idx('Romanian deadlift'),     sets:3, reps:10, targetWeight:40,  notes:'20 lb each'},
+  {libIdx:idx('Barbell back squat'),    sets:3, reps:10, targetWeight:45,  notes:'bar only · knee-aware · controlled depth'},
+  {libIdx:idx('DB Step-up'),            sets:3, reps:10, targetWeight:20,  notes:'10 lb each · drive through heel'},
+  {libIdx:idx('Band hip abduction'),    sets:3, reps:20, targetWeight:'Medium', notes:'seated · glute med activation'},
+  {libIdx:idx('Peloton 10-min Core'),   sets:1, reps:1,  targetWeight:'',  notes:'10 min class after lifting'},
 ],
 };
 
-const DAY_NAMES    = ['Day A · Hip Hinge & Push','Day B · Pull & Triceps','Day C · Lower Body & Glutes','Day 4 · Optional'];
+const DAY_NAMES    = ['Day A · Push focus','Day B · Pull focus','Day C · Lower Body & Glutes','Day 4 · Optional'];
 const DEF_OFFSETS  = [0,2,4,6];
 const DAY_LABELS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
@@ -1532,13 +1535,14 @@ function buildPullupDayTemplate(){
   ][stage] || {name:'Dead hang', sets:3, reps:25, notes:'seconds'};
 
   return [
-    // Current pull-up stage exercise — the only progression work
+    // Current pull-up stage exercise
     {libIdx:idx(stageExercise.name), sets:stageExercise.sets, reps:stageExercise.reps, targetWeight:'BW', notes:stageExercise.notes},
-    // Lat pulldown — trains same muscles, always in this day
-    {libIdx:idx('Lat pulldown'),     sets:3, reps:10, targetWeight:95,  notes:'pull to upper chest'},
-    // Supportwork
-    {libIdx:idx('DB Single-arm row'),sets:3, reps:10, targetWeight:15,  notes:'each side'},
-    {libIdx:idx('DB Hammer curl'),   sets:3, reps:12, targetWeight:20,  notes:'10 lb each'},
+    // Lat pulldown — plates only, 90 lb = 45+45
+    {libIdx:idx('Lat pulldown'),     sets:3, reps:10, targetWeight:90,   notes:'pull to upper chest · plates only'},
+    // Support work
+    {libIdx:idx('DB Single-arm row'),sets:3, reps:10, targetWeight:15,   notes:'each side'},
+    {libIdx:idx('DB Hammer curl'),   sets:3, reps:12, targetWeight:20,   notes:'10 lb each'},
+    {libIdx:idx('DB Rear delt fly'), sets:3, reps:12, targetWeight:10,   notes:'5 lb each · hinge forward · posture'},
     {libIdx:idx('Band pull-apart'),  sets:3, reps:15, targetWeight:'Medium', notes:'posture & rear delts'},
   ];
 }
@@ -1771,7 +1775,8 @@ async function renderDayEditor(){
             // Extract band resistance from notes (stored as "Medium band, ...")
             const bandNote=isBandEx&&sets[0]?.notes?sets[0].notes.split(' band')[0]:'';
             const bestWeight=isBandEx||isBWEx?null:Math.max(...sets.map(s=>s.weight||0));
-            const weightLabel=isBandEx?` · ${bandNote} band`:isBWEx?' · bodyweight':bestWeight>0?` · best ${bestWeight} lb`:'';
+            const maxReps=isBWEx?Math.max(...sets.map(s=>s.reps||0)):null;
+            const weightLabel=isBandEx?` · ${bandNote} band`:isBWEx?` · ${maxReps} reps max`:bestWeight>0?` · best ${bestWeight} lb`:'';
             return `<div style="font-size:.78rem;color:var(--ink2);">
               <strong>${ex}</strong> — ${totalSets} set${totalSets!==1?'s':''}${weightLabel}
             </div>`;
@@ -1946,11 +1951,11 @@ async function checkStartBar(){
    template used in each slot and suggests the next.
    ══════════════════════════════════════════════ */
 const ROTATION_KEYS = [
-  'Full Body A · Hip Hinge & Push',
-  'Full Body B · Pull & Triceps',
+  'Full Body A · Push focus',
+  'Full Body B · Pull focus',
   'Lower Body & Glutes',
 ];
-const ROTATION_SHORT = {'Full Body A · Hip Hinge & Push':'A','Full Body B · Pull & Triceps':'B','Lower Body & Glutes':'C'};
+const ROTATION_SHORT = {'Full Body A · Push focus':'A','Full Body B · Pull focus':'B','Lower Body & Glutes':'C'};
 
 async function getNextRotationTemplate(slotIdx){
   // Find the most recent template used in this slot across all saved weeks
@@ -2942,9 +2947,13 @@ function renderHeatmap(entries){
 function renderPRs(entries,freq){
   const prs={},first={};
   [...entries].sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{
-    if(!first[e.ex]) first[e.ex]=e.weight;
-    if(!prs[e.ex]||e.weight>prs[e.ex].best)
-      prs[e.ex]={best:e.weight,date:e.date,delta:e.weight-first[e.ex],e1rm:e1rm(e.weight,e.reps||10)};
+    const libEx=LIBRARY.find(l=>l.name===e.ex);
+    const isBW=libEx?.equipment==='pullup'||libEx?.equipment==='bw';
+    // For BW exercises track max reps; for weighted track max weight
+    const val=isBW?e.reps:e.weight;
+    if(!first[e.ex]) first[e.ex]=val;
+    if(!prs[e.ex]||val>prs[e.ex].best)
+      prs[e.ex]={best:val,date:e.date,delta:val-first[e.ex],isBW,e1rm:isBW?null:e1rm(e.weight,e.reps||10)};
   });
   const sorted=Object.keys(prs).sort((a,b)=>(freq[b]||0)-(freq[a]||0));
   const div=document.getElementById('p-prs');
@@ -2958,17 +2967,19 @@ function renderPRs(entries,freq){
     </tr></thead><tbody>
     ${sorted.map(ex=>{
       const pr=prs[ex];
-      const delta=pr.delta>0?`<span style="color:var(--sage2);font-weight:600;">+${pr.delta} lb</span>`:`<span style="color:var(--ink4);">—</span>`;
       const prDate=new Date(pr.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const bestLabel=pr.isBW?`${pr.best} reps`:`${pr.best} lb`;
+      const e1rmLabel=pr.isBW?'—':`${pr.e1rm} lb`;
+      const deltaVal=pr.delta>0?`<span style="color:var(--sage2);font-weight:600;">+${pr.delta} ${pr.isBW?'reps':'lb'}</span>`:`<span style="color:var(--ink4);">—</span>`;
       return `<tr>
         <td style="padding:7px 0;border-bottom:1px solid var(--border2);color:var(--ink2);">
           ${ex}<br><span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);">${freq[ex]||0}× logged</span>
         </td>
         <td style="padding:7px 0;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-weight:600;text-align:center;">
-          ${pr.best} lb<br><span style="font-size:.6rem;font-weight:400;color:var(--ink4);">${prDate}</span>
+          ${bestLabel}<br><span style="font-size:.6rem;font-weight:400;color:var(--ink4);">${prDate}</span>
         </td>
-        <td style="padding:7px 0;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-size:.78rem;text-align:center;color:var(--ink3);">${pr.e1rm} lb</td>
-        <td style="padding:7px 0;border-bottom:1px solid var(--border2);text-align:center;">${delta}</td>
+        <td style="padding:7px 0;border-bottom:1px solid var(--border2);font-family:'Roboto Mono',monospace;font-size:.78rem;text-align:center;color:var(--ink3);">${e1rmLabel}</td>
+        <td style="padding:7px 0;border-bottom:1px solid var(--border2);text-align:center;">${deltaVal}</td>
       </tr>`;
     }).join('')}</tbody></table>`;
 }
@@ -2999,7 +3010,8 @@ function renderRecentSessions(entries){
       const isBandEx=sets[0]?.equipment==='band';
       const isBWEx=sets[0]?.equipment==='pullup'||sets[0]?.equipment==='bw';
       const bandNote=isBandEx&&sets[0]?.notes?sets[0].notes.split(' band')[0]:'';
-      const weightLabel=isBandEx?` · ${bandNote} band`:isBWEx?' · bodyweight':bestWeight>0?` · best <strong>${bestWeight} lb</strong>`:'';
+      const maxReps=isBWEx?Math.max(...sets.map(s=>s.reps||0)):null;
+      const weightLabel=isBandEx?` · ${bandNote} band`:isBWEx?` · ${maxReps} reps max`:bestWeight>0?` · best <strong>${bestWeight} lb</strong>`:'';
       return `<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;
         padding:6px 10px;background:var(--cream2);border:1px solid var(--border2);
         border-radius:6px;font-size:.78rem;">

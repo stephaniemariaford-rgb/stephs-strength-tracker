@@ -2318,7 +2318,7 @@ async function checkStartBar(){
     const sched=addDays(ws,curDay);
     const isToday=sched===today();
     const btn=document.getElementById('start-btn');
-    if(btn) btn.textContent=isToday?'Start today\'s session →'':'Start this session →'';
+    if(btn) btn.textContent=isToday?'Start today\'s session →':'Start this session →';
   }
 }
 
@@ -4181,7 +4181,7 @@ function updateStartBtn(){
   if(!btn) return;
   const sched=document.querySelector('[id="day-tabs"] .day-tab.active .dt-date');
   const isToday=getWeekStart(weekOffset); // rough check
-  btn.textContent = weekOffset===0 ? 'Start today\'s session →'' : 'Start this session →'';
+  btn.textContent = weekOffset===0 ? 'Start today\'s session →' : 'Start this session →';
 }
 
 // Day name: click to edit

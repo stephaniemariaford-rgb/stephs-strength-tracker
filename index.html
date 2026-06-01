@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+?<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Strength Tracker Â· Pull-up Program</title>
+<title>Strength Tracker · Pull-up Program</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Strength">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -46,7 +46,7 @@ body{
   -webkit-tap-highlight-color:transparent;
 }
 
-/* â”€â”€ HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? HEADER �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .hdr{
   background:linear-gradient(135deg,#3d0a20 0%,#5c1535 100%);
   padding:1rem 1.5rem;
@@ -73,7 +73,7 @@ body{
 }
 .nav-pill:active{background:rgba(212,133,106,.15);}
 
-/* â”€â”€ MAIN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? MAIN �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .main{
   max-width:1000px;margin:0 auto;
   padding:1.5rem 1rem 6rem;
@@ -82,7 +82,7 @@ body{
 .view{display:none;}
 .view.active{display:block;}
 
-/* â”€â”€ TOP BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? TOP BAR �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .top-bar{
   display:flex;align-items:center;justify-content:space-between;
   flex-wrap:wrap;gap:.75rem;margin-bottom:1.5rem;
@@ -116,7 +116,7 @@ body{
 .btn.blush{background:var(--blush-lt);color:var(--blush2);border-color:rgba(212,133,106,.3);}
 .btn.blush:active{background:#f4ddd7;}
 
-/* â”€â”€ PROGRAM INFO BANNER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? PROGRAM INFO BANNER �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .program-banner{
   background:linear-gradient(135deg,#d4527a 0%,#a83058 100%);
   border-radius:var(--r);padding:1.25rem 1.5rem;
@@ -132,7 +132,7 @@ body{
 .pb-stat-val{font-family:'Playfair Display',serif;font-size:1.5rem;color:white;line-height:1;}
 .pb-stat-lbl{font-family:'Roboto Mono',monospace;font-size:.58rem;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-top:2px;}
 
-/* â”€â”€ DAY TABS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? DAY TABS �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .day-tabs{
   display:grid;grid-template-columns:repeat(7,1fr);
   gap:.375rem;margin-bottom:1.25rem;
@@ -146,7 +146,7 @@ body{
   transition:all .15s;
 }
 .day-tab:active{background:var(--cream2);}
-/* Active/selected â€” bright pink left border + pink tint, very clear */
+/* Active/selected — bright pink left border + pink tint, very clear */
 .day-tab.active{
   background:var(--blush-lt);
   border-color:var(--blush);
@@ -154,9 +154,9 @@ body{
   box-shadow:0 2px 8px rgba(212,133,106,.2);
 }
 .day-tab.has-ex{border-color:var(--sage-md);}
-/* Logged â€” green tint */
+/* Logged — green tint */
 .day-tab.logged{border-color:var(--sage);background:var(--sage-lt);}
-/* Active + logged â€” green with pink left accent */
+/* Active + logged — green with pink left accent */
 .day-tab.active.logged{
   background:var(--sage-lt);
   border-color:var(--sage);
@@ -179,7 +179,7 @@ body{
 }
 .day-tab.active .dt-badge{color:var(--sage2);}
 
-/* â”€â”€ EDITOR CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? EDITOR CARD �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .editor-card{
   background:white;border:1px solid var(--border);
   border-radius:var(--r);overflow:hidden;margin-bottom:1rem;
@@ -211,7 +211,7 @@ body{
 .sm-btn.sage{color:var(--sage);border-color:rgba(90,122,98,.3);background:var(--sage-lt);}
 .sm-btn.blush{color:var(--blush2);border-color:rgba(212,133,106,.3);background:var(--blush-lt);}
 
-/* â”€â”€ EXERCISE ROWS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? EXERCISE ROWS �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .ex-list{padding:.25rem 1rem .875rem;}
 .col-hdr{
   display:grid;
@@ -295,7 +295,7 @@ body{
 }
 .day-empty strong{color:var(--ink3);}
 
-/* â”€â”€ PULL-UP PROGRESS TRACKER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? PULL-UP PROGRESS TRACKER �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .pullup-tracker{
   background:linear-gradient(135deg,#fce8f0 0%,#fdf4f8 100%);
   border:1px solid rgba(124,111,170,.25);border-radius:var(--r);
@@ -328,7 +328,7 @@ body{
   border-radius:6px;padding:.625rem .75rem;
 }
 
-/* â”€â”€ KNEE NOTE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? KNEE NOTE �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .knee-note{
   background:var(--gold-lt);border:1px solid rgba(201,168,76,.3);
   border-left:3px solid var(--gold);border-radius:0 6px 6px 0;
@@ -336,7 +336,7 @@ body{
   font-size:.77rem;color:#7a5c1a;line-height:1.6;
 }
 
-/* â”€â”€ LOG SESSION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? LOG SESSION �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 /* Exercise card in log mode */
 .log-ex-card{
   padding:.875rem 0;border-bottom:1px solid var(--border2);
@@ -348,7 +348,7 @@ body{
 }
 .log-ex-meta{ flex:1;min-width:0; }
 
-/* Set row â€” compact single line per set */
+/* Set row — compact single line per set */
 .set-rows{ display:flex;flex-direction:column;gap:.375rem; }
 .set-row{
   display:flex;align-items:center;gap:.5rem;
@@ -367,7 +367,7 @@ body{
 .set-num-btn.done{background:var(--sage);border-color:var(--sage2);color:white;}
 .set-num-btn.done:active{background:var(--sage2);}
 
-/* Weight selector â€” fixed compact width, never grows */
+/* Weight selector — fixed compact width, never grows */
 .set-weight-sel{
   height:44px;padding:0 8px;
   border:1.5px solid var(--border);border-radius:6px;
@@ -426,7 +426,7 @@ body{
   text-transform:uppercase;color:var(--ink4);width:28px;text-align:center;flex-shrink:0;
 }
 
-/* â”€â”€ LOG FOOTER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? LOG FOOTER �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .log-footer{
   display:flex;align-items:center;justify-content:space-between;
   flex-wrap:wrap;gap:.75rem;
@@ -450,7 +450,7 @@ body{
 }
 .clear-log-btn:active{background:var(--cream2);}
 
-/* â”€â”€ BANNERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? BANNERS �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .banner{
   display:none;background:var(--sage);color:white;
   padding:1rem 1.25rem;border-radius:var(--r);margin-bottom:1.25rem;
@@ -462,7 +462,7 @@ body{
 .banner-text{font-family:'Playfair Display',serif;font-size:1rem;}
 .banner-text span{color:rgba(255,255,255,.75);font-size:.73rem;font-family:'Outfit',sans-serif;display:block;margin-top:2px;}
 
-/* â”€â”€ LIBRARY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? LIBRARY �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .lib-panel{
   background:white;border:1px solid var(--border);
   border-radius:var(--r);padding:1.125rem;margin-top:.875rem;
@@ -521,7 +521,7 @@ body{
 .lib-add-btn:active{background:var(--sage);color:white;}
 .lib-item.added .lib-add-btn{background:var(--sage);color:white;cursor:default;font-size:.9rem;}
 
-/* â”€â”€ HISTORY VIEW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? HISTORY VIEW �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .history-grid{display:flex;flex-direction:column;gap:.75rem;}
 .hw-card{background:white;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
 .hw-hdr{
@@ -549,12 +549,12 @@ body{
 }
 .load-btn:active{background:var(--sage-lt);}
 
-/* â”€â”€ START BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? START BAR �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .start-bar button{
   min-height:58px;font-size:1rem;font-weight:600;border-radius:var(--r);letter-spacing:.01em;
 }
 
-/* â”€â”€ PROGRESS DASHBOARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? PROGRESS DASHBOARD �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .hm-swatch{width:13px;height:13px;border-radius:3px;display:inline-block;border:1px solid;}
 
 .p-metric-btn{
@@ -588,25 +588,25 @@ body{
   .hm-label-row,.hm-main-grid{grid-template-columns:32px repeat(8,1fr)!important;}
 }
 
-/* â”€â”€ TABLET (iPad portrait 768px+) â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? TABLET (iPad portrait 768px+) �"?�"?�"?�"?�"?�"?�"? */
 @media(min-width:768px){
   .main{padding:1.5rem 1.5rem 6rem;}
   /* Day tabs breathing room on tablet */
   .day-tabs{gap:.5rem;}
-  /* Wider set rows on tablet â€” no wrapping needed */
+  /* Wider set rows on tablet — no wrapping needed */
   .set-row{flex-wrap:nowrap;}
   .set-weight-sel{max-width:220px;}
   /* Library shows 2 columns */
   .lib-grid{grid-template-columns:repeat(2,1fr);}
 }
 
-/* â”€â”€ PHONE (â‰¤600px) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? PHONE (�?�600px) �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 @media(max-width:600px){
   /* Header */
   .hdr{padding:.875rem 1rem;}
   .hdr-title{font-size:1.1rem;}
 
-  /* Day tabs â€” horizontal scroll on mobile */
+  /* Day tabs — horizontal scroll on mobile */
   .day-tabs{display:flex;overflow-x:auto;gap:.375rem;padding-bottom:.375rem;-webkit-overflow-scrolling:touch;}
   .day-tab{min-width:74px;flex-shrink:0;min-height:78px;padding:.5rem .25rem;}
   .dt-name{font-size:.82rem;}
@@ -615,7 +615,7 @@ body{
   .top-right{width:100%;}
   .top-right .btn{flex:1;justify-content:center;}
 
-  /* Plan exercise rows â€” stacked layout */
+  /* Plan exercise rows — stacked layout */
   .col-hdr{display:none;}
   .ex-row{
     grid-template-columns:1fr 1fr;
@@ -627,22 +627,22 @@ body{
   /* Last cell (reorder+remove) spans full width on mobile, right-aligned */
   .ex-row > div:last-child{grid-column:1/-1;justify-content:flex-end;display:flex;gap:.375rem;}
 
-  /* Log set rows â€” only wrap on very small phones */
+  /* Log set rows — only wrap on very small phones */
   .set-row{ gap:.375rem; }
   .set-weight-sel{ width:140px; }
   .set-reps-inp{ width:54px; }
-  .set-note-inp{ display:none; } /* hide notes on phone to save space â€” accessible via + note button if needed */
+  .set-note-inp{ display:none; } /* hide notes on phone to save space — accessible via + note button if needed */
 
   /* Library single column */
   .lib-grid{grid-template-columns:1fr;}
   .filter-row{flex-direction:column;align-items:stretch;}
   .filter-sel,.search-inp{width:100%;}
 
-  /* Progress metrics 2Ã—2 */
+  /* Progress metrics 2�-2 */
   .metrics-row{grid-template-columns:repeat(2,1fr);}
   .two-col-cards{grid-template-columns:1fr!important;}
 
-  /* Progress metric toggle buttons â€” scrollable row */
+  /* Progress metric toggle buttons — scrollable row */
   .p-metric-btns{
     overflow-x:auto;
     -webkit-overflow-scrolling:touch;
@@ -660,7 +660,7 @@ body{
   .pb-stat-val{font-size:1.25rem;}
 }
 
-/* â”€â”€ SMALL PHONE (â‰¤380px) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? SMALL PHONE (�?�380px) �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 @media(max-width:380px){
   .metrics-row{grid-template-columns:1fr 1fr;}
   .m-val{font-size:1.35rem;}
@@ -668,7 +668,7 @@ body{
   .set-reps-inp{width:56px;}
 }
 
-/* â”€â”€ BOTTOM NAV (mobile) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? BOTTOM NAV (mobile) �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .bottom-nav{
   display:none; /* shown via media query */
   position:fixed;bottom:0;left:0;right:0;
@@ -697,11 +697,11 @@ body{
 @media(max-width:768px){
   .bottom-nav{display:block;}
   .main{padding-bottom:max(80px,calc(70px + env(safe-area-inset-bottom)));}
-  /* Hide header nav pill on mobile â€” bottom nav handles it */
+  /* Hide header nav pill on mobile — bottom nav handles it */
   .nav-pill{display:none;}
 }
 
-/* â”€â”€ COLLAPSIBLE PROGRAM BANNER â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? COLLAPSIBLE PROGRAM BANNER �"?�"?�"?�"?�"?�"?�"?�"? */
 .program-banner{cursor:pointer;}
 .program-banner.collapsed{padding:.75rem 1.5rem;}
 .program-banner.collapsed .pb-sub{display:none;}
@@ -713,7 +713,7 @@ body{
 }
 .program-banner.collapsed .pb-collapse-hint{display:none;}
 
-/* â”€â”€ DRAG REORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? DRAG REORDER �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .ex-row{position:relative;}
 .drag-handle{
   position:absolute;left:0;top:50%;transform:translateY(-50%);
@@ -755,7 +755,7 @@ body{
   }
 }
 
-/* â”€â”€ RUNNING TRACKER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* �"?�"? RUNNING TRACKER �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"? */
 .run-log-card{
   background:white;border:1px solid var(--border);
   border-radius:var(--r);padding:1.25rem;margin-bottom:1rem;
@@ -793,56 +793,56 @@ body{
 <body>
 
 <header class="hdr">
-  <div class="hdr-title">Strength Tracker Â· <em>Pull-up Program</em></div>
+  <div class="hdr-title">Strength Tracker · <em>Pull-up Program</em></div>
   <div class="hdr-right">
     <div id="save-status-placeholder"></div>
     <div class="hdr-date" id="hdr-date"></div>
-    <a href="#" class="nav-pill" onclick="showView('progress');return false;">Progress â†—</a>
+    <a href="#" class="nav-pill" onclick="showView('progress');return false;">Progress →</a>
   </div>
 </header>
 
-<!-- Sticky bottom nav â€” mobile only -->
+<!-- Sticky bottom nav — mobile only -->
 <nav class="bottom-nav" id="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bnav-btn active" id="bnav-planner" onclick="showView('planner')">
-      <span class="bnav-icon">ðŸ“‹</span>PLANNER
+      <span class="bnav-icon">📋</span>PLANNER
     </button>
     <button class="bnav-btn" id="bnav-run" onclick="showView('run')">
-      <span class="bnav-icon">ðŸƒ</span>RUN
+      <span class="bnav-icon">🏃</span>RUN
     </button>
     <button class="bnav-btn" id="bnav-progress" onclick="showView('progress')">
-      <span class="bnav-icon">ðŸ“ˆ</span>PROGRESS
+      <span class="bnav-icon">📈</span>PROGRESS
     </button>
     <button class="bnav-btn" id="bnav-history" onclick="showView('history')">
-      <span class="bnav-icon">ðŸ“</span>HISTORY
+      <span class="bnav-icon">📝</span>HISTORY
     </button>
   </div>
 </nav>
 
 <main class="main">
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLANNER VIEW â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� PLANNER VIEW �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
   <div class="view active" id="view-planner">
 
     <div class="top-bar">
       <div class="top-left">
-        <button class="nav-btn" onclick="shiftWeek(-1)" aria-label="Previous week">â†</button>
+        <button class="nav-btn" onclick="shiftWeek(-1)" aria-label="Previous week">←</button>
         <div>
           <div class="week-label" id="week-label"></div>
           <div id="week-context" style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);margin-top:1px;"></div>
         </div>
-        <button class="nav-btn" onclick="shiftWeek(1)" aria-label="Next week">â†’</button>
+        <button class="nav-btn" onclick="shiftWeek(1)" aria-label="Next week">→</button>
       </div>
       <div class="top-right">
-        <button class="btn" onclick="showView('history')">Saved weeks â†—</button>
+        <button class="btn" onclick="showView('history')">Saved weeks →</button>
         <button class="btn primary" onclick="saveWeek()">Archive week</button>
       </div>
     </div>
 
     <div class="program-banner" id="program-banner" onclick="toggleBanner()">
       <div class="pb-text">
-        <div class="pb-title">3-Day Full Body Â· Pull-up Progression</div>
-        <div class="pb-sub">Evidence-based for muscle building & body recomp Â· Knee-aware Â· Pull-up ladder included each session</div>
+        <div class="pb-title">3-Day Full Body · Pull-up Progression</div>
+        <div class="pb-sub">Evidence-based for muscle building & body recomp · Knee-aware · Pull-up ladder included each session</div>
         <div id="pb-pullup-stage" style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:rgba(255,255,255,.75);margin-top:.375rem;letter-spacing:.04em;"></div>
         <div class="pb-collapse-hint">tap to collapse</div>
       </div>
@@ -864,14 +864,14 @@ body{
         <div style="flex:1;min-width:0;">
           <div id="day-name-display" style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--ink);cursor:text;padding:2px 0;"
             onclick="startEditDayName()" title="Click to rename"></div>
-          <input class="day-name-inp" id="day-name-inp" type="text" placeholder="Name this dayâ€¦" maxlength="50"
+          <input class="day-name-inp" id="day-name-inp" type="text" placeholder="Name this day…" maxlength="50"
             oninput="saveDayName(this.value)" onblur="endEditDayName()"
             autocomplete="off" style="display:none;">
           <!-- Day type toggle -->
           <div id="day-type-btns" style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;"></div>
         </div>
         <div class="editor-actions" id="workout-actions">
-          <button class="sm-btn blush" onclick="loadDayTemplate()">Template âœ¦</button>
+          <button class="sm-btn blush" onclick="loadDayTemplate()">Template ✏</button>
           <button class="sm-btn sage" onclick="toggleLibrary()">+ Add exercise</button>
         </div>
       </div>
@@ -907,7 +907,7 @@ body{
                 <option value="push">Push / Chest / Triceps</option>
                 <option value="core">Core</option>
               </select>
-              <input class="search-inp" id="lib-search" type="search" placeholder="Searchâ€¦"
+              <input class="search-inp" id="lib-search" type="search" placeholder="Search…"
                 oninput="renderLibrary()" autocomplete="off">
             </div>
           </div>
@@ -932,7 +932,7 @@ body{
         <div class="editor-hdr" style="background:linear-gradient(135deg,#3d0a20,#5c1535);">
           <div style="font-family:'Playfair Display',serif;font-size:1rem;color:white;" id="log-title"></div>
           <button class="sm-btn" onclick="confirmBackToPlan()"
-            style="color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.2);font-size:.75rem;">â† Exit</button>
+            style="color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.2);font-size:.75rem;">✕ Exit</button>
         </div>
         <div class="ex-list">
           <div id="log-ex-list"></div>
@@ -941,23 +941,23 @@ body{
       <div class="log-footer">
         <div class="prog-txt" id="log-prog"></div>
         <div style="display:flex;gap:.625rem;align-items:center;">
-          <button class="clear-log-btn" onclick="clearLog()" style="font-size:.75rem;min-height:44px;padding:0 .875rem;opacity:.6;">â†º Reset</button>
-          <button class="complete-btn" id="complete-btn" onclick="markComplete()">Log session âœ“</button>
+          <button class="clear-log-btn" onclick="clearLog()" style="font-size:.75rem;min-height:44px;padding:0 .875rem;opacity:.6;">↺ Reset</button>
+          <button class="complete-btn" id="complete-btn" onclick="markComplete()">Log session ✔</button>
         </div>
       </div>
     </div>
 
     <div id="start-bar" class="start-bar" style="display:none;margin-top:.875rem;">
-      <button class="btn primary" style="width:100%;font-size:1rem;font-weight:600;min-height:58px;border-radius:var(--r);" id="start-btn" onclick="startWorkout()">Start session â†’</button>
+      <button class="btn primary" style="width:100%;font-size:1rem;font-weight:600;min-height:58px;border-radius:var(--r);" id="start-btn" onclick="startWorkout()">Start session →'</button>
     </div>
 
   </div>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HISTORY VIEW â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� HISTORY VIEW �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
   <div class="view" id="view-history">
     <div class="top-bar">
       <div class="week-label">Saved weeks</div>
-      <button class="btn" onclick="showView('planner')">â† Back</button>
+      <button class="btn" onclick="showView('planner')">← Back</button>
     </div>
     <div class="history-grid" id="hist-grid"></div>
     <div id="hist-empty" style="display:none;text-align:center;padding:3rem;color:var(--ink4);font-size:.85rem;line-height:1.9;">
@@ -965,11 +965,11 @@ body{
     </div>
   </div>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• RUN VIEW â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� RUN VIEW �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
   <div class="view" id="view-run">
     <div class="top-bar">
       <div class="week-label">Running Tracker</div>
-      <button class="btn" onclick="showView('planner')">â† Back</button>
+      <button class="btn" onclick="showView('planner')">← Back</button>
     </div>
     <!-- Log a run -->
     <div class="run-log-card">
@@ -992,7 +992,7 @@ body{
           <input type="text" id="run-notes-inp" maxlength="80" placeholder="easy run, trail, etc."
             style="width:100%;min-height:44px;padding:0 .875rem;border:1.5px solid var(--border);border-radius:6px;background:var(--cream);font-family:'Outfit',sans-serif;font-size:.85rem;">
         </div>
-        <button class="btn primary" onclick="logRun()" style="min-height:44px;align-self:flex-end;">Log Run âœ“</button>
+        <button class="btn primary" onclick="logRun()" style="min-height:44px;align-self:flex-end;">Log Run ✔</button>
       </div>
       <div id="run-save-msg" style="font-family:'Roboto Mono',monospace;font-size:.7rem;color:var(--sage2);min-height:1.2em;"></div>
     </div>
@@ -1018,11 +1018,11 @@ body{
     </div>
   </div>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PROGRESS VIEW â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� PROGRESS VIEW �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
   <div class="view" id="view-progress">
     <div class="top-bar">
       <div class="week-label">My progress</div>
-      <button class="btn" onclick="showView('planner')">â† Back</button>
+      <button class="btn" onclick="showView('planner')">← Back</button>
     </div>
 
     <!-- Summary metrics -->
@@ -1075,7 +1075,7 @@ body{
           </div>
         </div>
       </div>
-      <!-- Exercise toggle pills â€” populated by JS -->
+      <!-- Exercise toggle pills — populated by JS -->
       <div id="ex-toggle-row" style="display:flex;flex-wrap:wrap;gap:.375rem;margin-bottom:.875rem;"></div>
       <div style="position:relative;height:240px;"><canvas id="trend-chart"></canvas></div>
       <div id="trend-insight" style="margin-top:.75rem;font-size:.75rem;color:var(--ink3);font-family:'Roboto Mono',monospace;min-height:1.2em;"></div>
@@ -1104,7 +1104,7 @@ body{
     <!-- Consistency heatmap -->
     <div class="section-card">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
-        <div class="sc-title" style="margin:0;">Workout consistency â€” last 12 weeks</div>
+        <div class="sc-title" style="margin:0;">Workout consistency — last 12 weeks</div>
         <div id="heatmap-streak" style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--sage2);"></div>
       </div>
       <!-- Day-of-week labels -->
@@ -1129,7 +1129,7 @@ body{
     <div class="section-card">
       <div class="sc-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:0;" onclick="toggleCollapse('pullup-ladder-body','pullup-ladder-chevron')">
         <span>Pull-up progression ladder</span>
-        <span id="pullup-ladder-chevron" style="font-family:'Roboto Mono',monospace;font-size:.7rem;color:var(--ink4);transition:transform .2s;">â–¼</span>
+        <span id="pullup-ladder-chevron" style="font-family:'Roboto Mono',monospace;font-size:.7rem;color:var(--ink4);transition:transform .2s;">▼</span>
       </div>
       <div id="pullup-ladder-body" style="display:none;margin-top:.875rem;">
         <div id="progress-pullup-stages"></div>
@@ -1140,7 +1140,7 @@ body{
     <div class="section-card">
       <div class="sc-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:0;" onclick="toggleCollapse('recent-sessions-body','recent-sessions-chevron')">
         <span>Recent sessions</span>
-        <span id="recent-sessions-chevron" style="font-family:'Roboto Mono',monospace;font-size:.7rem;color:var(--ink4);transition:transform .2s;">â–¼</span>
+        <span id="recent-sessions-chevron" style="font-family:'Roboto Mono',monospace;font-size:.7rem;color:var(--ink4);transition:transform .2s;">▼</span>
       </div>
       <div id="recent-sessions-body" style="display:none;margin-top:.875rem;">
         <div style="position:relative;padding-left:28px;" id="p-history-timeline">
@@ -1155,9 +1155,9 @@ body{
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    SUPABASE CONFIG
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 const SUPABASE_URL = 'https://afajekqackyoxyqbdirb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmYWpla3FhY2t5b3h5cWJkaXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3OTM1NjksImV4cCI6MjA4OTM2OTU2OX0.3cQcRFOf9QkjoBaercRN9q_iKUsJbRm4cNHN7g14Ew0';
 const USER_ID = 'default';
@@ -1200,9 +1200,9 @@ const sb = {
   del(table, query)         { return sb.req('DELETE', `${table}?${query}`); },
 };
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    LOCAL CACHE  (instant UI; Supabase is source of truth)
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 const cache = {
   entries:    null,
   weeks:      {},
@@ -1210,10 +1210,10 @@ const cache = {
   settings:   null,
 };
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    LOADING OVERLAY
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-function showLoading(msg='Loadingâ€¦'){
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
+function showLoading(msg='Loading…'){
   let el=document.getElementById('sb-loading');
   if(!el){
     el=document.createElement('div');
@@ -1230,9 +1230,9 @@ function showLoading(msg='Loadingâ€¦'){
 }
 function hideLoading(){ const el=document.getElementById('sb-loading'); if(el) el.style.display='none'; }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   STORAGE API â€” all async, cached locally
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
+   STORAGE API — all async, cached locally
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 async function getEntries(){
   if(cache.entries) return cache.entries;
   const rows = await sb.get('progress_entries', `user_id=eq.${USER_ID}&order=date.desc`);
@@ -1306,7 +1306,7 @@ async function loadWeekRemote(weekStart){
 async function saveWeekData(weekStart, week){
   cache.weeks[weekStart] = week;
   showSaveStatus('saving');
-  // Delete existing row for this week then insert fresh â€” most reliable approach
+  // Delete existing row for this week then insert fresh — most reliable approach
   await sb.del('week_plans', `user_id=eq.${USER_ID}&week_start=eq.${weekStart}`);
   const result = await sb.post('week_plans', {
     week_start: weekStart,
@@ -1356,16 +1356,16 @@ function showSaveStatus(state){
   }
   clearTimeout(_saveTimer);
   if(state==='saving'){
-    el.textContent = 'â†‘ savingâ€¦';
+    el.textContent = '→ saving…';
     el.style.color = 'var(--ink4)';
     el.style.opacity = '1';
   } else if(state==='saved'){
-    el.textContent = 'âœ“ saved';
+    el.textContent = '✔ saved';
     el.style.color = '#7fb899';
     el.style.opacity = '1';
     _saveTimer = setTimeout(()=>{ el.style.opacity='0'; }, 2000);
   } else if(state==='error'){
-    el.textContent = `âœ• save failed â€” ${sb.lastError||'unknown error'}`;
+    el.textContent = `✕ save failed — ${sb.lastError||'unknown error'}`;
     el.style.color = '#e8829f';
     el.style.opacity = '1';
     // Also log clearly
@@ -1380,7 +1380,7 @@ async function getSettings(){
   return cache.settings;
 }
 
-// Pull-up stage â€” reads/writes via settings table
+// Pull-up stage — reads/writes via settings table
 async function getPullupStageAsync(){
   const s = await getSettings();
   return s.pull_up_stage || 0;
@@ -1394,7 +1394,7 @@ function getPullupStage(){ return cache.settings?.pull_up_stage || 0; }
 function setPullupStage(n){
   if(!cache.settings) cache.settings={};
   cache.settings.pull_up_stage = n;
-  saveSettings({pull_up_stage: n}); // fire and forget â€” called from sync contexts
+  saveSettings({pull_up_stage: n}); // fire and forget — called from sync contexts
 }
 
 // Week cache sync shim (used after async load)
@@ -1402,8 +1402,8 @@ function loadWeekSync(ws){
   return cache.weeks[ws] || freshWeek(ws);
 }
 
-// Always use LOCAL date â€” toISOString() returns UTC which causes off-by-one errors
-// for users in timezones behind UTC (e.g. US Pacific) after 4pmâ€“8pm local time
+// Always use LOCAL date — toISOString() returns UTC which causes off-by-one errors
+// for users in timezones behind UTC (e.g. US Pacific) after 4pm�?"8pm local time
 function localDateStr(d=new Date()){
   const y=d.getFullYear();
   const m=String(d.getMonth()+1).padStart(2,'0');
@@ -1412,21 +1412,21 @@ function localDateStr(d=new Date()){
 }
 const today = () => localDateStr();
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    EQUIPMENT-APPROPRIATE WEIGHT OPTIONS
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    DB_WEIGHTS = available single dumbbells
-   Combined (bilateral) = 2Ã— a single DB
-   BellaBooty = 2 DBs clipped to belt â†’ combined weight
+   Combined (bilateral) = 2× a single DB
+   BellaBooty = 2 DBs clipped to belt → combined weight
    Rack = 45 lb bar + your available plates: 15, 25, 35 lb
-     (each plate comes in pairs, so add Ã—2 per side)
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+     (each plate comes in pairs, so add ×2 per side)
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 const DB_WEIGHTS = [3,5,8,10,15,20,25,30,35,40,45]; // single DB options
 const BAND_OPTS  = ['Light','Medium','Heavy','X-Heavy'];
 
 // Single dumbbell (e.g. per-arm rows, curls, lateral raises, goblet squat)
 function dbOptionsSingle(sel){
-  let h='<option value="">â€” lb (each)</option>';
+  let h='<option value="">— lb (each)</option>';
   DB_WEIGHTS.forEach(w=>{
     h+=`<option value="${w}"${parseFloat(sel)===w?' selected':''}>${w} lb each</option>`;
   });
@@ -1434,9 +1434,9 @@ function dbOptionsSingle(sel){
 }
 
 // Two dumbbells held together (e.g. bench press, overhead press, RDL, sumo DL, step-up)
-// User holds one in each hand â€” log as combined total
+// User holds one in each hand — log as combined total
 function dbOptionsPair(sel){
-  let h='<option value="">â€” lb (pair total)</option>';
+  let h='<option value="">— lb (pair total)</option>';
   DB_WEIGHTS.forEach(w=>{
     const total=w*2;
     h+=`<option value="${total}"${parseFloat(sel)===total?' selected':''}>${total} lb total (${w}+${w})</option>`;
@@ -1444,9 +1444,9 @@ function dbOptionsPair(sel){
   return h;
 }
 
-// BellaBooty belt: two DBs clipped to the belt ring â€” log combined weight
+// BellaBooty belt: two DBs clipped to the belt ring — log combined weight
 function bbOptions(sel){
-  let h='<option value="">â€” lb (both DBs)</option>';
+  let h='<option value="">— lb (both DBs)</option>';
   DB_WEIGHTS.forEach(w=>{
     const total=w*2;
     h+=`<option value="${total}"${parseFloat(sel)===total?' selected':''}>${total} lb (${w}+${w})</option>`;
@@ -1456,7 +1456,7 @@ function bbOptions(sel){
 
 // One dumbbell held with both hands (goblet squat, overhead tricep ext, skull crusher)
 function dbOptionsBothHands(sel){
-  let h='<option value="">â€” lb (one DB)</option>';
+  let h='<option value="">— lb (one DB)</option>';
   DB_WEIGHTS.forEach(w=>{
     h+=`<option value="${w}"${parseFloat(sel)===w?' selected':''}>${w} lb</option>`;
   });
@@ -1468,7 +1468,7 @@ function dbOptionsBothHands(sel){
 function rackOptions(sel){
   // generate combos: bar only, bar + pairs of your plates
   const BAR=45;
-  const AVAILABLE_PLATES=[15,25,35]; // each plate weight you own (added Ã—2 per pair)
+  const AVAILABLE_PLATES=[15,25,35]; // each plate weight you own (added ×2 per pair)
   const combos=new Set([BAR]);
   // all combinations of adding plate pairs
   AVAILABLE_PLATES.forEach(p=>{
@@ -1480,7 +1480,7 @@ function rackOptions(sel){
     });
   });
   const sorted=[...combos].sort((a,b)=>a-b);
-  let h='<option value="">â€” total lb</option>';
+  let h='<option value="">— total lb</option>';
   sorted.forEach(total=>{
     const added=total-BAR;
     const lbl=added===0?`${total} lb (bar only)`:`${total} lb total`;
@@ -1489,7 +1489,7 @@ function rackOptions(sel){
   return h;
 }
 
-// Plates-only rack (e.g. lat pulldown â€” no bar weight)
+// Plates-only rack (e.g. lat pulldown — no bar weight)
 // Available plates: 15, 25, 35, 45 lb, added in pairs
 function platesOnlyOptions(sel){
   const PLATES=[15,25,35,45];
@@ -1501,7 +1501,7 @@ function platesOnlyOptions(sel){
     });
   });
   const sorted=[...combos].filter(v=>v>0).sort((a,b)=>a-b);
-  let h='<option value="">â€” lb</option>';
+  let h='<option value="">— lb</option>';
   sorted.forEach(total=>{
     h+=`<option value="${total}"${parseFloat(sel)===total?' selected':''}>${total} lb</option>`;
   });
@@ -1509,7 +1509,7 @@ function platesOnlyOptions(sel){
 }
 
 function bandOptions(sel){
-  let h='<option value="">â€” band</option>';
+  let h='<option value="">— band</option>';
   BAND_OPTS.forEach(b=>{
     h+=`<option value="${b}"${sel===b?' selected':''}>${b}</option>`;
   });
@@ -1532,101 +1532,101 @@ function buildWeightOpts(ex, sel=''){
   return dbOptionsSingle(sel);
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    PULL-UP PROGRESSION SYSTEM
-   Research-based ladder: dead hang â†’ scap pulls â†’ band-assisted â†’ negatives â†’ full pull-up
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   Research-based ladder: dead hang → scap pulls → band-assisted → negatives → full pull-up
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 const PULLUP_STAGES = [
-  { id:0, name:'Dead hang', cue:'Hang from bar, arms straight, 3Ã—20â€“30 sec. Build grip and shoulder health. Add 5 sec each week.' },
-  { id:1, name:'Scap pulls', cue:'From dead hang, shrug shoulders down & back without bending elbows. 3Ã—8. This activates the lats that drive pull-ups.' },
-  { id:2, name:'Band-assisted pull-up', cue:'Loop heavy band around bar, knee in band. Full pull-up motion. 3Ã—5â€“8. Decrease band resistance as you get stronger.' },
-  { id:3, name:'Negative (eccentric)', cue:'Jump or step to top position, lower yourself for 4â€“6 seconds. 3Ã—3â€“5. This builds strength fast â€” negatives are the key stage.' },
+  { id:0, name:'Dead hang', cue:'Hang from bar, arms straight, 3×20–30 sec. Build grip and shoulder health. Add 5 sec each week.' },
+  { id:1, name:'Scap pulls', cue:'From dead hang, shrug shoulders down & back without bending elbows. 3×8. This activates the lats that drive pull-ups.' },
+  { id:2, name:'Band-assisted pull-up', cue:'Loop heavy band around bar, knee in band. Full pull-up motion. 3×5–8. Decrease band resistance as you get stronger.' },
+  { id:3, name:'Negative (eccentric)', cue:'Jump or step to top position, lower yourself for 4–6 seconds. 3×3–5. This builds strength fast – negatives are the key stage.' },
   { id:4, name:'First full pull-up!', cue:'Attempt a strict, unassisted pull-up from dead hang to chin over bar. You\'ve earned it. Add one rep per week from here.' },
 ];
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    EXERCISE LIBRARY
    Science-backed for beginners: compound-first, knee-aware, pull-up pathway included
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 const LIBRARY = [
-  // â”€â”€ PULL / BACK / BICEPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // �"?�"? PULL / BACK / BICEPS �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
   // weightMode: pullup/bw = bodyweight, rack = rack, single = one DB per arm, bothhands = one DB two hands
-  {name:'Dead hang',             detail:'Pull-up bar Â· arms straight Â· 20â€“30 sec hold Â· build grip',        tags:['pull','upper'], knee:false, equipment:'pullup',  pullupStage:0},
-  {name:'Scapular pull',         detail:'Pull-up bar Â· shrug shoulders down/back Â· no elbow bend',          tags:['pull','upper'], knee:false, equipment:'pullup',  pullupStage:1},
-  {name:'Band-assisted pull-up', detail:'Heavy band on bar Â· knee in band Â· full pull-up range',            tags:['pull','upper'], knee:false, equipment:'band',    pullupStage:2},
-  {name:'Negative pull-up',      detail:'Jump to top Â· lower slowly 5 sec Â· builds strength fast',         tags:['pull','upper'], knee:false, equipment:'pullup',  pullupStage:3},
-  {name:'Pull-up',               detail:'Strict overhand Â· chin over bar Â· full hang at bottom',            tags:['pull','upper'], knee:false, equipment:'pullup',  pullupStage:4},
-  {name:'Lat pulldown',          detail:'Plate-loaded lat bar Â· wide overhand grip Â· pull to upper chest', tags:['pull','upper'], knee:false, equipment:'rack', rackStyle:'plates_only'},
-  {name:'DB Single-arm row',     detail:'Knee on bench Â· one DB per arm Â· elbow in Â· full lat stretch',     tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'single'},
-  {name:'DB Bent-over row',      detail:'Hip hinge Â· one DB each hand Â· squeeze shoulder blades at top',    tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Rear delt fly',      detail:'Hinged forward Â· one DB each hand Â· arms out Â· rear delts',        tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'Band pull-apart',       detail:'Band at chest height Â· pull apart with both hands Â· rear delts',   tags:['pull','upper'], knee:false, equipment:'band'},
-  {name:'DB Hammer curl',        detail:'One DB each hand Â· neutral grip Â· brachialis Â· 3Ã—10',              tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Curl',               detail:'One DB each hand Â· supinated grip Â· peak contraction Â· 3Ã—10',      tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Concentration curl', detail:'Seated Â· one DB Â· elbow on inner thigh Â· strict form Â· log per arm',tags:['pull','upper'],knee:false, equipment:'dumbbell', weightMode:'single'},
-  // â”€â”€ PUSH / CHEST / SHOULDERS / TRICEPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  {name:'DB Bench press',        detail:'One DB each hand Â· flat surface Â· full chest stretch at bottom',   tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Incline press',      detail:'One DB each hand Â· incline surface Â· upper chest emphasis',        tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Shoulder press',     detail:'One DB each hand Â· seated or standing Â· neutral or pronated grip', tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Lateral raise',      detail:'One DB each hand Â· arms to shoulder height Â· slow 3-sec lower',    tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Arnold press',       detail:'One DB each hand Â· seated Â· rotate palms-in to palms-out at top',  tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Overhead tricep ext',detail:'Both hands grip one DB Â· overhead Â· long head isolation Â· 3Ã—12',   tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'bothhands'},
-  {name:'DB Skull crusher',      detail:'Both hands grip one DB Â· lower to forehead Â· elbows in Â· 3Ã—12',    tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'bothhands'},
-  {name:'DB Tricep kickback',    detail:'One DB each hand Â· hinge at hip Â· extend arms back Â· 3Ã—12',        tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'Band chest press',      detail:'Band anchored behind Â· press forward at chest height with both hands',tags:['push','upper'],knee:false, equipment:'band'},
-  {name:'Band overhead press',   detail:'Stand on band Â· press overhead with both hands Â· shoulder strength',tags:['push','upper'], knee:false, equipment:'band'},
-  // â”€â”€ LOWER BODY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  {name:'Goblet squat',          detail:'Both hands hold one DB at chest Â· squat deep Â· track knees over toes',tags:['lower'],     knee:true,  equipment:'dumbbell', weightMode:'bothhands'},
-  {name:'Romanian deadlift',     detail:'One DB each hand at thighs Â· hip hinge Â· hamstring stretch Â· 3Ã—10',tags:['lower'],        knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Hip thrust',         detail:'Shoulders on bench Â· one DB on hips Â· glute squeeze at top',       tags:['lower'],        knee:false, equipment:'dumbbell', weightMode:'single'},
-  {name:'BellaBooty hip thrust', detail:'Belt around hips Â· one DB clipped each side of belt Â· drive hips',  tags:['lower'],       knee:false, equipment:'bb'},
-  {name:'BellaBooty deadlift',   detail:'Belt at hip crease Â· one DB clipped each side Â· hip hinge focus',   tags:['lower'],       knee:false, equipment:'bb'},
-  {name:'DB Step-up',            detail:'One DB each hand Â· step or bench Â· drive through heel Â· 3Ã—10 each leg',tags:['lower'],    knee:true,  equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Reverse lunge',      detail:'One DB each hand Â· step back Â· gentler on knees than forward Â· 3Ã—10 each',tags:['lower'], knee:true,  equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Sumo deadlift',      detail:'Both hands hold one or two DBs between legs Â· wide stance Â· inner thigh',tags:['lower'],   knee:false, equipment:'dumbbell', weightMode:'bothhands'},
-  {name:'Barbell back squat',    detail:'Squat rack Â· bar on traps Â· controlled depth Â· knee track',         tags:['lower'],        knee:true,  equipment:'rack'},
-  {name:'Barbell RDL',           detail:'Squat rack Â· hip hinge Â· bar slides down shins Â· 3Ã—10',            tags:['lower'],        knee:false, equipment:'rack'},
-  {name:'Barbell hip thrust',    detail:'Rack Â· bar across hips Â· padded Â· powerful glute drive Â· 3Ã—10',    tags:['lower'],        knee:false, equipment:'rack'},
-  {name:'Band squat',            detail:'Band under feet Â· stand on it Â· add resistance to squat',          tags:['lower'],        knee:true,  equipment:'band'},
-  {name:'Band hip abduction',    detail:'Band around thighs above knees Â· seated or clamshell Â· glute med', tags:['lower'],        knee:false, equipment:'band'},
-  {name:'DB Stiff-leg deadlift', detail:'Both DBs Â· minimal knee bend Â· full hamstring lengthening Â· slow eccentric',tags:['lower','glutes'],knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'DB Calf raise',         detail:'One DB each hand Â· standing Â· full range plantarflexion Â· 3Ã—15',   tags:['lower'],        knee:false, equipment:'dumbbell', weightMode:'pair'},
-  {name:'Push-ups',             detail:'Bodyweight Â· chest to floor Â· full lockout Â· scale with knee push-ups if needed', tags:['push','upper'], knee:false, equipment:'bw'},
-  // â”€â”€ CORE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  // Core work done via Peloton â€” tracked as a class reminder, no weight needed
-  {name:'Peloton 10-min Core',   detail:'Open Peloton app Â· Strength â†’ Core Â· 10 min class Â· any instructor', tags:['core'], knee:false, equipment:'peloton'},
+  {name:'Dead hang',             detail:'Pull-up bar · arms straight · 20–30 sec hold · build grip',        tags:['pull','upper'], knee:false, equipment:'pullup',  pullupStage:0},
+  {name:'Scapular pull',         detail:'Pull-up bar · shrug shoulders down/back · no elbow bend',          tags:['pull','upper'], knee:false, equipment:'pullup',  pullupStage:1},
+  {name:'Band-assisted pull-up', detail:'Heavy band on bar · knee in band · full pull-up range',            tags:['pull','upper'], knee:false, equipment:'band',    pullupStage:2},
+  {name:'Negative pull-up',      detail:'Jump to top · lower slowly 5 sec · builds strength fast',         tags:['pull','upper'], knee:false, equipment:'pullup',  pullupStage:3},
+  {name:'Pull-up',               detail:'Strict overhand · chin over bar · full hang at bottom',            tags:['pull','upper'], knee:false, equipment:'pullup',  pullupStage:4},
+  {name:'Lat pulldown',          detail:'Plate-loaded lat bar · wide overhand grip · pull to upper chest', tags:['pull','upper'], knee:false, equipment:'rack', rackStyle:'plates_only'},
+  {name:'DB Single-arm row',     detail:'Knee on bench · one DB per arm · elbow in · full lat stretch',     tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'single'},
+  {name:'DB Bent-over row',      detail:'Hip hinge · one DB each hand · squeeze shoulder blades at top',    tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Rear delt fly',      detail:'Hinged forward · one DB each hand · arms out · rear delts',        tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'Band pull-apart',       detail:'Band at chest height · pull apart with both hands · rear delts',   tags:['pull','upper'], knee:false, equipment:'band'},
+  {name:'DB Hammer curl',        detail:'One DB each hand · neutral grip · brachialis · 3×10',              tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Curl',               detail:'One DB each hand · supinated grip · peak contraction · 3×10',      tags:['pull','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Concentration curl', detail:'Seated · one DB · elbow on inner thigh · strict form · log per arm',tags:['pull','upper'],knee:false, equipment:'dumbbell', weightMode:'single'},
+  // �"?�"? PUSH / CHEST / SHOULDERS / TRICEPS �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
+  {name:'DB Bench press',        detail:'One DB each hand · flat surface · full chest stretch at bottom',   tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Incline press',      detail:'One DB each hand · incline surface · upper chest emphasis',        tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Shoulder press',     detail:'One DB each hand · seated or standing · neutral or pronated grip', tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Lateral raise',      detail:'One DB each hand · arms to shoulder height · slow 3-sec lower',    tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Arnold press',       detail:'One DB each hand · seated · rotate palms-in to palms-out at top',  tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Overhead tricep ext',detail:'Both hands grip one DB · overhead · long head isolation · 3×12',   tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'bothhands'},
+  {name:'DB Skull crusher',      detail:'Both hands grip one DB · lower to forehead · elbows in · 3×12',    tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'bothhands'},
+  {name:'DB Tricep kickback',    detail:'One DB each hand · hinge at hip · extend arms back · 3×12',        tags:['push','upper'], knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'Band chest press',      detail:'Band anchored behind · press forward at chest height with both hands',tags:['push','upper'],knee:false, equipment:'band'},
+  {name:'Band overhead press',   detail:'Stand on band · press overhead with both hands · shoulder strength',tags:['push','upper'], knee:false, equipment:'band'},
+  // �"?�"? LOWER BODY �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
+  {name:'Goblet squat',          detail:'Both hands hold one DB at chest · squat deep · track knees over toes',tags:['lower'],     knee:true,  equipment:'dumbbell', weightMode:'bothhands'},
+  {name:'Romanian deadlift',     detail:'One DB each hand at thighs · hip hinge · hamstring stretch · 3×10',tags:['lower'],        knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Hip thrust',         detail:'Shoulders on bench · one DB on hips · glute squeeze at top',       tags:['lower'],        knee:false, equipment:'dumbbell', weightMode:'single'},
+  {name:'BellaBooty hip thrust', detail:'Belt around hips · one DB clipped each side of belt · drive hips',  tags:['lower'],       knee:false, equipment:'bb'},
+  {name:'BellaBooty deadlift',   detail:'Belt at hip crease · one DB clipped each side · hip hinge focus',   tags:['lower'],       knee:false, equipment:'bb'},
+  {name:'DB Step-up',            detail:'One DB each hand · step or bench · drive through heel · 3×10 each leg',tags:['lower'],    knee:true,  equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Reverse lunge',      detail:'One DB each hand · step back · gentler on knees than forward · 3×10 each',tags:['lower'], knee:true,  equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Sumo deadlift',      detail:'Both hands hold one or two DBs between legs · wide stance · inner thigh',tags:['lower'],   knee:false, equipment:'dumbbell', weightMode:'bothhands'},
+  {name:'Barbell back squat',    detail:'Squat rack · bar on traps · controlled depth · knee track',         tags:['lower'],        knee:true,  equipment:'rack'},
+  {name:'Barbell RDL',           detail:'Squat rack · hip hinge · bar slides down shins · 3×10',            tags:['lower'],        knee:false, equipment:'rack'},
+  {name:'Barbell hip thrust',    detail:'Rack · bar across hips · padded · powerful glute drive · 3×10',    tags:['lower'],        knee:false, equipment:'rack'},
+  {name:'Band squat',            detail:'Band under feet · stand on it · add resistance to squat',          tags:['lower'],        knee:true,  equipment:'band'},
+  {name:'Band hip abduction',    detail:'Band around thighs above knees · seated or clamshell · glute med', tags:['lower'],        knee:false, equipment:'band'},
+  {name:'DB Stiff-leg deadlift', detail:'Both DBs · minimal knee bend · full hamstring lengthening · slow eccentric',tags:['lower','glutes'],knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'DB Calf raise',         detail:'One DB each hand · standing · full range plantarflexion · 3×15',   tags:['lower'],        knee:false, equipment:'dumbbell', weightMode:'pair'},
+  {name:'Push-ups',             detail:'Bodyweight · chest to floor · full lockout · scale with knee push-ups if needed', tags:['push','upper'], knee:false, equipment:'bw'},
+  // �"?�"? CORE �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
+  // Core work done via Peloton — tracked as a class reminder, no weight needed
+  {name:'Peloton 10-min Core',   detail:'Open Peloton app · Strength → Core · 10 min class · any instructor', tags:['core'], knee:false, equipment:'peloton'},
 ];
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    PROGRAM TEMPLATES
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 const idx = name => LIBRARY.findIndex(l=>l.name===name);
 
 const TEMPLATES = {
-'Full Body A Â· Push focus': [
+'Full Body A · Push focus': [
   {libIdx:idx('DB Bench press'),        sets:3, reps:10, targetWeight:30,  notes:'15 lb each'},
   {libIdx:idx('DB Shoulder press'),     sets:3, reps:10, targetWeight:20,  notes:'10 lb each'},
-  {libIdx:idx('DB Lateral raise'),      sets:3, reps:12, targetWeight:16,  notes:'8 lb each Â· slow 3-sec lower'},
-  {libIdx:idx('DB Tricep kickback'),    sets:3, reps:12, targetWeight:10,  notes:'5 lb each Â· hinge at hip Â· both arms'},
-  {libIdx:idx('Barbell back squat'),    sets:3, reps:10, targetWeight:45,  notes:'bar only to start Â· knee-aware Â· controlled depth'},
-  {libIdx:idx('Push-ups'),              sets:3, reps:10, targetWeight:'BW',notes:'chest finisher Â· after bench Â· full range'},
+  {libIdx:idx('DB Lateral raise'),      sets:3, reps:12, targetWeight:16,  notes:'8 lb each · slow 3-sec lower'},
+  {libIdx:idx('DB Tricep kickback'),    sets:3, reps:12, targetWeight:10,  notes:'5 lb each · hinge at hip · both arms'},
+  {libIdx:idx('Barbell back squat'),    sets:3, reps:10, targetWeight:45,  notes:'bar only to start · knee-aware · controlled depth'},
+  {libIdx:idx('Push-ups'),              sets:3, reps:10, targetWeight:'BW',notes:'chest finisher · after bench · full range'},
   {libIdx:idx('Peloton 10-min Core'),   sets:1, reps:1,  targetWeight:'',  notes:'10 min class after lifting'},
 ],
-'Full Body B Â· Pull focus': [
-  {libIdx:idx('DB Bent-over row'),      sets:3, reps:10, targetWeight:40,  notes:'20 lb each Â· flat back Â· squeeze shoulder blades'},
-  {libIdx:idx('DB Rear delt fly'),      sets:3, reps:12, targetWeight:16,  notes:'8 lb each Â· hinge forward Â· arms wide'},
+'Full Body B · Pull focus': [
+  {libIdx:idx('DB Bent-over row'),      sets:3, reps:10, targetWeight:40,  notes:'20 lb each · flat back · squeeze shoulder blades'},
+  {libIdx:idx('DB Rear delt fly'),      sets:3, reps:12, targetWeight:16,  notes:'8 lb each · hinge forward · arms wide'},
   {libIdx:idx('DB Hammer curl'),        sets:3, reps:12, targetWeight:20,  notes:'10 lb each'},
-  {libIdx:idx('DB Curl'),               sets:3, reps:10, targetWeight:20,  notes:'10 lb each Â· supinated grip Â· peak contraction'},
+  {libIdx:idx('DB Curl'),               sets:3, reps:10, targetWeight:20,  notes:'10 lb each · supinated grip · peak contraction'},
   {libIdx:idx('Romanian deadlift'),     sets:3, reps:10, targetWeight:40,  notes:'20 lb each'},
-  {libIdx:idx('DB Step-up'),            sets:3, reps:10, targetWeight:20,  notes:'10 lb each Â· drive through heel'},
+  {libIdx:idx('DB Step-up'),            sets:3, reps:10, targetWeight:20,  notes:'10 lb each · drive through heel'},
   {libIdx:idx('Peloton 10-min Core'),   sets:1, reps:1,  targetWeight:'',  notes:'10 min class after lifting'},
 ],
 'Lower Body & Glutes': [
   {libIdx:idx('BellaBooty hip thrust'), sets:4, reps:12, targetWeight:50,  notes:'25+25 lb'},
   {libIdx:idx('Romanian deadlift'),     sets:3, reps:10, targetWeight:40,  notes:'20 lb each'},
-  {libIdx:idx('Barbell back squat'),    sets:3, reps:10, targetWeight:45,  notes:'bar only Â· knee-aware Â· controlled depth'},
-  {libIdx:idx('DB Step-up'),            sets:3, reps:10, targetWeight:20,  notes:'10 lb each Â· drive through heel'},
-  {libIdx:idx('Band hip abduction'),    sets:3, reps:20, targetWeight:'Medium', notes:'seated Â· glute med activation'},
+  {libIdx:idx('Barbell back squat'),    sets:3, reps:10, targetWeight:45,  notes:'bar only · knee-aware · controlled depth'},
+  {libIdx:idx('DB Step-up'),            sets:3, reps:10, targetWeight:20,  notes:'10 lb each · drive through heel'},
+  {libIdx:idx('Band hip abduction'),    sets:3, reps:20, targetWeight:'Medium', notes:'seated · glute med activation'},
   {libIdx:idx('Peloton 10-min Core'),   sets:1, reps:1,  targetWeight:'',  notes:'10 min class after lifting'},
 ],
 };
@@ -1642,9 +1642,9 @@ let libOpen      = false;
 let logMode      = false;
 let sessionLog   = {};
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    DATE HELPERS
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 function getWeekStart(off=0){
   const d=new Date();
   const dow=d.getDay();
@@ -1692,40 +1692,40 @@ function freshWeek(ws){
 // loadWeek = async, uses Supabase (defined above as loadWeekRemote)
 const loadWeek = loadWeekRemote;
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   PULL-UP DAY â€” DYNAMIC STAGE-AWARE BUILDER
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
+   PULL-UP DAY — DYNAMIC STAGE-AWARE BUILDER
    Only the current stage exercise is included,
    plus lat pulldown and supportwork that always apply.
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 function buildPullupDayTemplate(){
   const stage = getPullupStage();
   // Each stage: which exercise to do, sets/reps, and notes
   const stageExercise = [
-    {name:'Dead hang',             sets:3, reps:25,  notes:'seconds â€” add 5 sec each week'},
+    {name:'Dead hang',             sets:3, reps:25,  notes:'seconds – add 5 sec each week'},
     {name:'Scapular pull',         sets:3, reps:8,   notes:'shrug down & back, no elbow bend'},
     {name:'Band-assisted pull-up', sets:3, reps:6,   notes:'heavy band, full range of motion'},
-    {name:'Negative pull-up',      sets:3, reps:4,   notes:'5 sec lower â€” key strength builder'},
+    {name:'Negative pull-up',      sets:3, reps:4,   notes:'5 sec lower – key strength builder'},
     {name:'Pull-up',               sets:3, reps:1,   notes:'strict form, full hang to chin over bar'},
   ][stage] || {name:'Dead hang', sets:3, reps:25, notes:'seconds'};
 
   return [
     // Current pull-up stage exercise
     {libIdx:idx(stageExercise.name), sets:stageExercise.sets, reps:stageExercise.reps, targetWeight:'BW', notes:stageExercise.notes},
-    // Lat pulldown â€” plates only, 90 lb = 45+45
-    {libIdx:idx('Lat pulldown'),     sets:3, reps:10, targetWeight:90,   notes:'pull to upper chest Â· plates only'},
+    // Lat pulldown — plates only, 90 lb = 45+45
+    {libIdx:idx('Lat pulldown'),     sets:3, reps:10, targetWeight:90,   notes:'pull to upper chest · plates only'},
     // Support work
     {libIdx:idx('DB Single-arm row'),sets:3, reps:10, targetWeight:15,   notes:'each side'},
     {libIdx:idx('DB Hammer curl'),   sets:3, reps:12, targetWeight:20,   notes:'10 lb each'},
-    {libIdx:idx('DB Rear delt fly'), sets:3, reps:12, targetWeight:10,   notes:'5 lb each Â· hinge forward Â· posture'},
+    {libIdx:idx('DB Rear delt fly'), sets:3, reps:12, targetWeight:10,   notes:'5 lb each · hinge forward · posture'},
     {libIdx:idx('Band pull-apart'),  sets:3, reps:15, targetWeight:'Medium', notes:'posture & rear delts'},
   ];
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    PULL-UP TRACKER RENDER
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 function renderPullupTracker(){
-  // Pull-up tracker moved to banner â€” this is now a no-op
+  // Pull-up tracker moved to banner — this is now a no-op
   // Stage info shown in pb-pullup-stage via updateHeaderStats()
 }
 
@@ -1754,9 +1754,9 @@ function setPullupStageUI(i){
   updateHeaderStats();
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    RENDER: PLANNER
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 async function renderPlanner(){
   const ws=getWeekStart(weekOffset);
   await loadWeek(ws); // ensure cached
@@ -1776,7 +1776,7 @@ async function updateHeaderStats(){
   const stage=getPullupStage();
   const stageName=PULLUP_STAGES[stage]?.name||'Dead hang';
   const pbStage=document.getElementById('pb-pullup-stage');
-  if(pbStage) pbStage.textContent=`Pull-up ladder Â· Stage ${stage+1} of ${PULLUP_STAGES.length}: ${stageName}`;
+  if(pbStage) pbStage.textContent=`Pull-up ladder · Stage ${stage+1} of ${PULLUP_STAGES.length}: ${stageName}`;
 }
 
 async function renderDayTabs(){
@@ -1787,7 +1787,7 @@ async function renderDayTabs(){
   // Get the week's date range (Mon to Sun+1)
   const weekEnd=addDays(ws,7);
 
-  // Build a map: dayLabel (day1, day2...) â†’ dates logged this week
+  // Build a map: dayLabel (day1, day2...) �?' dates logged this week
   // Also track all dates with weekly entries this week
   const weeklyEntries=entries.filter(e=>e.source==='weekly'&&e.date>=ws&&e.date<weekEnd);
   const loggedDayLabels=new Set(weeklyEntries.map(e=>e.day)); // e.g. 'day1','day2'
@@ -1819,8 +1819,8 @@ async function renderDayTabs(){
     // Activity type indicator
     let typeIcon='';
     if(isLogged) typeIcon='';
-    else if(dayType==='workout'&&hasEx) typeIcon='ðŸ’ª';
-    else if(dayType==='run') typeIcon='ðŸƒ';
+    else if(dayType==='workout'&&hasEx) typeIcon='💪';
+    else if(dayType==='run') typeIcon='🏃';
 
     const div=document.createElement('div');
     let cls=`day-tab`;
@@ -1839,14 +1839,14 @@ async function renderDayTabs(){
       <div style="font-family:'Roboto Mono',monospace;font-size:.56rem;margin-top:1px;
         color:${isLogged?'var(--sage)':i===curDay?'var(--blush2)':'var(--ink4)'};">
         ${isLogged
-          ? 'âœ“ done'
+          ? '✔ done'
           : dayType==='workout'&&hasEx
             ? `${day.exercises.length}ex`
             : dayType==='run'
               ? 'run'
               : dayType==='workout'
                 ? 'empty'
-                : 'â€”'
+                : '—'
         }
       </div>`;
     c.appendChild(div);
@@ -1864,11 +1864,11 @@ async function changeScheduledDate(dayIdx, newDate){
 
 async function updateWeekLabel(){
   const ws=getWeekStart(weekOffset);
-  // Derive the week range directly from the Monday (ws) â€” Mon to Sun
+  // Derive the week range directly from the Monday (ws) — Mon to Sun
   const mon=new Date(ws+'T12:00:00');
   const sun=new Date(ws+'T12:00:00'); sun.setDate(mon.getDate()+6);
   document.getElementById('week-label').textContent=
-    mon.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' â€“ '+
+    mon.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' — '+
     sun.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   updateWeekContext();
 }
@@ -1890,13 +1890,13 @@ async function renderDayEditor(){
   document.getElementById('day-name-inp').value=nameVal;
   // Update the display span
   const display=document.getElementById('day-name-display');
-  if(display) display.textContent=nameVal||DOW_SHORT[curDay]+' â€” '+new Date(addDays(ws,curDay)+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  if(display) display.textContent=nameVal||DOW_SHORT[curDay]+' — '+new Date(addDays(ws,curDay)+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
   endEditDayName();
 
   // Day type toggle buttons
   const typeContainer=document.getElementById('day-type-btns');
   if(typeContainer){
-    const types=[{k:'rest',lbl:'ðŸ˜´ Rest'},{k:'workout',lbl:'ðŸ’ª Workout'},{k:'run',lbl:'ðŸƒ Run'}];
+    const types=[{k:'rest',lbl:'😴 Rest'},{k:'workout',lbl:'💪 Workout'},{k:'run',lbl:'🏃 Run'}];
     typeContainer.innerHTML=types.map(t=>`
       <button onclick="changeDayType('${t.k}')"
         style="font-family:'Roboto Mono',monospace;font-size:.6rem;padding:3px 9px;border-radius:12px;cursor:pointer;
@@ -1920,7 +1920,7 @@ async function renderDayEditor(){
     if(anchor) anchor.before(summaryEl);
   }
 
-  // Robust logged check â€” same logic as renderDayTabs
+  // Robust logged check — same logic as renderDayTabs
   const entries=await getEntries();
   const ws2=getWeekStart(weekOffset);
   const weekEnd=addDays(ws2,7);
@@ -1952,11 +1952,11 @@ async function renderDayEditor(){
         border-radius:0 var(--r) var(--r) 0;padding:.875rem 1rem;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem;">
           <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--sage2);">
-            âœ“ Session completed ${lookupDate?new Date(lookupDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}):''}
+            ✔ Session completed ${lookupDate?new Date(lookupDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}):''}
           </div>
           <div style="display:flex;gap:.5rem;">
             <button class="sm-btn" style="font-size:.72rem;" onclick="togglePlanSection()">
-              <span id="plan-toggle-lbl">Show plan â†“</span>
+              <span id="plan-toggle-lbl">Show plan ↓</span>
             </button>
             <button class="sm-btn" style="font-size:.72rem;" onclick="unlogDay(${curDay})">Undo</button>
           </div>
@@ -1971,9 +1971,9 @@ async function renderDayEditor(){
             const bandNote=isBandEx&&sets[0]?.notes?sets[0].notes.split(' band')[0]:'';
             const bestWeight=isBandEx||isBWEx?null:Math.max(...sets.map(s=>s.weight||0));
             const maxReps=isBWEx?Math.max(...sets.map(s=>s.reps||0)):null;
-            const weightLabel=isBandEx?` Â· ${bandNote} band`:isBWEx?` Â· ${maxReps} reps max`:bestWeight>0?` Â· best ${bestWeight} lb`:'';
+            const weightLabel=isBandEx?` · ${bandNote} band`:isBWEx?` · ${maxReps} reps max`:bestWeight>0?` · best ${bestWeight} lb`:'';
             return `<div style="font-size:.78rem;color:var(--ink2);">
-              <strong>${ex}</strong> â€” ${totalSets} set${totalSets!==1?'s':''}${weightLabel}
+              <strong>${ex}</strong> — ${totalSets} set${totalSets!==1?'s':''}${weightLabel}
             </div>`;
           }).join('')}
         </div>`:'<div style="font-size:.78rem;color:var(--ink3);">No weighted sets recorded.</div>'}
@@ -1985,7 +1985,7 @@ async function renderDayEditor(){
     const planSection=document.getElementById('plan-section');
     if(planSection) planSection.style.display='none';
     const toggleLbl=document.getElementById('plan-toggle-lbl');
-    if(toggleLbl) toggleLbl.textContent='Show plan â†“';
+    if(toggleLbl) toggleLbl.textContent='Show plan ↓';
   } else {
     summaryEl.style.display='none';
     // Ensure plan section is visible for unlogged days
@@ -2006,7 +2006,7 @@ async function renderDayEditor(){
     document.getElementById('start-bar').style.display='none';
     const list=document.getElementById('plan-ex-list');
     if(list) list.innerHTML=`<div class="day-empty">
-      <strong>${DOW_SHORT[curDay]} â€” Rest Day</strong><br>
+      <strong>${DOW_SHORT[curDay]} — Rest Day</strong><br>
       Recovery is part of the program. Switch to Workout or Run above to plan something.
     </div>`;
   }
@@ -2027,7 +2027,7 @@ function togglePlanSection(){
   if(!el) return;
   const collapsed=el.style.display==='none';
   el.style.display=collapsed?'block':'none';
-  if(lbl) lbl.textContent=collapsed?'Hide plan â†‘':'Show plan â†“';
+  if(lbl) lbl.textContent=collapsed?'Hide plan ↑':'Show plan ↓';
 }
 
 async function unlogDay(dayIdx){
@@ -2049,7 +2049,7 @@ async function renderPlanExList(){
   document.getElementById('knee-note').style.display=hasKnee?'block':'none';
 
   if(day.exercises.length===0){
-    list.innerHTML=`<div class="day-empty"><strong>No exercises yet.</strong><br>Tap "Template âœ¦" to load a pre-built day, or "+ Add exercise" to pick from the library.</div>`;
+    list.innerHTML=`<div class="day-empty"><strong>No exercises yet.</strong><br>Tap "Template �o�" to load a pre-built day, or "+ Add exercise" to pick from the library.</div>`;
     return;
   }
   list.innerHTML='';
@@ -2059,7 +2059,7 @@ async function renderPlanExList(){
     const libEx=LIBRARY[ex.libIdx];
     if(!libEx) return;
 
-    // â”€â”€ Peloton class: compact reminder row â”€â”€
+    // �"?�"? Peloton class: compact reminder row �"?�"?
     if(libEx.equipment==='peloton'){
       const row=document.createElement('div');
       row.style.cssText='display:grid;grid-template-columns:36px 1fr 44px;align-items:center;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--border2);position:relative;padding-left:2rem;';
@@ -2073,20 +2073,20 @@ async function renderPlanExList(){
         <div style="display:flex;align-items:center;gap:.75rem;min-width:0;">
           <div style="flex-shrink:0;">
             <div style="font-weight:600;font-size:.85rem;">Peloton 10-min Core</div>
-            <div style="font-size:.7rem;color:var(--ink3);">After lifting Â· Strength â†’ Core</div>
+            <div style="font-size:.7rem;color:var(--ink3);">After lifting · Strength → Core</div>
           </div>
           <input class="note-inp" type="text" maxlength="80" style="flex:1;min-width:0;"
-            value="${ex.notes||''}" placeholder="notesâ€¦"
+            value="${ex.notes||''}" placeholder="notes…"
             onchange="updPlanField(${ri},'notes',this.value)">
         </div>
         <div style="display:flex;align-items:center;gap:.375rem;">
           <div class="reorder-btns">
-            <button class="reorder-btn jump" onclick="moveExToTop(${ri})" ${ri===0?'disabled':''} title="Send to top">â‡ˆ</button>
-            <button class="reorder-btn" onclick="moveEx(${ri},-1)" ${ri===0?'disabled':''} title="Move up">â†‘</button>
-            <button class="reorder-btn" onclick="moveEx(${ri},1)" ${ri===total-1?'disabled':''} title="Move down">â†“</button>
-            <button class="reorder-btn jump" onclick="moveExToBottom(${ri})" ${ri===total-1?'disabled':''} title="Send to bottom">â‡Š</button>
+            <button class="reorder-btn jump" onclick="moveExToTop(${ri})" ${ri===0?'disabled':''} title="Send to top">⇈</button>
+            <button class="reorder-btn" onclick="moveEx(${ri},-1)" ${ri===0?'disabled':''} title="Move up">↑</button>
+            <button class="reorder-btn" onclick="moveEx(${ri},1)" ${ri===total-1?'disabled':''} title="Move down">↓</button>
+            <button class="reorder-btn jump" onclick="moveExToBottom(${ri})" ${ri===total-1?'disabled':''} title="Send to bottom">⇊</button>
           </div>
-          <button class="rm-btn" onclick="removeEx(${ri})" aria-label="Remove">âœ•</button>
+          <button class="rm-btn" onclick="removeEx(${ri})" aria-label="Remove">✕</button>
         </div>`;
       _addDragListeners(row, ri);
       list.appendChild(row);
@@ -2122,16 +2122,16 @@ async function renderPlanExList(){
         : `<select class="wt-select" onchange="updPlanField(${ri},'targetWeight',this.value);updPlanNote(${ri},this.value)">${buildWeightOpts(libEx,ex.targetWeight)}</select>`
       }
       <input class="note-inp" type="text" maxlength="50"
-        value="${ex.notes||''}" placeholder="notesâ€¦"
+        value="${ex.notes||''}" placeholder="notes…"
         onchange="updPlanField(${ri},'notes',this.value)">
       <div style="display:flex;align-items:center;gap:.375rem;">
         <div class="reorder-btns">
-          <button class="reorder-btn jump" onclick="moveExToTop(${ri})" ${ri===0?'disabled':''} title="Send to top">â‡ˆ</button>
-          <button class="reorder-btn" onclick="moveEx(${ri},-1)" ${ri===0?'disabled':''} title="Move up">â†‘</button>
-          <button class="reorder-btn" onclick="moveEx(${ri},1)" ${ri===total-1?'disabled':''} title="Move down">â†“</button>
-          <button class="reorder-btn jump" onclick="moveExToBottom(${ri})" ${ri===total-1?'disabled':''} title="Send to bottom">â‡Š</button>
+          <button class="reorder-btn jump" onclick="moveExToTop(${ri})" ${ri===0?'disabled':''} title="Send to top">⇈</button>
+          <button class="reorder-btn" onclick="moveEx(${ri},-1)" ${ri===0?'disabled':''} title="Move up">↑</button>
+          <button class="reorder-btn" onclick="moveEx(${ri},1)" ${ri===total-1?'disabled':''} title="Move down">↓</button>
+          <button class="reorder-btn jump" onclick="moveExToBottom(${ri})" ${ri===total-1?'disabled':''} title="Send to bottom">⇊</button>
         </div>
-        <button class="rm-btn" onclick="removeEx(${ri})" aria-label="Remove">âœ•</button>
+        <button class="rm-btn" onclick="removeEx(${ri})" aria-label="Remove">✕</button>
       </div>`;
     _addDragListeners(row, ri);
     list.appendChild(row);
@@ -2183,7 +2183,7 @@ function _addDragListeners(row, ri){
     _dragSrcRi=null;
   });
 
-  // Touch reorder â€” long-press on handle to enable touch drag
+  // Touch reorder — long-press on handle to enable touch drag
   const handle=row.querySelector('.drag-handle');
   if(!handle) return;
   let _touchY=0, _touchTimer=null, _touchActive=false;
@@ -2318,22 +2318,22 @@ async function checkStartBar(){
     const sched=addDays(ws,curDay);
     const isToday=sched===today();
     const btn=document.getElementById('start-btn');
-    if(btn) btn.textContent=isToday?'Start today\'s session â†’':'Start this session â†’';
+    if(btn) btn.textContent=isToday?'Start today\'s session →'':'Start this session →'';
   }
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    ROTATION ENGINE
-   A â†’ B â†’ C â†’ A â†’ B â†’ Câ€¦
+   A → B → C → A → B → C…
    Looks at saved week plans to find the last
    template used in each slot and suggests the next.
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 const ROTATION_KEYS = [
-  'Full Body A Â· Push focus',
-  'Full Body B Â· Pull focus',
+  'Full Body A · Push focus',
+  'Full Body B · Pull focus',
   'Lower Body & Glutes',
 ];
-const ROTATION_SHORT = {'Full Body A Â· Push focus':'A','Full Body B Â· Pull focus':'B','Lower Body & Glutes':'C'};
+const ROTATION_SHORT = {'Full Body A · Push focus':'A','Full Body B · Pull focus':'B','Lower Body & Glutes':'C'};
 
 async function getNextRotationTemplate(slotIdx){
   // Find the most recent template used in this slot across all saved weeks
@@ -2345,18 +2345,18 @@ async function getNextRotationTemplate(slotIdx){
   let lastKey=null;
   for(let off=weekOffset-1; off>=weekOffset-12; off--){
     const pastWs=getWeekStart(off);
-    // Only check if cached â€” don't fire 12 Supabase requests
+    // Only check if cached — don't fire 12 Supabase requests
     const cached=cache.weeks[pastWs];
     if(!cached) continue;
     const day=cached.days[slotIdx];
     if(!day||!day.exercises.length) continue;
     // Match day name to a known template key
-    const match=ROTATION_KEYS.find(k=>day.name===k||day.name===k.split(' Â· ')[0]);
+    const match=ROTATION_KEYS.find(k=>day.name===k||day.name===k.split(' · ')[0]);
     if(match){ lastKey=match; break; }
   }
 
   if(!lastKey){
-    // No history â€” default by slot position
+    // No history — default by slot position
     return ROTATION_KEYS[slotIdx % 3];
   }
 
@@ -2388,14 +2388,14 @@ async function showTemplateModal(highlightKey, slotIdx=null){
     rotationHint=`<div style="font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink4);
       background:var(--cream2);border-radius:6px;padding:.5rem .75rem;margin:.625rem .625rem 0;line-height:1.8;">
       Next in rotation: <strong style="color:var(--sage2);">Day ${letter}</strong>
-      &nbsp;Â·&nbsp;
-      Wk1: A/B/C &nbsp;Â·&nbsp; Wk2: B/C/A &nbsp;Â·&nbsp; Wk3: C/A/B
+      &nbsp;·&nbsp;
+      Wk1: A/B/C &nbsp;·&nbsp; Wk2: B/C/A &nbsp;·&nbsp; Wk3: C/A/B
     </div>`;
   }
 
   const header=`<div style="padding:1.25rem 1.25rem .75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
     <div style="font-family:'Playfair Display',serif;font-size:1rem;">Choose a template</div>
-    <button onclick="document.getElementById('tmpl-modal').remove()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ink3);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">âœ•</button>
+    <button onclick="document.getElementById('tmpl-modal').remove()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ink3);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">✕</button>
   </div>${rotationHint}`;
 
   // Static templates
@@ -2403,8 +2403,8 @@ async function showTemplateModal(highlightKey, slotIdx=null){
     const exs=TEMPLATES[key];
     const isHighlighted=(key===highlightKey);
     const letter=ROTATION_SHORT[key]||'';
-    const exNames=exs.map(e=>LIBRARY[e.libIdx]?.name||'').filter(Boolean).slice(0,4).join(', ')+(exs.length>4?'â€¦':'');
-    const title=letter?`Day ${letter} Â· ${key.split(' Â· ').slice(1).join(' Â· ')||key}`:key;
+    const exNames=exs.map(e=>LIBRARY[e.libIdx]?.name||'').filter(Boolean).slice(0,4).join(', ')+(exs.length>4?'…':'');
+    const title=letter?`Day ${letter} · ${key.split(' · ').slice(1).join(' · ')||key}`:key;
     return cardHTML(title, exNames, isHighlighted, `applyTemplate('${key.replace(/'/g,"\\'")}',this)`);
   }).join('');
 
@@ -2413,24 +2413,24 @@ async function showTemplateModal(highlightKey, slotIdx=null){
   const customCards=Object.keys(customTmpls).map(key=>{
     const exs=customTmpls[key];
     const isHighlighted=(key===highlightKey);
-    const exNames=exs.map(e=>LIBRARY[e.libIdx]?.name||'').filter(Boolean).slice(0,4).join(', ')+(exs.length>4?'â€¦':'');
-    return cardHTML('â˜… '+key, exNames, isHighlighted, `applyTemplate('${key.replace(/'/g,"\\'")}',this,'custom')`);
+    const exNames=exs.map(e=>LIBRARY[e.libIdx]?.name||'').filter(Boolean).slice(0,4).join(', ')+(exs.length>4?'…':'');
+    return cardHTML('★ '+key, exNames, isHighlighted, `applyTemplate('${key.replace(/'/g,"\\'")}',this,'custom')`);
   }).join('');
 
   // Pull-up day
   const stage=getPullupStage();
   const stageName=PULLUP_STAGES[stage]?.name||'Dead hang';
-  const pullupPreview=`${stageName} Â· Lat pulldown Â· Single-arm row Â· Hammer curl Â· Band pull-apart`;
+  const pullupPreview=`${stageName} · Lat pulldown · Single-arm row · Hammer curl · Band pull-apart`;
   const isPullupHighlighted=(highlightKey==='pullup');
   const pullupCard=cardHTML(
-    'Optional Â· Pull-up Day',
+    'Optional · Pull-up Day',
     `Stage ${stage+1}: ${pullupPreview}`,
     isPullupHighlighted,
     `applyPullupTemplate()`
   );
 
   const footer=`<div style="padding:.5rem 1rem .875rem;border-top:1px solid var(--border2);margin-top:.25rem;text-align:right;">
-    <button class="sm-btn" onclick="document.getElementById('tmpl-modal')?.remove();showTemplateManager()">âœŽ Manage templates</button>
+    <button class="sm-btn" onclick="document.getElementById('tmpl-modal')?.remove();showTemplateManager()">✎ Manage templates</button>
   </div>`;
 
   const customSectionHtml=Object.keys(customTmpls).length>0
@@ -2475,7 +2475,7 @@ async function applyTemplate(key, el, source='builtin'){
   const week=await loadWeek(ws);
   const entries=await getEntries();
 
-  // Build PR map: exercise name â†’ best weight ever
+  // Build PR map: exercise name �?' best weight ever
   const prs={};
   entries.forEach(e=>{
     if(e.weight>0&&(!prs[e.ex]||e.weight>prs[e.ex])) prs[e.ex]=e.weight;
@@ -2527,9 +2527,9 @@ function buildWeightNote(libEx, totalWeight, fallbackNote){
   return fallbackNote||'';
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    TEMPLATE MANAGER
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 function showTemplateManager(){
   const old=document.getElementById('tmgr-modal'); if(old) old.remove();
   const customTmpls=_getCustomTemplates();
@@ -2547,7 +2547,7 @@ function showTemplateManager(){
     const listHtml=keys.length===0
       ?`<div style="text-align:center;padding:1.5rem;color:var(--ink4);font-size:.82rem;">No custom templates yet. Create one below.</div>`
       :keys.map(k=>{
-        const exNames=ct[k].map(e=>LIBRARY[e.libIdx]?.name||'').filter(Boolean).slice(0,3).join(', ')+(ct[k].length>3?'â€¦':'');
+        const exNames=ct[k].map(e=>LIBRARY[e.libIdx]?.name||'').filter(Boolean).slice(0,3).join(', ')+(ct[k].length>3?'…':'');
         return `<div style="display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;border-bottom:1px solid var(--border2);">
           <div style="flex:1;min-width:0;">
             <div style="font-weight:600;font-size:.88rem;">${k}</div>
@@ -2562,7 +2562,7 @@ function showTemplateManager(){
     box.innerHTML=`
       <div style="padding:1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
         <div style="font-family:'Playfair Display',serif;font-size:1rem;">My Templates</div>
-        <button onclick="document.getElementById('tmgr-modal').remove()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ink3);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">âœ•</button>
+        <button onclick="document.getElementById('tmgr-modal').remove()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ink3);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">✕</button>
       </div>
       <div>${listHtml}</div>
       <div style="padding:1rem 1.25rem;">
@@ -2618,7 +2618,7 @@ function openTemplateEditor(existingKey){
           title="Reps">
         <span style="font-size:.72rem;color:var(--ink4);">reps</span>
         <button style="width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:transparent;color:var(--ink4);cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center;"
-          onclick="window._edExs.splice(${i},1);window._refreshEditorBody()">âœ•</button>
+          onclick="window._edExs.splice(${i},1);window._refreshEditorBody()">✕</button>
       </div>`;
     }).join('');
 
@@ -2629,15 +2629,15 @@ function openTemplateEditor(existingKey){
         style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-bottom:1px solid var(--border2);
           cursor:${already?'default':'pointer'};opacity:${already?'.4':'1'};background:${already?'var(--cream2)':'white'};">
         <div style="flex:1;font-size:.8rem;font-weight:500;">${ex.name}</div>
-        <div style="font-size:.65rem;color:var(--ink4);">${ex.tags.join(' Â· ')}</div>
-        <span style="font-size:1rem;color:var(--sage);">${already?'âœ“':'+'}</span>
+        <div style="font-size:.65rem;color:var(--ink4);">${ex.tags.join(' · ')}</div>
+        <span style="font-size:1rem;color:var(--sage);">${already?'✔':'+'}</span>
       </div>`;
     }).join('');
 
     box.innerHTML=`
       <div style="padding:1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
         <div style="font-family:'Playfair Display',serif;font-size:1rem;">${existingKey?'Edit Template':'New Template'}</div>
-        <button onclick="document.getElementById('tedit-modal').remove()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ink3);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">âœ•</button>
+        <button onclick="document.getElementById('tedit-modal').remove()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ink3);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">✕</button>
       </div>
       <div style="padding:1rem 1.25rem .5rem;">
         <label style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--ink4);display:block;margin-bottom:4px;">TEMPLATE NAME</label>
@@ -2647,7 +2647,7 @@ function openTemplateEditor(existingKey){
       <div style="padding:.25rem 1.25rem .5rem;">
         <div style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:var(--ink4);margin-bottom:.375rem;">EXERCISES IN TEMPLATE (${editorExercises.length})</div>
         ${editorExercises.length===0
-          ?'<div style="font-size:.8rem;color:var(--ink4);padding:.5rem 0;">Pick exercises from the library below â†’</div>'
+          ?'<div style="font-size:.8rem;color:var(--ink4);padding:.5rem 0;">Pick exercises from the library below →</div>'
           :`<div>${exRows}</div>`}
       </div>
       <details style="margin:0 1.25rem .75rem;">
@@ -2694,12 +2694,12 @@ async function saveCustomTemplate(oldKey){
   if(window._refreshTemplateManager) window._refreshTemplateManager();
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    LIBRARY
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-/* ══════════════════════════════════════════════
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
+/* ??????????????????????????????????????????????
    CUSTOM EXERCISE CREATOR
-   ══════════════════════════════════════════════ */
+   ?????????????????????????????????????????????? */
 function _getCustomExercises(){
   try{ return JSON.parse(localStorage.getItem('customExercises')||'[]'); }catch(e){ return []; }
 }
@@ -2735,8 +2735,8 @@ function showNewExerciseModal(editIdx=null){
     {v:'peloton',l:'Peloton / Cardio'},
   ];
   const WM_OPTS=[
-    {v:'pair',l:'One DB each hand — log combined weight'},
-    {v:'single',l:'One DB per arm — log weight each side'},
+    {v:'pair',l:'One DB each hand - log combined weight'},
+    {v:'single',l:'One DB per arm - log weight each side'},
     {v:'bothhands',l:'Both hands grip one DB'},
   ];
   const TAG_OPTS=['upper','lower','push','pull','core'];
@@ -2747,7 +2747,7 @@ function showNewExerciseModal(editIdx=null){
   box.innerHTML=`
     <div style="padding:1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
       <div style="font-family:'Playfair Display',serif;font-size:1rem;">${isEdit?'Edit Exercise':'Create Exercise'}</div>
-      <button onclick="document.getElementById('newex-modal').remove()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ink3);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">✕</button>
+      <button onclick="document.getElementById('newex-modal').remove()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ink3);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">?</button>
     </div>
     <div style="padding:1rem 1.25rem;display:flex;flex-direction:column;gap:.875rem;">
       <div>
@@ -2757,7 +2757,7 @@ function showNewExerciseModal(editIdx=null){
       </div>
       <div>
         <label class="run-inp-lbl">Description / coaching cue</label>
-        <input id="nex-detail" type="text" maxlength="120" value="${existing?.detail||''}" placeholder="Form cue, sets, reps guidance…"
+        <input id="nex-detail" type="text" maxlength="120" value="${existing?.detail||''}" placeholder="Form cue, sets, reps guidance."
           style="width:100%;min-height:44px;padding:0 .875rem;border:1.5px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;font-size:.85rem;background:var(--cream);">
       </div>
       <div>
@@ -2790,7 +2790,7 @@ function showNewExerciseModal(editIdx=null){
       <div>
         <label style="display:flex;align-items:center;gap:.625rem;cursor:pointer;font-size:.85rem;">
           <input type="checkbox" id="nex-knee" ${existing?.knee?'checked':''} style="accent-color:var(--gold);width:18px;height:18px;">
-          Knee-aware — show modification reminder when this exercise is planned
+          Knee-aware - show modification reminder when this exercise is planned
         </label>
       </div>
       ${isEdit?`<div style="padding-top:.25rem;border-top:1px solid var(--border2);">
@@ -2804,7 +2804,7 @@ function showNewExerciseModal(editIdx=null){
     <div style="padding:.75rem 1.25rem 1.25rem;display:flex;gap:.5rem;justify-content:flex-end;border-top:1px solid var(--border2);">
       <button class="btn" onclick="document.getElementById('newex-modal').remove()">Cancel</button>
       <button class="btn primary" onclick="saveCustomExercise(${isEdit?editIdx:'null'})">
-        ${isEdit?'Save changes':'Add to library ✓'}
+        ${isEdit?'Save changes':'Add to library ?'}
       </button>
     </div>`;
 
@@ -2900,7 +2900,7 @@ async function renderLibrary(){
     const ms=!sr||ex.name.toLowerCase().includes(sr)||ex.tags.some(t=>t.includes(sr));
     return meq&&mbf&&ms;
   });
-  document.getElementById('lib-count').textContent=`â€” ${filtered.length}`;
+  document.getElementById('lib-count').textContent=`— ${filtered.length}`;
   const grid=document.getElementById('lib-grid'); grid.innerHTML='';
   if(!filtered.length){grid.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ink4);font-size:.82rem;grid-column:1/-1;">No matches.</div>';return;}
   filtered.forEach(ex=>{
@@ -2921,7 +2921,7 @@ async function renderLibrary(){
         <div class="lib-item-tags">${tagHTMLparts.join(``)}${eqLabel?`<span class="tag tag-band" style="margin-left:2px;">${eqLabel}</span>`:``}${customBadge}</div>
       </div>
       <button class="lib-add-btn" onclick="addFromLib(${idx})" ${isAdded?`disabled`:``}
-        aria-label="${isAdded?`Added`:`Add `+ex.name}">${isAdded?`✓`:`+`}</button>`;
+        aria-label="${isAdded?`Added`:`Add `+ex.name}">${isAdded?`?`:`+`}</button>`;
     grid.appendChild(item);
   });
 }
@@ -2939,14 +2939,14 @@ async function addFromLib(libIdx){
   renderPlanExList();
   renderDayTabs();
   const item=document.getElementById(`li-${libIdx}`);
-  if(item){item.classList.add('added');const b=item.querySelector('.lib-add-btn');b.textContent='âœ“';b.disabled=true;}
+  if(item){item.classList.add('added');const b=item.querySelector('.lib-add-btn');b.textContent='✔';b.disabled=true;}
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   LOG SESSION â€” per-set weight + reps tracking
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
+   LOG SESSION — per-set weight + reps tracking
    sessionLog[ei] = { sets:[{done,weight,reps,notes}], _prefillW }
                   | { pelotonDone, notes }
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 async function startWorkout(){
   logMode=true; sessionLog={};
   document.getElementById('plan-panel').style.display='none';
@@ -3004,7 +3004,7 @@ async function renderLogList(){
             onclick="togglePeloton(${ei},this)">${PELOTON_SVG.replace('width="44" height="44"','width="28" height="28"')}</div>
           <div style="flex:1;">
             <div class="ex-name">Peloton 10-min Core Class</div>
-            <div style="font-size:.72rem;color:var(--ink3);margin-top:2px;">${done?'âœ“ Complete â€” great work!':'Tap when you\'ve finished your class'}</div>
+            <div style="font-size:.72rem;color:var(--ink3);margin-top:2px;">${done?'✔ Complete — great work!':'Tap when you\'ve finished your class'}</div>
           </div>
           <input class="set-note-inp" style="max-width:160px;" type="text" maxlength="40" placeholder="notes"
             value="${sessionLog[ei].notes||''}" onchange="sessionLog[${ei}].notes=this.value">
@@ -3018,12 +3018,12 @@ async function renderLogList(){
     }
     const card=document.createElement('div');
     card.className='log-ex-card'; card.id=`log-card-${ei}`;
-    const planTarget=ex.targetWeight&&ex.targetWeight!=='BW'?` Â· plan: ${ex.targetWeight} lb`:'';
+    const planTarget=ex.targetWeight&&ex.targetWeight!=='BW'?` · plan: ${ex.targetWeight} lb`:'';
     card.innerHTML=`
       <div class="log-ex-header">
         <div class="log-ex-meta">
           <div class="ex-name">${libEx.name}${libEx.knee?'<span class="tag tag-knee" style="margin-left:5px;">knee</span>':''}</div>
-          <div style="font-size:.7rem;color:var(--ink3);margin-top:2px;">${ex.sets||3} sets Ã— ${ex.reps||10} reps${planTarget}</div>
+          <div style="font-size:.7rem;color:var(--ink3);margin-top:2px;">${ex.sets||3} sets × ${ex.reps||10} reps${planTarget}</div>
         </div>
       </div>
       <div class="set-rows" id="set-rows-${ei}"></div>
@@ -3056,10 +3056,10 @@ function renderSetRows(ei,libEx,exPlan){
       weightEl=`<select class="set-weight-sel ${set.done?'done-sel':''}"
         style="${prefillBorder}"
         onchange="updateSetWeight(${ei},${si},this.value)"
-        title="${isPrefilled?'â†º Pre-filled from last session â€” change if needed':''}"
+        title="${isPrefilled?'… Pre-filled from last session — change if needed':''}"
         >${buildWeightOpts(libEx,set.weight)}</select>`;
     }
-    // Reps dropdown (1â€“30)
+    // Reps dropdown (1�?"30)
     const repsOpts=Array.from({length:30},(_,i)=>i+1).map(n=>
       `<option value="${n}"${(set.reps||exPlan.reps||10)===n?' selected':''}>${n}</option>`
     ).join('');
@@ -3069,11 +3069,11 @@ function renderSetRows(ei,libEx,exPlan){
       title="Reps">${repsOpts}</select>`;
     const showNote=si===sl.sets.length-1||set.notes;
     const noteEl=showNote
-      ?`<input class="set-note-inp" type="text" maxlength="40" placeholder="noteâ€¦"
+      ?`<input class="set-note-inp" type="text" maxlength="40" placeholder="note…"
           value="${set.notes||''}" onchange="updateSetNote(${ei},${si},this.value)">`
       :`<div style="flex:1;"></div>`;
     const rmEl=sl.sets.length>1
-      ?`<button class="set-rm-btn" onclick="removeSet(${ei},${si})" title="Remove">âœ•</button>`
+      ?`<button class="set-rm-btn" onclick="removeSet(${ei},${si})" title="Remove">✕</button>`
       :`<div style="width:36px;"></div>`;
     row.innerHTML=numBtn+weightEl+repsEl+noteEl+rmEl;
     container.appendChild(row);
@@ -3131,7 +3131,7 @@ function togglePeloton(ei,iconEl){
   iconEl.style.color=done?'white':'var(--ink3)';
   iconEl.style.borderColor=done?'var(--sage2)':'var(--border)';
   const lbl=iconEl.nextElementSibling?.querySelector('div:last-child');
-  if(lbl) lbl.textContent=done?'âœ“ Complete â€” great work!':'Tap when you\'ve finished your class';
+  if(lbl) lbl.textContent=done?'✔ Complete — great work!':'Tap when you\'ve finished your class';
   updateLogProgress();
 }
 async function updateLogProgress(){
@@ -3171,7 +3171,7 @@ async function markComplete(){
   const week=await loadWeek(ws);
   const day=week.days[curDay];
   const dt=today();
-  showLoading('Saving sessionâ€¦');
+  showLoading('Saving session…');
   const allEntries=await getEntries();
   const entries=allEntries.filter(e=>e.date!==dt||e.day!==('day'+(curDay+1)));
   const fresh=[];
@@ -3224,9 +3224,9 @@ async function markComplete(){
   document.getElementById('banner').style.background='';
   const exCount=new Set(fresh.map(f=>f.ex)).size;
   document.getElementById('banner-text').innerHTML=
-    `${day.name||'Session'} complete! <span>${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})} Â· ${fresh.length} sets across ${exCount} exercise${exCount!==1?'s':''} logged.</span>`;
+    `${day.name||'Session'} complete! <span>${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})} · ${fresh.length} sets across ${exCount} exercise${exCount!==1?'s':''} logged.</span>`;
   document.getElementById('banner').classList.add('show');
-  document.getElementById('complete-btn').textContent='Session logged âœ“';
+  document.getElementById('complete-btn').textContent='Session logged ✔';
   document.getElementById('complete-btn').classList.add('done-state');
   document.getElementById('complete-btn').disabled=true;
   await renderDayTabs();
@@ -3235,9 +3235,9 @@ async function markComplete(){
 }
 
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    WEEK NAV + SAVE
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 async function shiftWeek(delta){
   weekOffset+=delta; curDay=0; logMode=false; sessionLog={}; libOpen=false;
   document.getElementById('lib-panel').style.display='none';
@@ -3251,7 +3251,7 @@ async function saveWeek(){
   const week=await loadWeek(ws);
   const total=week.days.reduce((s,d)=>s+d.exercises.length,0);
   if(total===0){alert('Add exercises to at least one day before saving.');return;}
-  showLoading('Saving weekâ€¦');
+  showLoading('Saving week…');
   const weeks=await getSavedWeeks();
   const ei=weeks.findIndex(w=>w.weekStart===ws);
   const rec={weekStart:ws,savedAt:new Date().toISOString(),days:week.days};
@@ -3260,13 +3260,13 @@ async function saveWeek(){
   hideLoading();
   const btn=document.querySelector('.btn.primary');
   const orig=btn.textContent;
-  btn.textContent='Saved âœ“'; btn.style.background='var(--sage)';
+  btn.textContent='Saved ✔'; btn.style.background='var(--sage)';
   setTimeout(()=>{btn.textContent=orig;btn.style.background='';},2000);
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    HISTORY VIEW
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 async function renderHistoryView(){
   const weeks=await getSavedWeeks();
   const grid=document.getElementById('hist-grid');
@@ -3277,13 +3277,13 @@ async function renderHistoryView(){
   weeks.forEach((w,wi)=>{
     const s=new Date(w.weekStart+'T12:00:00');
     const e=new Date(s); e.setDate(e.getDate()+6);
-    const lbl=s.toLocaleDateString('en-US',{month:'long',day:'numeric'})+' â€“ '+e.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    const lbl=s.toLocaleDateString('en-US',{month:'long',day:'numeric'})+' — '+e.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
     const total=w.days.reduce((s,d)=>s+d.exercises.length,0);
     const card=document.createElement('div'); card.className='hw-card';
     card.innerHTML=`
       <div class="hw-hdr" onclick="document.getElementById('hwb-${wi}').classList.toggle('open')">
-        <div><div class="hw-label">${lbl}</div><div class="hw-meta">${total} exercises Â· ${w.days.filter(d=>d.exercises.length>0).length} days</div></div>
-        <div><button class="load-btn" onclick="event.stopPropagation();loadHistWeek(${wi})">Load â†’</button></div>
+        <div><div class="hw-label">${lbl}</div><div class="hw-meta">${total} exercises · ${w.days.filter(d=>d.exercises.length>0).length} days</div></div>
+        <div><button class="load-btn" onclick="event.stopPropagation();loadHistWeek(${wi})">Load →'</button></div>
       </div>
       <div class="hw-body" id="hwb-${wi}">
         ${w.days.map((d,di)=>`
@@ -3309,9 +3309,9 @@ async function loadHistWeek(wi){
   await renderPlanner();
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    PROGRESS DASHBOARD
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 let trendChartInst=null, muscleChartInst=null;
 let activeMetric='volume';
 
@@ -3347,7 +3347,7 @@ async function renderProgressView(){
     monthArc.style.transition='stroke-dashoffset .7s cubic-bezier(.4,0,.2,1)';
     monthArc.setAttribute('stroke-dashoffset', String(Math.round(circ*(1-pct))));
     monthVal.textContent=monthCount;
-    if(monthSub) monthSub.textContent=monthCount>=MONTH_GOAL?'Goal reached! ðŸŽ¯':`of ${MONTH_GOAL} goal`;
+    if(monthSub) monthSub.textContent=monthCount>=MONTH_GOAL?'Goal reached! 🎯':`of ${MONTH_GOAL} goal`;
     monthArc.setAttribute('stroke', monthCount>=MONTH_GOAL?'#5ec49a':'#d4527a');
   }
 
@@ -3404,7 +3404,7 @@ async function renderProgressView(){
         const pill=document.createElement('button');
         pill.className='p-metric-btn'+(active?' active':'');
         pill.style.cssText='font-size:.62rem;padding:4px 10px;border-radius:20px;'+(fewData&&!active?'opacity:.55;':'');
-        pill.title=fewData?`${sessions} session${sessions!==1?'s':''} â€” log more to see a trend`:'';
+        pill.title=fewData?`${sessions} session${sessions!==1?'s':''} — log more to see a trend`:'';
         pill.textContent=ex+(fewData?` (${sessions})` :'');
         pill.onclick=()=>{
           if(selectedExercises.has(ex)) selectedExercises.delete(ex);
@@ -3536,14 +3536,14 @@ async function renderTrendChart(){
       const rangeLabel=rangeDays>0?`last ${rangeDays} days`:'all time';
       insight.textContent=diff===0
         ?`${ex}: ${lbl} steady at ${vals[vals.length-1]} ${metricLabel.split(' ')[0]} (${rangeLabel})`
-        :`${ex}: ${lbl} ${diff>0?'â†‘ up':'â†“ down'} ${Math.abs(diff)} ${metricLabel.split(' ')[0]} (${pct>0?'+':''}${pct}%) over ${rangeLabel}`;
+        :`${ex}: ${lbl} ${diff>0?'↑ up':'↓ down'} ${Math.abs(diff)} ${metricLabel.split(' ')[0]} (${pct>0?'+':''}${pct}%) over ${rangeLabel}`;
       insight.style.color=diff>=0?'var(--sage2)':'var(--blush2)';
     } else {
-      insight.textContent=vals.length===1?`${ex}: first session logged â€” keep going!`:'';
+      insight.textContent=vals.length===1?`${ex}: first session logged — keep going!`:'';
       insight.style.color='var(--ink4)';
     }
   } else {
-    insight.textContent=`Showing ${activeExs.length} exercises Â· tap a pill above to show/hide`;
+    insight.textContent=`Showing ${activeExs.length} exercises · tap a pill above to show/hide`;
     insight.style.color='var(--ink4)';
   }
 }
@@ -3600,22 +3600,22 @@ function renderSplitCharts(entries){
 
   // Push vs Pull
   const ppDiff=Math.abs(push.vol-pull.vol)/(push.vol+pull.vol||1)*100;
-  const ppRatio=pull.vol>0?(push.vol/pull.vol).toFixed(1):'â€”';
+  const ppRatio=pull.vol>0?(push.vol/pull.vol).toFixed(1):'—';
   const ppNote=push.vol===0&&pull.vol===0?'':
-    ppDiff>15?(push.vol>pull.vol?'Push-heavy Â· add more pull work':'Pull-heavy Â· add more push work'):
-    'âœ“ Well balanced';
+    ppDiff>15?(push.vol>pull.vol?'Push-heavy · add more pull work':'Pull-heavy · add more push work'):
+    '✔ Well balanced';
   renderStackedBar('pushpull-stacked',
     Math.round(push.vol), Math.round(pull.vol),
     'Push','Pull','#e8829f','#d4527a',
     'pushpull-balance',
-    push.vol||pull.vol?`Push:Pull ratio ${ppRatio} Â· ${ppNote}`:'');
+    push.vol||pull.vol?`Push:Pull ratio ${ppRatio} · ${ppNote}`:'');
 
   // Upper vs Lower
   const ulTotal=upper.vol+lower.vol;
   const ulDiff=ulTotal?Math.abs(upper.vol-lower.vol)/ulTotal*100:0;
   const ulNote=ulTotal===0?'':
-    ulDiff>20?(upper.vol>lower.vol?'Upper-heavy Â· add more lower body work':'Lower-heavy Â· add more upper body work'):
-    'âœ“ Well balanced';
+    ulDiff>20?(upper.vol>lower.vol?'Upper-heavy · add more lower body work':'Lower-heavy · add more upper body work'):
+    '✔ Well balanced';
   renderStackedBar('upperlower-stacked',
     Math.round(upper.vol), Math.round(lower.vol),
     'Upper','Lower','#c2547e','#f5bcd0',
@@ -3627,7 +3627,7 @@ function renderSplitCharts(entries){
 function renderMuscleChart(entries){ renderSplitCharts(entries); }
 
 function renderHeatmap(entries){
-  // Volume per date â€” used for 4-level intensity
+  // Volume per date — used for 4-level intensity
   const workedEntries=entries.filter(e=>e.source==='weekly');
   const volByDate={};
   workedEntries.forEach(e=>{
@@ -3639,7 +3639,7 @@ function renderHeatmap(entries){
   // 4-level intensity palette
   const LEVELS=[
     {bg:'#f0e4ea',border:'#e0c8d4'}, // rest
-    {bg:'#f5bcd0',border:'#e8829f'}, // light (1â€“33rd pctile of worked days)
+    {bg:'#f5bcd0',border:'#e8829f'}, // light (1—33rd pctile of worked days)
     {bg:'#e8829f',border:'#d4527a'}, // moderate
     {bg:'#d4527a',border:'#a83058'}, // full
     {bg:'#a83058',border:'#7a1a40'}, // high volume (top 10%)
@@ -3708,8 +3708,8 @@ function renderHeatmap(entries){
         cell.style.outlineOffset='2px';
       }
       const dayLabel=cellDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-      const volLabel=level>0?` Â· ${Math.round(volByDate[ds]||0).toLocaleString()} lb vol`:'';
-      cell.title=`${dayLabel}${isToday?' (today)':''}${isFuture?'':level>0?' Â· âœ“ session logged'+volLabel:' Â· rest day'}`;
+      const volLabel=level>0?` · ${Math.round(volByDate[ds]||0).toLocaleString()} lb vol`:'';
+      cell.title=`${dayLabel}${isToday?' (today)':''}${isFuture?'':level>0?' · ✔ session logged'+volLabel:' · rest day'}`;
       grid.appendChild(cell);
     }
   }
@@ -3729,8 +3729,8 @@ function renderHeatmap(entries){
     const sessionsInWindow=[...workedDates].filter(d=>d>=windowStart&&d<=todayStr).length;
     const totalDays=[...workedDates].filter(d=>d<=todayStr).length;
     streakEl.textContent=streak>1
-      ?`${streak}-day streak Â· ${sessionsInWindow} sessions this period`
-      :`${sessionsInWindow} sessions in last ${WEEKS} weeks Â· ${totalDays} total`;
+      ?`${streak}-day streak · ${sessionsInWindow} sessions this period`
+      :`${sessionsInWindow} sessions in last ${WEEKS} weeks · ${totalDays} total`;
   }
 }
 
@@ -3761,7 +3761,7 @@ function renderPRs(entries,freq){
     const prDate=new Date(pr.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
     const unit=pr.isBW?'reps':'lb';
     const bestLabel=`${pr.best} ${unit}`;
-    const e1rmLabel=pr.isBW?'':` Â· est. 1RM: ${pr.e1rm} lb`;
+    const e1rmLabel=pr.isBW?'':` · est. 1RM: ${pr.e1rm} lb`;
     const barPct=pr.start>0?Math.min(100,Math.round((pr.best/pr.start/2)*100)):50;
     const pct=pr.start>0?Math.round(((pr.best-pr.start)/pr.start)*100):0;
     const deltaBadge=pr.delta>0
@@ -3772,7 +3772,7 @@ function renderPRs(entries,freq){
         <div style="font-size:.83rem;font-weight:600;color:var(--ink2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ex}</div>
         <div style="display:flex;gap:5px;align-items:center;flex-shrink:0;">
           ${deltaBadge}
-          <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);">${freq[ex]||0}Ã—</span>
+          <span style="font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);">${freq[ex]||0}×</span>
         </div>
       </div>
       <div style="position:relative;height:7px;background:var(--cream3);border-radius:4px;overflow:hidden;margin-bottom:.375rem;">
@@ -3780,7 +3780,7 @@ function renderPRs(entries,freq){
       </div>
       <div style="display:flex;justify-content:space-between;font-family:'Roboto Mono',monospace;font-size:.6rem;color:var(--ink4);">
         <span>Start: ${pr.start} ${unit}</span>
-        <span style="color:var(--sage2);font-weight:500;">PR: ${bestLabel} Â· ${prDate}${e1rmLabel}</span>
+        <span style="color:var(--sage2);font-weight:500;">PR: ${bestLabel} · ${prDate}${e1rmLabel}</span>
       </div>
     </div>`;
   }
@@ -3793,7 +3793,7 @@ function renderPRs(entries,freq){
       style="margin-top:.5rem;width:100%;min-height:36px;background:none;border:1.5px solid var(--border);border-radius:var(--r);
       font-family:'Roboto Mono',monospace;font-size:.62rem;color:var(--ink4);cursor:pointer;
       display:flex;align-items:center;justify-content:center;gap:.375rem;">
-      <span id="pr-chevron">â–¼</span>
+      <span id="pr-chevron">▼</span>
       <span id="pr-toggle-lbl">Show ${rest.length} more</span>
     </button>`;
   }
@@ -3820,7 +3820,7 @@ function renderRecentSessions(entries){
     const dateLabel=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
     const isFirst=di===0;
 
-    // Mini bar chart data per exercise â€” use session volume for bar width
+    // Mini bar chart data per exercise — use session volume for bar width
     const exList=Object.entries(exMap);
     const maxVol=Math.max(...exList.map(([,sets])=>sets.reduce((s,e)=>(s+(e.weight||0)*(e.reps||0)*(e.sets||1)),0)));
 
@@ -3828,7 +3828,7 @@ function renderRecentSessions(entries){
       const bestWeight=Math.max(...sets.map(s=>s.weight||0));
       const totalSets=sets.length;
       const repRange=[...new Set(sets.map(s=>s.reps))];
-      const repLabel=repRange.length===1?`${repRange[0]}r`:`${Math.min(...repRange)}â€“${Math.max(...repRange)}r`;
+      const repLabel=repRange.length===1?`${repRange[0]}r`:`${Math.min(...repRange)}–${Math.max(...repRange)}r`;
       const isBandEx=sets[0]?.equipment==='band';
       const isBWEx=sets[0]?.equipment==='pullup'||sets[0]?.equipment==='bw';
       const bandNote=isBandEx&&sets[0]?.notes?sets[0].notes.split(' band')[0]:'';
@@ -3847,7 +3847,7 @@ function renderRecentSessions(entries){
         <button onclick="deleteSessionExercise('${date}','${exName.replace(/'/g,"\\'")}')"
           style="width:22px;height:22px;border-radius:50%;border:1px solid var(--border);
           background:transparent;color:var(--ink4);cursor:pointer;font-size:.6rem;
-          display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;" title="Delete">âœ•</button>
+          display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;" title="Delete">✕</button>
       </div>`;
     }).join('');
 
@@ -3899,28 +3899,28 @@ function renderPullupLadder(){
   const stage=getPullupStage();
   document.getElementById('progress-pullup-stages').innerHTML=PULLUP_STAGES.map((s,i)=>{
     const done=i<stage,cur=i===stage;
-    const icon=done?'âœ“':cur?'â†’':'â—‹';
+    const icon=done?'✔':cur?'→':'○';
     const col=done?'var(--sage2)':cur?'var(--sage)':'var(--ink4)';
     return `<div style="display:flex;gap:.75rem;align-items:flex-start;padding:.625rem 0;border-bottom:1px solid var(--border2);">
       <div style="font-family:'Roboto Mono',monospace;font-size:.9rem;color:${col};width:24px;flex-shrink:0;">${icon}</div>
       <div style="flex:1;">
         <div style="font-weight:600;font-size:.85rem;color:${col};">${i+1}. ${s.name}</div>
         <div style="font-size:.73rem;color:var(--ink3);margin-top:3px;line-height:1.5;">${s.cue}</div>
-        ${cur?`<button class="sm-btn blush" style="margin-top:.5rem;" onclick="advancePullupStage()">Mark stage ${i+1} complete â†’ ${PULLUP_STAGES[i+1]?.name||'Done!'}</button>`:''}
+        ${cur?`<button class="sm-btn blush" style="margin-top:.5rem;" onclick="advancePullupStage()">Mark stage ${i+1} complete �?' ${PULLUP_STAGES[i+1]?.name||'Done!'}</button>`:''}
       </div>
     </div>`;
   }).join('');
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    RUNNING TRACKER
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 const RACE_GOALS = [
-  {name:'5k',        miles:3.1,  emoji:'ðŸ…'},
-  {name:'10k',       miles:6.2,  emoji:'ðŸ¥ˆ'},
-  {name:'15k',       miles:9.3,  emoji:'ðŸŽ¯'},
-  {name:'Half Marathon', miles:13.1, emoji:'ðŸ¥‡'},
-  {name:'Marathon',  miles:26.2, emoji:'ðŸ†'},
+  {name:'5k',        miles:3.1,  emoji:'🏅'},
+  {name:'10k',       miles:6.2,  emoji:'🥈'},
+  {name:'15k',       miles:9.3,  emoji:'🎯'},
+  {name:'Half Marathon', miles:13.1, emoji:'🥇'},
+  {name:'Marathon',  miles:26.2, emoji:'🏆'},
 ];
 
 async function getRunEntries(){
@@ -3967,7 +3967,7 @@ async function renderRunView(){
               <span style="font-family:'Roboto Mono',monospace;font-size:.62rem;font-weight:400;color:var(--ink4);">(${g.miles} mi)</span>
             </span>
             <span style="font-family:'Roboto Mono',monospace;font-size:.65rem;color:${achieved?'#27ae60':'var(--ink4)'};">
-              ${achieved?'âœ“ Achieved!':pct+'%'+' Â· '+remaining.toFixed(1)+' mi to go'}
+              ${achieved?'✔ Achieved!':pct+'%'+' · '+remaining.toFixed(1)+' mi to go'}
             </span>
           </div>
           <div style="height:10px;background:var(--cream3);border-radius:5px;overflow:hidden;">
@@ -3991,14 +3991,14 @@ async function renderRunView(){
         const pace=dur>0&&mi>0?(dur/mi).toFixed(1)+' min/mi':'';
         const dateStr=new Date(r.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
         return `<div class="run-entry-row">
-          <span style="font-size:1.1rem;">ðŸƒ</span>
+          <span style="font-size:1.1rem;">🏃</span>
           <span style="font-family:'Roboto Mono',monospace;font-size:.7rem;color:var(--ink4);width:80px;flex-shrink:0;">${dateStr}</span>
           <span style="font-weight:600;flex:0 0 auto;">${mi.toFixed(1)} mi</span>
-          ${dur>0?`<span style="font-family:'Roboto Mono',monospace;font-size:.7rem;color:var(--ink4);">${dur} min${pace?' Â· '+pace:''}</span>`:''}
+          ${dur>0?`<span style="font-family:'Roboto Mono',monospace;font-size:.7rem;color:var(--ink4);">${dur} min${pace?' · '+pace:''}</span>`:''}
           ${r.notes?`<span style="font-size:.78rem;color:var(--ink3);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.notes}</span>`:'<span style="flex:1;"></span>'}
           <button onclick="deleteRun(${r.id})"
             style="width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:transparent;
-            color:var(--ink4);cursor:pointer;font-size:.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Delete">âœ•</button>
+            color:var(--ink4);cursor:pointer;font-size:.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Delete">✕</button>
         </div>`;
       }).join('');
     }
@@ -4033,11 +4033,11 @@ async function logRun(){
     document.getElementById('run-miles-inp').value='';
     document.getElementById('run-dur-inp').value='';
     document.getElementById('run-notes-inp').value='';
-    document.getElementById('run-save-msg').textContent='âœ“ Run logged!';
+    document.getElementById('run-save-msg').textContent='✔ Run logged!';
     setTimeout(()=>{ const m=document.getElementById('run-save-msg'); if(m) m.textContent=''; },2500);
     await renderRunView();
   } else {
-    document.getElementById('run-save-msg').textContent='Save failed â€” check connection.';
+    document.getElementById('run-save-msg').textContent='Save failed — check connection.';
   }
 }
 
@@ -4063,8 +4063,8 @@ async function renderRunDayEditor(){
     const pace=dur>0&&mi>0?(dur/mi).toFixed(1)+' min/mi':'';
     list.innerHTML=`<div style="padding:1rem;">
       <div style="background:#e8f4fd;border:1px solid #5b8fd4;border-left:3px solid #2d7dd2;border-radius:0 var(--r) var(--r) 0;padding:.875rem 1rem;margin-bottom:.75rem;">
-        <div style="font-family:'Playfair Display',serif;color:#2d7dd2;font-size:.9rem;margin-bottom:.375rem;">ðŸƒ Run logged</div>
-        <div style="font-size:.85rem;font-weight:600;">${mi.toFixed(1)} miles${dur?` Â· ${dur} min${pace?' Â· '+pace:''}`:''}</div>
+        <div style="font-family:'Playfair Display',serif;color:#2d7dd2;font-size:.9rem;margin-bottom:.375rem;">🏃 Run logged</div>
+        <div style="font-size:.85rem;font-weight:600;">${mi.toFixed(1)} miles${dur?` · ${dur} min${pace?' · '+pace:''}`:''}</div>
         ${dayRun.notes?`<div style="font-size:.75rem;color:var(--ink3);margin-top:3px;">${dayRun.notes}</div>`:''}
         <button class="sm-btn" style="margin-top:.625rem;font-size:.72rem;" onclick="deleteDayRun(${dayRun.id})">Remove run</button>
       </div>
@@ -4084,10 +4084,10 @@ async function renderRunDayEditor(){
           </div>
           <div style="flex:1;min-width:100px;">
             <label class="run-inp-lbl">Notes</label>
-            <input type="text" id="day-run-notes" maxlength="80" placeholder="easy, intervals, trailâ€¦"
+            <input type="text" id="day-run-notes" maxlength="80" placeholder="easy, intervals, trail…"
               style="width:100%;min-height:44px;padding:0 .875rem;border:1.5px solid var(--border);border-radius:6px;background:var(--cream);font-family:'Outfit',sans-serif;font-size:.85rem;">
           </div>
-          <button class="btn primary" onclick="logDayRun()" style="min-height:44px;align-self:flex-end;">Log Run âœ“</button>
+          <button class="btn primary" onclick="logDayRun()" style="min-height:44px;align-self:flex-end;">Log Run ✔</button>
         </div>
       </div>
     </div>`;
@@ -4136,12 +4136,12 @@ async function deleteDayRun(id){
   }
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    VIEW SWITCHING
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    UI UTILITY FUNCTIONS
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 
 // Bottom nav active state
 function updateBottomNav(name){
@@ -4150,7 +4150,7 @@ function updateBottomNav(name){
   if(btn) btn.classList.add('active');
 }
 
-// Banner collapse/expand â€” persisted in localStorage
+// Banner collapse/expand — persisted in localStorage
 function toggleBanner(){
   const el=document.getElementById('program-banner');
   if(!el) return;
@@ -4164,7 +4164,7 @@ function initBanner(){
   }catch(e){}
 }
 
-// Week context label â€” "This week", "Next week", "2 weeks ago", etc.
+// Week context label — "This week", "Next week", "2 weeks ago", etc.
 function updateWeekContext(){
   const el=document.getElementById('week-context');
   if(!el) return;
@@ -4175,13 +4175,13 @@ function updateWeekContext(){
   else el.textContent=`${Math.abs(weekOffset)} weeks ago`;
 }
 
-// Start session button â€” contextual label
+// Start session button — contextual label
 function updateStartBtn(){
   const btn=document.getElementById('start-btn');
   if(!btn) return;
   const sched=document.querySelector('[id="day-tabs"] .day-tab.active .dt-date');
   const isToday=getWeekStart(weekOffset); // rough check
-  btn.textContent = weekOffset===0 ? 'Start today\'s session â†’' : 'Start this session â†’';
+  btn.textContent = weekOffset===0 ? 'Start today\'s session →'' : 'Start this session →'';
 }
 
 // Day name: click to edit
@@ -4198,7 +4198,7 @@ function endEditDayName(){
   const display=document.getElementById('day-name-display');
   const input=document.getElementById('day-name-inp');
   if(!display||!input) return;
-  display.textContent=input.value||'Name this dayâ€¦';
+  display.textContent=input.value||'Name this day…';
   display.style.display='block';
   input.style.display='none';
 }
@@ -4216,7 +4216,7 @@ function confirmBackToPlan(){
 }
 
 
-// Generic collapse toggle â€” used for PR list, pull-up ladder, recent sessions
+// Generic collapse toggle — used for PR list, pull-up ladder, recent sessions
 function toggleCollapse(bodyId, chevronId){
   const body=document.getElementById(bodyId);
   const chev=document.getElementById(chevronId);
@@ -4246,9 +4246,9 @@ async function showView(name){
   if(name==='run')      await renderRunView();
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
    INIT
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� */
 document.getElementById('hdr-date').textContent=
   new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
@@ -4266,7 +4266,7 @@ cache.settings.customTemplates=_getCustomTemplates();
 loadCustomExercisesIntoLibrary();
 
 // Re-fetch from Supabase whenever the tab becomes visible again
-// This ensures cross-device data is always fresh (phone logs â†’ computer sees it)
+// This ensures cross-device data is always fresh (phone logs �?' computer sees it)
 document.addEventListener('visibilitychange', async ()=>{
   if(document.hidden) return;
   // Clear all caches so next render pulls fresh from Supabase
@@ -4285,7 +4285,7 @@ document.addEventListener('visibilitychange', async ()=>{
 });
 
 (async()=>{
-  showLoading('Connectingâ€¦');
+  showLoading('Connecting…');
   try {
     // Load settings first so pull-up stage is available synchronously
     await getSettings();

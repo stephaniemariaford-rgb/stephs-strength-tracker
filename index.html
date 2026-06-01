@@ -1,4 +1,4 @@
-?<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -948,7 +948,7 @@ body{
     </div>
 
     <div id="start-bar" class="start-bar" style="display:none;margin-top:.875rem;">
-      <button class="btn primary" style="width:100%;font-size:1rem;font-weight:600;min-height:58px;border-radius:var(--r);" id="start-btn" onclick="startWorkout()">Start session →'</button>
+      <button class="btn primary" style="width:100%;font-size:1rem;font-weight:600;min-height:58px;border-radius:var(--r);" id="start-btn" onclick="startWorkout()">Start session →</button>
     </div>
 
   </div>
@@ -1282,6 +1282,7 @@ async function loadWeekRemote(weekStart){
   const rows = await sb.get('week_plans', `week_start=eq.${weekStart}&user_id=eq.${USER_ID}`);
   if(rows?.[0]?.data){
     const data = rows[0].data;
+    if(!Array.isArray(data.days)) data.days = [];
     // Migrate old 4-day data to 7-day format
     while(data.days.length < 7){
       const i = data.days.length;
@@ -1289,6 +1290,7 @@ async function loadWeekRemote(weekStart){
     }
     // Ensure all days have dayType field
     data.days.forEach((d,i)=>{
+      if(!Array.isArray(d.exercises)) d.exercises = [];
       if(!d.dayType) d.dayType = d.exercises.length > 0 ? 'workout' : 'rest';
       if(!d.hasOwnProperty('name')) d.name = '';
       // Normalize scheduledDate to match day position
@@ -2625,7 +2627,7 @@ function openTemplateEditor(existingKey){
     // Library picker (compact)
     const libPicker=LIBRARY.map((ex,li)=>{
       const already=editorExercises.some(e=>e.libIdx===li);
-      return `<div onclick="${already?'':'window._edExs.push({libIdx:'+li+',sets:3,reps:10,targetWeight:\\'\\',notes:\\'\\'});window._refreshEditorBody()'}"
+      return `<div onclick="${already?'':'window._edExs.push({libIdx:'+li+',sets:3,reps:10,targetWeight:\'\',notes:\'\''});window._refreshEditorBody()'}"
         style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-bottom:1px solid var(--border2);
           cursor:${already?'default':'pointer'};opacity:${already?'.4':'1'};background:${already?'var(--cream2)':'white'};">
         <div style="flex:1;font-size:.8rem;font-weight:500;">${ex.name}</div>
@@ -3283,7 +3285,7 @@ async function renderHistoryView(){
     card.innerHTML=`
       <div class="hw-hdr" onclick="document.getElementById('hwb-${wi}').classList.toggle('open')">
         <div><div class="hw-label">${lbl}</div><div class="hw-meta">${total} exercises · ${w.days.filter(d=>d.exercises.length>0).length} days</div></div>
-        <div><button class="load-btn" onclick="event.stopPropagation();loadHistWeek(${wi})">Load →'</button></div>
+        <div><button class="load-btn" onclick="event.stopPropagation();loadHistWeek(${wi})">Load →</button></div>
       </div>
       <div class="hw-body" id="hwb-${wi}">
         ${w.days.map((d,di)=>`

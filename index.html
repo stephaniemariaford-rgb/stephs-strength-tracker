@@ -2604,6 +2604,12 @@ function openTemplateEditor(existingKey){
   box.style.cssText='background:var(--cream);border-radius:12px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.3);';
 
   function renderEditorBody(){
+    window._addLibToTemplate = function(li){
+      if(!window._edExs.some(e=>e.libIdx===li)){
+        window._edExs.push({libIdx:li,sets:3,reps:10,targetWeight:'',notes:''});
+        window._refreshEditorBody();
+      }
+    };
     const exRows=editorExercises.map((ex,i)=>{
       const libEx=LIBRARY[ex.libIdx];
       if(!libEx) return '';
@@ -2627,7 +2633,7 @@ function openTemplateEditor(existingKey){
     // Library picker (compact)
     const libPicker=LIBRARY.map((ex,li)=>{
       const already=editorExercises.some(e=>e.libIdx===li);
-      return `<div onclick="${already?'':'window._edExs.push({libIdx:'+li+',sets:3,reps:10,targetWeight:\'\',notes:\'\''});window._refreshEditorBody()'}"
+      return `<div onclick="${already?'':'window._addLibToTemplate('+li+')'}"
         style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-bottom:1px solid var(--border2);
           cursor:${already?'default':'pointer'};opacity:${already?'.4':'1'};background:${already?'var(--cream2)':'white'};">
         <div style="flex:1;font-size:.8rem;font-weight:500;">${ex.name}</div>
@@ -2915,6 +2921,7 @@ async function renderLibrary(){
     const item=document.createElement('div');
     item.className=`lib-item${isAdded?' added':''}`;
     item.id=`li-${idx}`;
+    if(!isAdded) item.onclick = (e) => { if(!e.target.closest('[title="Edit"]')) addFromLib(idx); };
     const customBadge=ex.custom?`<span class="tag" style="background:#eef3ff;color:#3a5faa;border:1px solid rgba(58,95,170,.2);">custom</span>`:````;
     item.innerHTML=`
       <div style="flex:1;min-width:0;">
